@@ -2,106 +2,111 @@ import { ref, reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useStore = defineStore('store', () => {
-  const civici = reactive({})
-  const selectedBlock = ref(null)
-  const searchedNum = ref(null)
-  const selectedNum = ref(0)
+	const civici = reactive({})
+	const selectedBlock = ref(null)
+	const searchedNum = ref(null)
+	const selectedNum = ref(0)
 
-  const blocks = ref({
-    cannaregio: {
-      name: 'Cannaregio',
-      img: '',
-    },
-    castello: {
-      name: 'Castello',
-      img: '',
-    },
-    dorsoduro: {
-      name: 'Dorsoduro',
-      img: '',
-    },
-    giudecca: {
-      name: 'Giudecca',
-      img: '',
-    },
-    sanmarco: {
-      name: 'San Marco',
-      img: '',
-    },
-    sanpolo: {
-      name: 'San Polo',
-      img: '',
-    },
-    santacroce: {
-      name: 'Santa Croce',
-      img: '',
-    }
-  })
+	const blocks = ref({
+		cannaregio: {
+			name: 'Cannaregio',
+			img: '',
+		},
+		castello: {
+			name: 'Castello',
+			img: '',
+		},
+		dorsoduro: {
+			name: 'Dorsoduro',
+			img: '',
+		},
+		giudecca: {
+			name: 'Giudecca',
+			img: '',
+		},
+		sanmarco: {
+			name: 'San Marco',
+			img: '',
+		},
+		sanpolo: {
+			name: 'San Polo',
+			img: '',
+		},
+		santacroce: {
+			name: 'Santa Croce',
+			img: '',
+		}
+	})
 
 
-  const cleanupNumbers = (block) => {
-    let numbers = []
+	const cleanupNumbers = (block) => {
+		let numbers = []
 
-    for (const i in block) {
+		for (const i in block) {
 
-        for (const n in block[i]) {
+			for (const n in block[i]) {
 
-          let id = (parseFloat(i) + n).split('_')[0]
+				let id = (parseFloat(i) + n).split('_')[0]
 
-          let num = {
-            id: id,
-            lat: block[i][n].lat,
-            lng: block[i][n].lng
-          }
+				let num = {
+					id: id,
+					lat: block[i][n].lat,
+					lng: block[i][n].lng
+				}
 
-          numbers.push(num) 
+				numbers.push(num)
 
-        }
-    }
+			}
+		}
 
-    return numbers
+		return numbers
 
-  }
-  
-  const loadAddresses = async () => {
-    const response = await fetch('civici.json')
-    const data = await response.json()
+	}
 
-    civici.cannaregio = cleanupNumbers(data.CN)
-    civici.castello = data.CS
-    civici.dorsoduro = data.DD
-    civici.giudecca = data.GD
-    civici.santacroce = data.SC
-    civici.sanmarco = data.SM
-    civici.sanpolo = data.SP
-  }
+	const loadAddresses = async () => {
+		const response = await fetch('civici.json')
+		const data = await response.json()
 
-  const selectBlock = (block) => {
-    selectedBlock.value = block
-  }
+		civici.cannaregio = cleanupNumbers(data.CN)
+		civici.castello = cleanupNumbers(data.CS)
+		civici.dorsoduro = cleanupNumbers(data.DD)
+		civici.giudecca = cleanupNumbers(data.GD)
+		civici.santacroce = cleanupNumbers(data.SC)
+		civici.sanmarco = cleanupNumbers(data.SM)
+		civici.sanpolo = cleanupNumbers(data.SP)
+	}
 
-  const filteredNumbers = computed(() => {
-    if (!searchedNum.value) {
-      return null
-    } else {
-      console.lo
-      let numberblock = civici[selectedBlock.value]
+	const selectBlock = (block) => {
+		selectedBlock.value = block
+	}
 
-      numberblock = numberblock.filter( n => n.id.startsWith(searchedNum.value) )
+	const selectNumber = (num) => {
+		selectedNum.value = num
+	}
 
-      return numberblock.splice(0,6)
-    }
-    
-  })
+	const filteredNumbers = computed(() => {
+		if (!searchedNum.value) {
+			return null
+		} else {
+			console.lo
+			let numberblock = civici[selectedBlock.value]
 
-  return { 
-    blocks,
-    filteredNumbers,
-    searchedNum,
-    selectedNum,
-    selectedBlock,
-    civici,
-    loadAddresses,
-    selectBlock
-  }
+			numberblock = numberblock.filter(n => n.id.startsWith(searchedNum.value))
+
+			return numberblock.splice(0, 6)
+		}
+
+	})
+
+	return {
+		blocks,
+		filteredNumbers,
+		searchedNum,
+		selectedNum,
+		selectNumber,
+		selectedBlock,
+		civici,
+		loadAddresses,
+		selectBlock
+	}
 })
