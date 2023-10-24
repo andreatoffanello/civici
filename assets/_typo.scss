@@ -1,0 +1,118 @@
+* {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 400;
+    margin: 0;
+}
+
+h1 {
+    line-height: 1;
+}
+
+p {
+    line-height: 1.5;
+}
+
+:root {
+    --text-xxxlarge: 6rem;
+    --text-xxlarge: 4rem;
+    --text-xlarge: 2.4rem;
+    --text-large: 1.8rem;
+    --text-regular: 1.6rem;
+    --text-small: 1.2rem;
+}
+
+body,
+div,
+span,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--text-color);
+}
+
+.text-xxxlarge {
+    font-size: var(--text-xxxlarge);
+}
+
+.text-xxlarge {
+    font-size: var(--text-xxlarge);
+}
+
+.text-xlarge {
+    font-size: var(--text-xlarge);
+}
+
+.text-large {
+    font-size: var(--text-large);
+}
+
+.text-regular {
+    font-size: var(--text-regular);
+    letter-spacing: calc(var(--text-xlarge) * 0.01);
+}
+
+.text-small {
+    font-size: var(--text-small);
+    letter-spacing: calc(var(--text-xlarge) * 0.025);
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.lowercase {
+    text-transform: lowercase;
+}
+
+.color-main {
+    color: var(--main-color);
+}
+
+.color-secondary {
+    color: var(--secondary-color);
+}
+
+.color-white {
+    color: var(--color-white);
+}
+
+.color-active {
+    color: var(--active-color);
+}
+
+.color-error {
+    color: var(--error-color);
+}
+
+.align-center {
+    text-align: center;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.align-left {
+    text-align: left;
+}
+
+pre {
+    font-family: monospace;
+    display: inline;
+    padding: .4rem;
+    background: var(--border-color);
+    border-radius: .4rem;
+    border: solid 1px var(--main-color);
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.8 (1915364 spike-06.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <relation id="4817103" visible="true" version="7" changeset="132705073" timestamp="2023-02-18T08:01:06Z" user="assar" uid="59757">
+  <member type="way" ref="339735723" role="outer"/>
+  <member type="way" ref="848380826" role="outer"/>
+  <member type="way" ref="173197057" role="outer"/>
+  <member type="way" ref="339735706" role="outer"/>
+  <member type="way" ref="352859843" role="outer"/>
+  <tag k="name" v="Venezia"/>
+  <tag k="name:eu" v="Venezia"/>
+  <tag k="name:fr" v="Venise"/>
+  <tag k="place" v="island"/>
+  <tag k="type" v="multipolygon"/>
+  <tag k="wikidata" v="Q106595369"/>
+ </relation>
+</osm>
