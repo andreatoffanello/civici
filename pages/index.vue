@@ -1,11 +1,21 @@
 <script setup>
 
+import { useStore } from '../stores/store'
+
+const store = useStore()
+
+
 </script>
 
 <template>
     <div class="page">
         <Map/>
-        <h1>Home</h1>
+        <SestieriSelector/>
+
+        <p v-for="(civico, i) in store.filteredNumbers" :key="i">
+            {{ civico }}
+        </p>
+
     </div>
 </template>
 
