@@ -4,12 +4,17 @@ import { useStore } from '../stores/store'
 
 const store = useStore()
 
+const handleClick = (i) => {
+    store.selectSestiere(i)
+    navigateTo(`/sestiere-${i}`)
+}
+
 </script>
 
 <template>
     <div ref="sestieri" class="sestieri">
-        <div v-for="(sestiere, i) in store.sestieri" :key="sestiere.id" class="sestiere" @click="store.selectSestiere(i)">
-            {{ sestiere.name }}
+        <div v-for="(sestiere, i) in store.sestieri" :key="sestiere.id" class="sestiere" @click="handleClick(i)">
+            <span class="venice text-xlarge">{{ sestiere.name }}</span>
         </div>
     </div>
 </template>
@@ -22,15 +27,13 @@ s
 
 .sestieri {
     position: relative;
-    display: flex;
-    flex-direction: column;
+    overflow: auto;
 }
 
 .sestiere {
     text-align: center;
-    padding: 2rem;
+    padding: var(--space-md) var(--space-md);
     box-sizing: border-box;
-    font-size: 2rem;
     white-space: nowrap;
 }
 

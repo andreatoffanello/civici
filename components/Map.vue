@@ -12,17 +12,33 @@ const mapContainer = ref(null)
 let map
 
 const initialPitch = 55
+const initialZoom = 13
 
 const initMap = () => {
     map = new mapboxgl.Map({
         container: mapContainer.value,
         style: 'mapbox://styles/andreatoffanello/clo4nfb7v00f901qxfr1c87kv',
-        center: [12.335931181402884, 45.438053730947416],
-        zoom: 13,
-        pitch: initialPitch,
+        // center: [12.335931181402884, 45.438053730947416],
+        // zoom: 0,
+        // bearing: 200,
+        antialias: true,
+        // opacity 0
+        fadeDuration: 1000,
     })
 
+    // set map initial properties
+    
     map.on('load', () => {
+        map.setZoom(0)
+        map.setBearing(200)
+        map.setPitch(0)
+
+        if (!map.isStyleLoaded()) {
+            return
+        }
+
+        mapContainer.value.style.opacity = 1
+
         // Aggiungi il layer per gli edifici in 3D
         map.addLayer({
             'id': '3d-buildings',
@@ -46,6 +62,43 @@ const initMap = () => {
                 'fill-extrusion-opacity': .4
             }
         })
+
+        if (store.selectedAddress) return
+        
+
+        map.flyTo({
+            center: [12.335931181402884, 45.438053730947416],
+            zoom: initialZoom,
+            pitch: initialPitch,
+            bearing: 0,
+            duration: 10000,
+            easing(t) {
+                return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(1 - t, 3) * 4
+            }
+        })
+    })
+}
+
+const resetMap = () => {
+    if (!map) return
+    // rimuovi il vecchio layer con id 'sestiere'
+    if (map.getLayer('sestiere')) {
+        map.removeLayer('sestiere')
+    }
+
+    document.querySelectorAll('.marker').forEach((marker) => {
+        marker.remove()
+    })
+
+    map.flyTo({
+        center: [12.335931181402884, 45.438053730947416],
+        zoom: initialZoom,
+        pitch: initialPitch,
+        bearing: 0,
+        duration: 2000,
+        easing(t) {
+            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(1 - t, 3) * 4
+        }
     })
 }
 
@@ -99,53 +152,101 @@ const flyToSestiere = (id) => {
     })
 
     map.fitBounds(bounds, {
-        padding: 50,
+        padding: 24,
         pitch: initialPitch,
         bearing: 0,
-        speed: 0.5,
+        // duration 5s
+        duration: 2000,
+        // actual bearing + 360
+        bearing: map.getBearing() + 30,
         easing(t) {
             return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(1 - t, 3) * 4
         }
     })
 }
 
-const populateSestiere = (id) => {
+
+const placeMarker = (address) => {
     if (!map) return
-    // rimuovi tutti i marker
-    document.querySelectorAll('.marker').forEach((marker) => marker.remove())
-    // aggiungi alla mappa un marker html per ogni elemento in store.filteredNumbers
-    store.filteredNumbers.slice(0,10).forEach((civico) => {
-              
-            const el = document.createElement('div')
-            el.className = 'marker'
-            el.style.backgroundColor = 'red'
-            el.style.width = '20px'
-            el.style.height = '20px'
-            el.style.borderRadius = '50%'
-            new mapboxgl.Marker(el)
-                .setLngLat({ lng: civico.lng, lat: civico.lat })
-                .addTo(map) 
+
+    // remove any other marker before placing a new one
+    document.querySelectorAll('.marker').forEach((marker) => {
+        marker.remove()
     })
+
+    const el = document.createElement('div')
+    el.className = 'marker'
+    el.style.width = '40px'
+    el.style.height = '40px'
+    el.style.backgroundImage = 'url("/pin.png")'
+    el.style.backgroundSize = 'contain'
+    el.style.backgroundRepeat = 'no-repeat'
+    el.style.backgroundPosition = 'center'
+    // el.style.background = 'red'
+
+    // place marker with html element and text label
+    const marker = new mapboxgl.Marker({
+        element: el,
+        anchor: 'bottom'
+    })
+        .setLngLat([address.coordinates.lng, address.coordinates.lat])
+        .addTo(map)
+
+    // fly to marker
+    console.log('fly to marker')
+    setTimeout(() => {
+        
+        map.flyTo({
+            center: [address.coordinates.lng, address.coordinates.lat],
+            zoom: 17,
+            pitch: 0,
+            bearing: 0,
+            duration: 10000,
+            easing(t) {
+                return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(1 - t, 3) * 4
+            }
+        })
+    }, 1000)
 }
 
 
+
+
 onMounted(() => {
-    initMap()
+
 })
 
 watchEffect(() => {
+    if (!mapContainer.value) {
+        return
+    }
+    setTimeout(() => {
+        initMap()
+    }, 1000)
+})
+
+watchEffect(() => {
+    if (!store.selectedSestiere) {
+        resetMap()
+        return
+    }
     flyToSestiere(store.selectedSestiere)
+})
+
+watchEffect(() => {
+    if (!store.selectedAddress) {
+        return
+    }
+    setTimeout(() => {
+        placeMarker(store.selectedAddress)
+    }, 1000)
+    
 })
 
 </script>
 
 <template>
     <div ref="mapContainer" id="mapContainer"></div>
-    <!-- <div class="sestieri">
-        <div v-for="sestiere in sestieri" :key="sestiere.id" class="sestiere" @click="flyToSestiere(sestiere)">
-            {{ sestiere.name }}
-        </div>
-    </div> -->
 </template>
 
 <style lang="scss" scoped>
@@ -156,6 +257,9 @@ watchEffect(() => {
     position: absolute;
     top: 0;
     left: 0;
+    mask-image: radial-gradient(ellipse 90% 80% at center, black 20%, transparent 70%);
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
 }
     
 </style>

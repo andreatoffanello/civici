@@ -36,7 +36,7 @@ export const useStore = defineStore('store', () => {
             id: 4,
             name: 'Giudecca',
             coordinates: [12.325256777527102, 45.426553166266984],
-            color: '#E6E6FA',
+            color: '#c0c0fa',
             geojson: giudecca
         },
         'SC': {
@@ -98,14 +98,22 @@ export const useStore = defineStore('store', () => {
         // trova tutti gli oggetti figli di civici[selectedSestiere.value] che hanno come chiave un numero che contiene la stringa filterNumber
 
         if (!civici[selectedSestiere.value]) return []
+        
         let filtered = Object.keys(civici[selectedSestiere.value])
-
+ 
         if (filterNumber.value) {
             filtered = filtered.filter(key => key.includes(filterNumber.value))
         }
+        
+        console.log(filtered)
 
-        return filtered.map(key => civici[selectedSestiere.value][key])
+
+        // console.log(filtered)
+
+        return filtered
     })
+
+    const selectedAddress = ref(null)
 
     
     onMounted(async () => {
@@ -117,6 +125,8 @@ export const useStore = defineStore('store', () => {
         sestieri,
         selectedSestiere,
         selectSestiere,
-        filteredNumbers
+        filterNumber,
+        filteredNumbers,
+        selectedAddress
     }
 })

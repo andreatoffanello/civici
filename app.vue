@@ -6,6 +6,8 @@ const store = useStore()
 
 </script>
 <template>
-  <NuxtPage />
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
 
