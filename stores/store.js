@@ -102,7 +102,8 @@ export const useStore = defineStore('store', () => {
         let filtered = Object.keys(civici[selectedSestiere.value])
  
         if (filterNumber.value) {
-            filtered = filtered.filter(key => key.includes(filterNumber.value))
+            //filtered = filtered.filter(key => key.includes(filterNumber.value))
+            filtered = filtered.filter(key => key.startsWith(filterNumber.value))
         }
         
         console.log(filtered)

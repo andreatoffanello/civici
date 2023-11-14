@@ -1,5 +1,5 @@
 <script setup>
-import mapboxgl from 'mapbox-gl' 
+import mapboxgl from 'mapbox-gl'
 import { useStore } from '../stores/store'
 
 
@@ -17,7 +17,7 @@ const initialZoom = 13
 const initMap = () => {
     map = new mapboxgl.Map({
         container: mapContainer.value,
-        style: 'mapbox://styles/andreatoffanello/clo4nfb7v00f901qxfr1c87kv',
+        style: 'mapbox://styles/andreatoffanello/cloywqcgd000101qteohz56tw',
         // center: [12.335931181402884, 45.438053730947416],
         // zoom: 0,
         // bearing: 200,
@@ -27,7 +27,7 @@ const initMap = () => {
     })
 
     // set map initial properties
-    
+
     map.on('load', () => {
         map.setZoom(0)
         map.setBearing(200)
@@ -64,7 +64,7 @@ const initMap = () => {
         })
 
         if (store.selectedAddress) return
-        
+
 
         map.flyTo({
             center: [12.335931181402884, 45.438053730947416],
@@ -110,7 +110,12 @@ const flyToSestiere = (id) => {
     if (map.getLayer('sestiere')) {
         map.removeLayer('sestiere')
     }
-    
+
+    // remove any other marker before placing a new one
+    document.querySelectorAll('.marker').forEach((marker) => {
+        marker.remove()
+    })
+
     // rimuovi tutti i source
     Object.keys(map.getStyle().sources).forEach((source) => {
         if (source !== 'composite') {
@@ -130,7 +135,7 @@ const flyToSestiere = (id) => {
         'source': id,
         'layout': {},
         'paint': {
-            'fill-color': store.sestieri[id].color,
+            'fill-color': '#c21d03',
             'fill-opacity': .4
         }
     })
@@ -169,6 +174,11 @@ const flyToSestiere = (id) => {
 const placeMarker = (address) => {
     if (!map) return
 
+    // rimuovi il vecchio layer con id 'sestiere'
+    if (map.getLayer('sestiere')) {
+        map.removeLayer('sestiere')
+    }
+
     // remove any other marker before placing a new one
     document.querySelectorAll('.marker').forEach((marker) => {
         marker.remove()
@@ -192,21 +202,23 @@ const placeMarker = (address) => {
         .setLngLat([address.coordinates.lng, address.coordinates.lat])
         .addTo(map)
 
-    // fly to marker
-    console.log('fly to marker')
+
+
     setTimeout(() => {
-        
+
+        // fly to marker
         map.flyTo({
             center: [address.coordinates.lng, address.coordinates.lat],
-            zoom: 17,
+            zoom: 18,
             pitch: 0,
             bearing: 0,
-            duration: 10000,
+            duration: 5000,
             easing(t) {
                 return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(1 - t, 3) * 4
             }
         })
-    }, 1000)
+
+    }, 500)
 }
 
 
@@ -214,33 +226,35 @@ const placeMarker = (address) => {
 
 onMounted(() => {
 
-})
-
-watchEffect(() => {
-    if (!mapContainer.value) {
-        return
-    }
-    setTimeout(() => {
-        initMap()
-    }, 1000)
-})
-
-watchEffect(() => {
-    if (!store.selectedSestiere) {
-        resetMap()
-        return
-    }
-    flyToSestiere(store.selectedSestiere)
-})
-
-watchEffect(() => {
-    if (!store.selectedAddress) {
-        return
-    }
-    setTimeout(() => {
-        placeMarker(store.selectedAddress)
-    }, 1000)
+    watchEffect(() => {
+        if (!mapContainer.value) {
+            return
+        }
+        setTimeout(() => {
+            initMap()
+        }, 500)
+    })
     
+    watchEffect(() => {
+        if (!store.selectedSestiere) {
+            resetMap()
+            return
+        }
+        setTimeout(() => {
+            flyToSestiere(store.selectedSestiere)
+        }, 500)
+    })
+    
+    watchEffect(() => {
+        if (!store.selectedAddress) {
+            return
+        }
+        
+        setTimeout(() => {
+            placeMarker(store.selectedAddress)
+        }, 500)
+        
+    })
 })
 
 </script>
@@ -250,7 +264,6 @@ watchEffect(() => {
 </template>
 
 <style lang="scss" scoped>
-
 #mapContainer {
     width: 100%;
     height: 100%;
@@ -260,6 +273,6 @@ watchEffect(() => {
     mask-image: radial-gradient(ellipse 90% 80% at center, black 20%, transparent 70%);
     opacity: 0;
     transition: opacity 1s ease-in-out;
+    mix-blend-mode: multiply;
 }
-    
 </style>

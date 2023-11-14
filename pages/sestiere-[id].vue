@@ -16,6 +16,8 @@ const handleClick = (num) => {
     navigateTo(`/result-${id}-${num}`)
 }
 
+const limit = ref(10)
+
 </script>
 
 <template>
@@ -23,19 +25,24 @@ const handleClick = (num) => {
         <div class="heading align-center">
             <span class="venice text-large">{{ store.sestieri[id].name }}</span>
         </div>
-        
+
         <div class="input-wrapper align-center">
-            <input class="align-center text-large venice" type="number" v-model="store.filterNumber" placeholder="Numero">
+            <input class="align-center text-xlarge venice" type="number" v-model="store.filterNumber" placeholder="cerca numero">
         </div>
-        
+
 
         <div class="results align-center">
             <transition-group name="fadeUp" tag="div">
 
-                <div class="result-single" v-for="(result, i) in store.filteredNumbers.slice(0,21)" :key="result" @click="handleClick(result)">
-                <span class="venice color-accent-2 text-regular">{{ result  }}</span>
-            </div>
+                <div class="result-single" v-for="(result, i) in store.filteredNumbers.slice(0, limit)" :key="result"
+                     @click="handleClick(result)">
+                    <span class="venice color-main text-xlarge">{{ result }}</span>
+                </div>
             </transition-group>
+
+            <div class="result-single" v-if="store.filteredNumbers.length > limit" @click="limit += 10">
+                <span class="venice color-main text-xlarge">Mostra altri</span>
+            </div>
         </div>
     </div>
 </template>
@@ -44,15 +51,16 @@ const handleClick = (num) => {
 .fadeUp-move,
 .fadeUp-enter-active,
 .fadeUp-leave-active {
-  transition: all 0.5s ease;
+    transition: all 0.5s ease;
 }
+
 .fadeUp-enter-from,
 .fadeUp-leave-to {
-  opacity: 0;
+    opacity: 0;
 }
 
 .fadeUp-leave-active {
-  position: absolute;
+    position: absolute;
 }
 
 .heading {
@@ -66,7 +74,7 @@ const handleClick = (num) => {
         border: 0;
         background: none;
         outline: none;
-        border-bottom: .2rem solid var(--color-accent-2);
+        border-bottom: .2rem solid var(--color-main);
         text-align: center;
     }
 }
@@ -75,7 +83,7 @@ const handleClick = (num) => {
     display: inline-block;
     padding: var(--space-sm) var(--space-md);
     background: var(--color-white);
-    border: .2rem solid var(--color-accent-2);
+    border: .2rem solid var(--color-main);
     text-align: center;
     color: var(--color-white);
     margin: var(--space-sm);

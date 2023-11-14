@@ -12,23 +12,26 @@ const handleClick = () => {
 
 <template>
     <div class="page">
+
         <div class="heading align-center">
             <h1 class="color-accent-2 text-xxxlarge bold">Find in Venice</h1>
             
             <p class="text-large bold">Trova la posizione reale dei numeri civici nei sestieri di Venezia.</p>
+            
+            <div class="button" @click="handleClick()">
+                <span class="venice text-large">Inizia la ricerca</span>
+                <span class="text-xlarge">➵</span>
+            </div>
+        
         </div>
 
-        <div class="button" @click="handleClick()">
-            <span class="venice text-large">Inizia la ricerca</span>
-            <span class="text-xlarge">➵</span>
-        </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
 
 .heading {
-    padding: 8rem var(--space-large);
+    padding: 8rem var(--space-xl);
 }
 
 .button {
