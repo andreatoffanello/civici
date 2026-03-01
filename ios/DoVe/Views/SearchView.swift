@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SearchView: View {
     @Environment(SearchViewModel.self) private var viewModel
+    @Environment(\.strings) private var strings
     @FocusState private var isSearchFocused: Bool
     @State private var appeared = false
 
@@ -31,7 +32,7 @@ struct SearchView: View {
                             .font(.custom("Sotoportego-Medium", size: 22))
                             .foregroundStyle(sestiere.color)
 
-                        Text("\(viewModel.totalCount) civici")
+                        Text(strings.civiciLabel(viewModel.totalCount))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -45,10 +46,7 @@ struct SearchView: View {
                             .font(.body.weight(.semibold))
                             .foregroundStyle(.secondary)
                             .frame(width: 32, height: 32)
-                            .glassEffect(
-                                .regular.interactive(),
-                                in: .circle
-                            )
+                            .adaptiveGlassEffect(interactive: true, in: Circle())
                     }
                     .buttonStyle(.plain)
                 }
@@ -62,7 +60,7 @@ struct SearchView: View {
                 Image(systemName: "number")
                     .foregroundStyle(.secondary)
 
-                TextField("Numero civico", text: $vm.searchText)
+                TextField(strings.civicNumberPlaceholder, text: $vm.searchText)
                     .keyboardType(.numberPad)
                     .focused($isSearchFocused)
                     .font(.title3)
@@ -78,16 +76,13 @@ struct SearchView: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
-            .glassEffect(
-                .regular,
-                in: RoundedRectangle(cornerRadius: 16)
-            )
+            .adaptiveGlassEffect(in: RoundedRectangle(cornerRadius: 16))
             .padding(.horizontal, 20)
 
             // Result count
             if !viewModel.searchText.isEmpty {
                 HStack {
-                    Text("\(viewModel.resultCount) risultat\(viewModel.resultCount == 1 ? "o" : "i")")
+                    Text(strings.resultsLabel(viewModel.resultCount))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                     Spacer()
@@ -121,7 +116,7 @@ struct SearchView: View {
                     }
 
                     if viewModel.hasMoreResults {
-                        Text("Continua a digitare per filtrare...")
+                        Text(strings.keepTypingToFilter)
                             .font(.footnote)
                             .foregroundStyle(.tertiary)
                             .padding(.vertical, 20)

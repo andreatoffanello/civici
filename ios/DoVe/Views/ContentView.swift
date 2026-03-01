@@ -2,27 +2,28 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(SearchViewModel.self) private var viewModel
+    @Environment(\.strings) private var strings
 
     var body: some View {
         TabView {
-            Tab("Cerca", systemImage: "magnifyingglass") {
+            Tab(strings.tabSearch, systemImage: "magnifyingglass") {
                 NavigationStack {
                     SearchFlowView()
                 }
             }
 
-            Tab("Info", systemImage: "info.circle") {
+            Tab(strings.tabInfo, systemImage: "info.circle") {
                 NavigationStack {
                     InfoView()
                 }
             }
 
-            Tab("Impostazioni", systemImage: "gearshape") {
+            Tab(strings.tabSettings, systemImage: "gearshape") {
                 NavigationStack {
                     SettingsView()
                 }
             }
         }
-        .tint(Color(hex: "C2452D"))
+        .tint(Color.doVeAccent)
     }
 }

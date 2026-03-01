@@ -28,9 +28,9 @@ struct SearchFlowView: View {
                     .transition(.move(edge: .leading).combined(with: .opacity))
             }
         }
-        .animation(.smooth(duration: 0.4), value: viewModel.selectedSestiere?.id)
-        .animation(.smooth(duration: 0.4), value: viewModel.selectedZona?.id)
-        .animation(.smooth(duration: 0.4), value: viewModel.selectedStreet)
-        .animation(.smooth(duration: 0.4), value: viewModel.selectedCivico?.id)
+        .animation(.smooth(duration: 0.28), value: viewModel.selectedSestiere?.id)
+        .animation(.smooth(duration: 0.28), value: viewModel.selectedZona?.id)
+        .animation(.smooth(duration: 0.28), value: viewModel.selectedStreet)
+        .animation(.smooth(duration: 0.28), value: viewModel.selectedCivico?.id)
     }
 }

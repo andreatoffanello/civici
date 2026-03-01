@@ -4,6 +4,7 @@ import MapKit
 struct ResultView: View {
     @Environment(SearchViewModel.self) private var viewModel
     @Environment(LocationManager.self) private var locationManager
+    @Environment(\.strings) private var strings
     @AppStorage("defaultMapView") private var defaultMapViewPref: String = DefaultMapView.threeD.rawValue
     @AppStorage("preferredNavApp") private var preferredNavApp: String = PreferredNavApp.appleMaps.rawValue
     @State private var mapCameraPosition: MapCameraPosition = .automatic
@@ -11,6 +12,11 @@ struct ResultView: View {
     @State private var is3DInitialized = false
     @State private var mapAppeared = false
     @State private var showNavigationOptions = false
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var vignetteColor: Color {
+        colorScheme == .dark ? Color(hex: "1A1A1A") : Color.niziolettoBackground
+    }
 
     private func cameraFor(_ civico: Civico) -> MapCamera {
         MapCamera(
@@ -45,12 +51,12 @@ struct ResultView: View {
                             }
                             .padding(.horizontal, 10)
                             .padding(.vertical, 6)
-                            .background(Color(hex: "C2452D"))
+                            .background(Color.doVeAccent)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
 
                             // Pin tail
                             Triangle()
-                                .fill(Color(hex: "C2452D"))
+                                .fill(Color.doVeAccent)
                                 .frame(width: 14, height: 8)
                         }
                     }
@@ -74,9 +80,7 @@ struct ResultView: View {
                     }
                     mapAppeared = true
                     locationManager.startUpdating()
-                    withAnimation(.smooth(duration: 2.0)) {
-                        mapCameraPosition = .camera(cameraFor(civico))
-                    }
+                    mapCameraPosition = .camera(cameraFor(civico))
                 }
                 .onDisappear {
                     locationManager.stopUpdating()
@@ -89,9 +93,9 @@ struct ResultView: View {
                             colors: [
                                 .clear,
                                 .clear,
-                                Color(hex: "F5F0E6").opacity(0.4),
-                                Color(hex: "F5F0E6").opacity(0.7),
-                                Color(hex: "F5F0E6").opacity(0.9)
+                                vignetteColor.opacity(0.4),
+                                vignetteColor.opacity(0.7),
+                                vignetteColor.opacity(0.9)
                             ],
                             center: .center,
                             startRadius: 100,
@@ -112,10 +116,7 @@ struct ResultView: View {
                                 .font(.body.weight(.semibold))
                                 .frame(width: 44, height: 44)
                                 .contentShape(Circle())
-                                .glassEffect(
-                                    .regular.interactive(),
-                                    in: .circle
-                                )
+                                .adaptiveGlassEffect(interactive: true, in: Circle())
                         }
                         .buttonStyle(.plain)
 
@@ -136,7 +137,7 @@ struct ResultView: View {
 
                             Text(civico.number)
                                 .font(.system(size: 32, weight: .bold, design: .serif))
-                                .foregroundStyle(Color(hex: "C2452D"))
+                                .foregroundStyle(Color.doVeAccent)
                         }
                         .padding(.horizontal, 24)
                         .padding(.vertical, 12)
@@ -155,10 +156,7 @@ struct ResultView: View {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.body.weight(.semibold))
                                 .frame(width: 40, height: 40)
-                                .glassEffect(
-                                    .regular.interactive(),
-                                    in: .circle
-                                )
+                                .adaptiveGlassEffect(interactive: true, in: Circle())
                         }
                         .buttonStyle(.plain)
                     }
@@ -171,36 +169,51 @@ struct ResultView: View {
 
                     // Bottom controls
                     HStack(alignment: .bottom) {
-                        // Map controls: 3D toggle + recenter
+                        // Map controls: 3D toggle + recenter + north reset
                         VStack(spacing: 10) {
                             Button {
-                                withAnimation(.smooth(duration: 0.5)) {
-                                    is3D.toggle()
+                                is3D.toggle()
+                                withAnimation(.easeInOut(duration: 0.6)) {
                                     mapCameraPosition = .camera(cameraFor(civico))
                                 }
                             } label: {
                                 Text(is3D ? "2D" : "3D")
                                     .font(.system(size: 15, weight: .bold, design: .rounded))
                                     .frame(width: 40, height: 40)
-                                    .glassEffect(
-                                        .regular.interactive(),
-                                        in: .circle
-                                    )
+                                    .adaptiveGlassEffect(interactive: true, in: Circle())
                             }
                             .buttonStyle(.plain)
 
+                            // Centra sul civico
                             Button {
-                                withAnimation(.smooth(duration: 0.6)) {
+                                withAnimation(.easeInOut(duration: 0.6)) {
                                     mapCameraPosition = .camera(cameraFor(civico))
                                 }
                             } label: {
-                                Image(systemName: "location.fill")
+                                Image(systemName: "scope")
                                     .font(.body.weight(.semibold))
                                     .frame(width: 40, height: 40)
-                                    .glassEffect(
-                                        .regular.interactive(),
-                                        in: .circle
+                                    .adaptiveGlassEffect(interactive: true, in: Circle())
+                            }
+                            .buttonStyle(.plain)
+
+                            // Reset orientamento nord
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.6)) {
+                                    mapCameraPosition = .camera(
+                                        MapCamera(
+                                            centerCoordinate: civico.coordinate,
+                                            distance: 500,
+                                            heading: 0,
+                                            pitch: is3D ? 45 : 0
+                                        )
                                     )
+                                }
+                            } label: {
+                                Image(systemName: "location.north.fill")
+                                    .font(.body.weight(.semibold))
+                                    .frame(width: 40, height: 40)
+                                    .adaptiveGlassEffect(interactive: true, in: Circle())
                             }
                             .buttonStyle(.plain)
                         }
@@ -211,16 +224,11 @@ struct ResultView: View {
                         Button {
                             navigateToCivico(civico)
                         } label: {
-                            Label("Naviga", systemImage: "arrow.triangle.turn.up.right.diamond")
+                            Label(strings.navigate, systemImage: "arrow.triangle.turn.up.right.diamond")
                                 .font(.body.weight(.medium))
                                 .padding(.horizontal, 24)
                                 .padding(.vertical, 14)
-                                .glassEffect(
-                                    .regular
-                                        .tint(Color(hex: "C2452D").opacity(0.4))
-                                        .interactive(),
-                                    in: .capsule
-                                )
+                                .adaptiveGlassEffect(interactive: true, in: Capsule())
                         }
                         .buttonStyle(.plain)
 
@@ -242,7 +250,7 @@ struct ResultView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .navigationBar)
             .toolbar(.hidden, for: .tabBar)
-            .confirmationDialog("Apri navigazione con", isPresented: $showNavigationOptions, titleVisibility: .visible) {
+            .confirmationDialog(strings.openNavigationWith, isPresented: $showNavigationOptions, titleVisibility: .visible) {
                 Button("Apple Maps") {
                     openInAppleMaps(civico: civico)
                 }
@@ -259,7 +267,7 @@ struct ResultView: View {
                     }
                 }
 
-                Button("Annulla", role: .cancel) {}
+                Button(strings.cancel, role: .cancel) {}
             }
         }
     }
@@ -270,6 +278,8 @@ struct ResultView: View {
         let pref = PreferredNavApp(rawValue: preferredNavApp) ?? .appleMaps
 
         switch pref {
+        case .alwaysAsk:
+            showNavigationOptions = true
         case .googleMaps where canOpenGoogleMaps:
             openInGoogleMaps(civico: civico)
         case .waze where canOpenWaze:

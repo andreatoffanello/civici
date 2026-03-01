@@ -1,12 +1,11 @@
 {
   "meta": {
     "title": "DoVe — Trova i numeri civici di Venezia",
-    "description": "Trova la posizione esatta dei numeri civici nei sestieri e nelle isole di Venezia. 47.261 civici, ricerca gratuita e offline."
+    "description": "Trova la posizione esatta dei numeri civici nei sestieri e nelle isole di Venezia. Ricerca gratuita e offline."
   },
   "nav": {
     "home": "Home",
-    "howItWorks": "Come funziona",
-    "about": "Chi siamo",
+    "about": "Info",
     "contact": "Contatti",
     "support": "Supporto"
   },
@@ -16,24 +15,26 @@
     "cta": "Prova la ricerca",
     "download": "Scarica l'app"
   },
-  "features": {
-    "title": "Perché DoVe",
-    "offline": {
-      "title": "Funziona offline",
-      "description": "Tutti i 47.261 civici sono inclusi nell'app. Nessuna connessione necessaria."
-    },
-    "sestieri": {
-      "title": "Sestieri e isole",
-      "description": "7 sestieri con numerazione progressiva e 11 zone con indirizzamento stradale."
-    },
-    "precise": {
-      "title": "Coordinate precise",
-      "description": "Posizione GPS esatta per ogni numero civico, da San Marco a Pellestrina."
-    },
-    "free": {
-      "title": "Gratuito",
-      "description": "Nessun costo, nessuna pubblicità, nessun tracciamento."
-    }
+  "problem": {
+    "headline": "A Venezia, trovare un indirizzo è un'altra storia.",
+    "body": "Nel centro storico i numeri civici non seguono le strade — seguono i sestieri. \"San Marco 3456\" non indica nessuna via: bisogna sapere dove si trova quel numero all'interno del sestiere. Nelle isole funziona diversamente. DoVe conosce entrambi i sistemi.",
+    "sestieriTitle": "Centro storico — per sestiere",
+    "sestieriDesc": "Cannaregio, Castello, Dorsoduro, San Marco, San Polo, Santa Croce e Giudecca hanno ciascuno una numerazione progressiva indipendente. Lo stesso numero esiste in ogni sestiere.",
+    "isoleTitle": "Isole e laguna — per via",
+    "isoleDesc": "Murano, Burano, Lido, Pellestrina e le altre isole usano il classico sistema via + civico, come nel resto d'Italia."
+  },
+  "showcase": {
+    "title": "Trovalo in tre tocchi.",
+    "feature1Title": "Funziona offline",
+    "feature1Desc": "Tutti i civici sono nell'app. Nessuna connessione necessaria, anche senza segnale.",
+    "feature2Title": "Posizione esatta",
+    "feature2Desc": "Coordinate GPS precise per ogni numero. Si apre direttamente in Apple Maps o Google Maps.",
+    "feature3Title": "Gratis, per sempre",
+    "feature3Desc": "Nessun abbonamento, nessun tracciamento, nessuna registrazione."
+  },
+  "searchDemo": {
+    "title": "Provalo adesso",
+    "subtitle": "Scegli sestiere o isola, inserisci il numero civico e trovalo sulla mappa."
   },
   "sestieri": {
     "CN": "Cannaregio",
@@ -58,13 +59,7 @@
       "exampleDesc": "Via + numero + isola, come nella terraferma."
     },
     "example": "Esempio",
-    "demoSubtitle": "Seleziona un sestiere o un'isola, cerca il numero civico e visualizzalo sulla mappa.",
-    "stats": {
-      "civici": "Numeri civici",
-      "sestieri": "Sestieri",
-      "zone": "Zone/Isole",
-      "streets": "Strade nelle isole"
-    }
+    "demoSubtitle": "Seleziona un sestiere o un'isola, cerca il numero civico e visualizzalo sulla mappa."
   },
   "search": {
     "title": "Prova la ricerca",
@@ -98,7 +93,7 @@
     "free": "Gratis"
   },
   "about": {
-    "title": "Chi siamo"
+    "title": "Info"
   },
   "contact": {
     "title": "Contatti"

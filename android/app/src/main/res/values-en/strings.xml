@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DoVe</string>
+
+    <!-- SestieriScreen -->
+    <string name="sestieri_title">Sestieri</string>
+    <string name="isole_title">Islands</string>
+    <string name="zone_centro_title">City centre zones</string>
+    <string name="indirizzamento_stradale">Street addressing</string>
+
+    <!-- SearchScreen -->
+    <string name="search_placeholder">Enter civic number…</string>
+    <string name="no_results">No civic number found for "%1$s"</string>
+    <string name="error_loading">Error loading data</string>
+    <string name="no_data_zona">Civic data not yet available for this area</string>
+
+    <!-- ResultScreen -->
+    <string name="open_maps">Google Maps</string>
+    <string name="open_waze">Waze</string>
+    <string name="share">Share</string>
+
+    <!-- InfoScreen -->
+    <string name="info_title">About</string>
+    <string name="info_civici_title">Venetian civic numbers</string>
+    <string name="info_civici_body">Venice has a unique civic numbering system: numbers follow the sestieri (districts), not the streets. An address like "Cannaregio 2345" doesn\'t tell you which calle, campo or fondamenta to look for — locals know by experience, everyone else gets lost.\n\nDoVe solves this: enter the sestiere and number, and the app shows you exactly where it is on the map.</string>
+    <string name="info_nizioleti_title">The nizioleti</string>
+    <string name="info_nizioleti_body">The nizioleti (Venetian for "little sheets") are the white signs with black lettering that mark the names of Venice\'s calli, campi, rii and fondamenta. They are an integral part of the city\'s visual identity and historical heritage.</string>
+    <string name="info_credits_title">Credits</string>
+    <string name="info_credits_body">DoVe uses open data from the City of Venice and OpenStreetMap maps via OpenFreeMap.\n\nApp developed with love for Venice.</string>
+
+    <!-- SettingsScreen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_language">Language</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="lang_system">System</string>
+    <string name="lang_italian">Italiano</string>
+    <string name="lang_english">English</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="info">About</string>
+    <string name="settings">Settings</string>
+    <string name="clear">Clear</string>
+    <string name="tagline">Find every Venice civic number</string>
+    <string name="seleziona_sestiere">SELECT A SESTIERE</string>
+    <string name="tab_cerca">Search</string>
+    <string name="tab_info">Info</string>
+    <string name="tab_impostazioni">Settings</string>
+</resources>

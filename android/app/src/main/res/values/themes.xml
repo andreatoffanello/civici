@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema base — usato solo per la finestra. Il tema reale è in Compose (DoVeTheme) -->
+    <!-- Tema XML minimale per app pure Compose — usa DeviceDefault sempre disponibile -->
+    <style name="Theme.DoVe" parent="android:Theme.DeviceDefault.NoActionBar" />
+</resources>

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SestieriView: View {
     @Environment(SearchViewModel.self) private var viewModel
+    @Environment(\.strings) private var strings
     @State private var appeared = false
 
     var body: some View {
@@ -14,7 +15,7 @@ struct SestieriView: View {
                         .scaledToFit()
                         .frame(width: 120, height: 120)
 
-                    Text("Trova ogni civico di Venezia")
+                    Text(strings.tagline)
                         .font(.system(size: 15, weight: .regular, design: .serif))
                         .foregroundStyle(.secondary)
                         .italic()
@@ -26,7 +27,7 @@ struct SestieriView: View {
                 .animation(.easeOut(duration: 1.0), value: appeared)
 
                 // Label
-                Text("SELEZIONA UN SESTIERE")
+                Text(strings.selectSestiere)
                     .font(.system(size: 11, weight: .medium))
                     .tracking(2)
                     .foregroundStyle(.tertiary)
@@ -58,7 +59,7 @@ struct SestieriView: View {
                 }
 
                 // Zone centro storico label
-                Text("ALTRE ZONE")
+                Text(strings.otherAreas)
                     .font(.system(size: 11, weight: .medium))
                     .tracking(2)
                     .foregroundStyle(.tertiary)
@@ -91,7 +92,7 @@ struct SestieriView: View {
                 }
 
                 // Isole label
-                Text("ISOLE")
+                Text(strings.islands)
                     .font(.system(size: 11, weight: .medium))
                     .tracking(2)
                     .foregroundStyle(.tertiary)

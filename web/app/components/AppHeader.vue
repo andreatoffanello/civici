@@ -74,7 +74,6 @@ const mobileOpen = ref(false)
 
 const navItems = computed(() => [
   { to: '/', label: t('nav.home') },
-  { to: '/come-funziona', label: t('nav.howItWorks') },
   { to: '/about', label: t('nav.about') },
   { to: '/contatti', label: t('nav.contact') },
 ])

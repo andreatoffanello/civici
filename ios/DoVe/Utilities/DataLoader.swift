@@ -21,10 +21,38 @@ final class DataLoader: Sendable {
 
     private let data: CiviciData?
     private let zoneData: ZoneNormaliData?
+    private let sortedNumbersCache: [String: [String]]
+    private let sortedStreetsCache: [String: [String]]
 
     private init() {
-        data = DataLoader.loadData()
-        zoneData = DataLoader.loadZoneNormali()
+        let loadedData = DataLoader.loadData()
+        let loadedZoneData = DataLoader.loadZoneNormali()
+
+        // Precompute sorted numbers per sestiere
+        var numbersCache: [String: [String]] = [:]
+        if let d = loadedData {
+            for (sestiere, entries) in d {
+                numbersCache[sestiere] = entries.keys.sorted { a, b in
+                    let numA = Int(a) ?? Int.max
+                    let numB = Int(b) ?? Int.max
+                    if numA != numB { return numA < numB }
+                    return a < b
+                }
+            }
+        }
+
+        // Precompute sorted streets per zona
+        var streetsCache: [String: [String]] = [:]
+        if let z = loadedZoneData {
+            for (zona, streets) in z {
+                streetsCache[zona] = streets.keys.sorted()
+            }
+        }
+
+        data = loadedData
+        zoneData = loadedZoneData
+        sortedNumbersCache = numbersCache
+        sortedStreetsCache = streetsCache
     }
 
     private static func loadData() -> CiviciData? {
@@ -58,13 +86,7 @@ final class DataLoader: Sendable {
     }
 
     func numbers(for sestiere: Sestiere) -> [String] {
-        guard let sestiereData = data?[sestiere.rawValue] else { return [] }
-        return sestiereData.keys.sorted { a, b in
-            let numA = Int(a) ?? Int.max
-            let numB = Int(b) ?? Int.max
-            if numA != numB { return numA < numB }
-            return a < b
-        }
+        sortedNumbersCache[sestiere.rawValue] ?? []
     }
 
     func coordinate(for sestiere: Sestiere, number: String) -> CLLocationCoordinate2D? {
@@ -85,8 +107,7 @@ final class DataLoader: Sendable {
     // MARK: - Zone normali
 
     func streets(for zona: ZonaNormale) -> [String] {
-        guard let streets = zoneData?[zona.rawValue] else { return [] }
-        return streets.keys.sorted()
+        sortedStreetsCache[zona.rawValue] ?? []
     }
 
     func numbers(for zona: ZonaNormale, street: String) -> [String] {

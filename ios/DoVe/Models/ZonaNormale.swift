@@ -26,10 +26,10 @@ enum ZonaNormale: String, CaseIterable, Identifiable {
         case .mazzorbo: "Mazzorbo"
         case .lido: "Lido"
         case .pellestrina: "Pellestrina"
-        case .santErasmo: "Sant'Erasmo"
+        case .santErasmo: "Sant\u{2019}Erasmo"
         case .vignole: "Vignole"
         case .certosa: "Certosa"
-        case .santElena: "Sant'Elena"
+        case .santElena: "Sant\u{2019}Elena"
         case .saccaFisola: "Sacca Fisola"
         }
     }

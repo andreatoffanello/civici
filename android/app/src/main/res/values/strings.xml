@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DoVe</string>
+
+    <!-- SestieriScreen -->
+    <string name="sestieri_title">Sestieri</string>
+    <string name="isole_title">Isole</string>
+    <string name="zone_centro_title">Zone del centro</string>
+    <string name="indirizzamento_stradale">Indirizzamento stradale</string>
+
+    <!-- SearchScreen -->
+    <string name="search_placeholder">Inserisci il numero civico…</string>
+    <string name="no_results">Nessun civico trovato per "%1$s"</string>
+    <string name="error_loading">Errore nel caricamento dei dati</string>
+    <string name="no_data_zona">Dati civici non ancora disponibili per questa zona</string>
+
+    <!-- ResultScreen -->
+    <string name="open_maps">Google Maps</string>
+    <string name="open_waze">Waze</string>
+    <string name="share">Condividi</string>
+
+    <!-- InfoScreen -->
+    <string name="info_title">Informazioni</string>
+    <string name="info_civici_title">I civici veneziani</string>
+    <string name="info_civici_body">Venezia ha un sistema di numerazione civica unico al mondo: i numeri non seguono le strade ma i sestieri. Un indirizzo come "Cannaregio 2345" non ti dice su quale calle, campo o fondamenta sei — i veneziani lo sanno per esperienza, tutti gli altri si perdono.\n\nDoVe nasce per risolvere questo problema: inserisci sestiere e numero, e l\'app ti mostra esattamente dove si trova sulla mappa.</string>
+    <string name="info_nizioleti_title">I nizioleti</string>
+    <string name="info_nizioleti_body">I nizioleti (in veneziano "piccoli lenzuoli") sono le targhe bianche con la scritta nera che segnano i nomi delle calli, campi, rii e fondamenta di Venezia. Sono parte integrante dell\'identità visiva della città e del suo patrimonio storico.</string>
+    <string name="info_credits_title">Credits</string>
+    <string name="info_credits_body">DoVe utilizza dati aperti del Comune di Venezia e mappe OpenStreetMap via OpenFreeMap.\n\nApp sviluppata con passione per Venezia.</string>
+
+    <!-- SettingsScreen -->
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_language">Lingua</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Chiaro</string>
+    <string name="theme_dark">Scuro</string>
+    <string name="lang_system">Sistema</string>
+    <string name="lang_italian">Italiano</string>
+    <string name="lang_english">English</string>
+
+    <!-- Comuni -->
+    <string name="back">Indietro</string>
+    <string name="info">Informazioni</string>
+    <string name="settings">Impostazioni</string>
+    <string name="clear">Cancella</string>
+    <string name="tagline">Trova ogni civico di Venezia</string>
+    <string name="seleziona_sestiere">SELEZIONA UN SESTIERE</string>
+    <string name="tab_cerca">Cerca</string>
+    <string name="tab_info">Info</string>
+    <string name="tab_impostazioni">Impostazioni</string>
+</resources>

@@ -3,14 +3,16 @@ import CoreLocation
 import UserNotifications
 
 enum PreferredNavApp: String, CaseIterable, Identifiable {
+    case alwaysAsk = "ask"
     case appleMaps = "apple"
     case googleMaps = "google"
     case waze = "waze"
 
     var id: String { rawValue }
 
-    var displayName: String {
+    func displayName(strings: L10n.Strings) -> String {
         switch self {
+        case .alwaysAsk: strings.alwaysAsk
         case .appleMaps: "Apple Maps"
         case .googleMaps: "Google Maps"
         case .waze: "Waze"
@@ -19,9 +21,42 @@ enum PreferredNavApp: String, CaseIterable, Identifiable {
 
     var iconName: String {
         switch self {
+        case .alwaysAsk: "questionmark.circle"
         case .appleMaps: "map"
         case .googleMaps: "globe"
         case .waze: "car"
+        }
+    }
+}
+
+enum AppColorScheme: String, CaseIterable, Identifiable {
+    case light = "light"
+    case dark = "dark"
+    case system = "system"
+
+    var id: String { rawValue }
+
+    func displayName(strings: L10n.Strings) -> String {
+        switch self {
+        case .light: strings.themeLight
+        case .dark: strings.themeDark
+        case .system: strings.themeSystem
+        }
+    }
+
+    var iconName: String {
+        switch self {
+        case .light: "sun.max"
+        case .dark: "moon"
+        case .system: "circle.lefthalf.filled"
+        }
+    }
+
+    var colorScheme: ColorScheme? {
+        switch self {
+        case .light: .light
+        case .dark: .dark
+        case .system: nil
         }
     }
 }
@@ -64,13 +99,28 @@ enum AppLanguage: String, CaseIterable, Identifiable {
 struct SettingsView: View {
     @Environment(LocationManager.self) private var locationManager
     @Environment(NotificationManager.self) private var notificationManager
+    @Environment(\.strings) private var strings
 
     @AppStorage("preferredNavApp") private var preferredNavApp: String = PreferredNavApp.appleMaps.rawValue
     @AppStorage("defaultMapView") private var defaultMapView: String = DefaultMapView.threeD.rawValue
     @AppStorage("appLanguage") private var appLanguage: String = AppLanguage.italian.rawValue
+    @AppStorage("appColorScheme") private var appColorScheme: String = AppColorScheme.light.rawValue
 
     var body: some View {
         List {
+            // Appearance section
+            Section {
+                Picker(selection: $appColorScheme) {
+                    ForEach(AppColorScheme.allCases) { scheme in
+                        Text(scheme.displayName(strings: strings)).tag(scheme.rawValue)
+                    }
+                } label: {
+                    Label(strings.theme, systemImage: "paintpalette")
+                }
+            } header: {
+                Text(strings.sectionAppearance)
+            }
+
             // Map section
             Section {
                 Picker(selection: $defaultMapView) {
@@ -78,21 +128,20 @@ struct SettingsView: View {
                         Text(option.displayName).tag(option.rawValue)
                     }
                 } label: {
-                    Label("Vista mappa", systemImage: "cube")
+                    Label(strings.mapView, systemImage: "cube")
                 }
 
                 Picker(selection: $preferredNavApp) {
                     ForEach(PreferredNavApp.allCases) { app in
-                        Label(app.displayName, systemImage: app.iconName)
-                            .tag(app.rawValue)
+                        Text(app.displayName(strings: strings)).tag(app.rawValue)
                     }
                 } label: {
-                    Label("App navigazione", systemImage: "arrow.triangle.turn.up.right.diamond")
+                    Label(strings.navigationLabel, systemImage: "arrow.triangle.turn.up.right.diamond")
                 }
             } header: {
-                Text("Mappa")
+                Text(strings.sectionMap)
             } footer: {
-                Text("L'app di navigazione verrà usata quando premi \"Naviga\". Se l'app scelta non è installata, si aprirà Apple Maps.")
+                Text(strings.navFooter)
             }
 
             // Language section
@@ -102,46 +151,46 @@ struct SettingsView: View {
                         Text("\(lang.flag) \(lang.displayName)").tag(lang.rawValue)
                     }
                 } label: {
-                    Label("Lingua", systemImage: "globe")
+                    Label(strings.languageLabel, systemImage: "globe")
                 }
             } header: {
-                Text("Lingua")
+                Text(strings.sectionLanguage)
             } footer: {
-                Text("Al momento l'app è disponibile solo in italiano. Altre lingue saranno aggiunte in futuro.")
+                Text(strings.languageFooter)
             }
 
             // Permissions section
             Section {
                 HStack {
-                    Label("Posizione", systemImage: "location")
+                    Label(strings.locationLabel, systemImage: "location")
                     Spacer()
                     permissionBadge(for: locationManager.authorizationStatus)
                 }
 
                 HStack {
-                    Label("Notifiche", systemImage: "bell")
+                    Label(strings.notificationsLabel, systemImage: "bell")
                     Spacer()
                     permissionBadge(forNotification: notificationManager.authorizationStatus)
                 }
             } header: {
-                Text("Permessi")
+                Text(strings.sectionPermissions)
             } footer: {
-                Text("Puoi gestire i permessi nelle Impostazioni di sistema.")
+                Text(strings.permissionsFooter)
             }
 
             // About section
             Section {
                 HStack {
-                    Text("Versione")
+                    Text(strings.versionLabel)
                     Spacer()
                     Text("1.0")
                         .foregroundStyle(.secondary)
                 }
             } header: {
-                Text("Info")
+                Text(strings.sectionAbout)
             }
         }
-        .navigationTitle("Impostazioni")
+        .navigationTitle(strings.settingsNavTitle)
         .navigationBarTitleDisplayMode(.large)
         .task {
             await notificationManager.refreshStatus()
@@ -152,19 +201,19 @@ struct SettingsView: View {
     private func permissionBadge(for status: CLAuthorizationStatus) -> some View {
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
-            Text("Concesso")
+            Text(strings.permissionGranted)
                 .font(.caption)
                 .foregroundStyle(.green)
         case .denied, .restricted:
-            Text("Negato")
+            Text(strings.permissionDenied)
                 .font(.caption)
                 .foregroundStyle(.red)
         case .notDetermined:
-            Text("Non richiesto")
+            Text(strings.permissionNotRequested)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         @unknown default:
-            Text("Sconosciuto")
+            Text(strings.permissionUnknown)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -174,19 +223,19 @@ struct SettingsView: View {
     private func permissionBadge(forNotification status: UNAuthorizationStatus) -> some View {
         switch status {
         case .authorized, .provisional:
-            Text("Concesso")
+            Text(strings.permissionGranted)
                 .font(.caption)
                 .foregroundStyle(.green)
         case .denied:
-            Text("Negato")
+            Text(strings.permissionDenied)
                 .font(.caption)
                 .foregroundStyle(.red)
         case .notDetermined:
-            Text("Non richiesto")
+            Text(strings.permissionNotRequested)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         @unknown default:
-            Text("Sconosciuto")
+            Text(strings.permissionUnknown)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

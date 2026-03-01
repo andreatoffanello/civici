@@ -60,8 +60,12 @@ struct SestiereCard: View {
 struct NiziolettoButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
-            .opacity(configuration.isPressed ? 0.8 : 1.0)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: configuration.isPressed)
+            .background(
+                configuration.isPressed
+                    ? Color.primary.opacity(0.06)
+                    : Color.clear
+            )
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }

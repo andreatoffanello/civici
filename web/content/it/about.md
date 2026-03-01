@@ -1,21 +1,29 @@
 ---
-title: Chi siamo
+title: Info
 ---
-
-## Il problema
-
-A Venezia i numeri civici non funzionano come nelle altre città. Ogni sestiere ha una propria numerazione che parte da 1 e arriva fino a quasi 7.000. Un indirizzo come "Cannaregio 2345" non dice nulla sulla posizione reale: potrebbe trovarsi in qualsiasi punto del sestiere.
-
-## La soluzione
-
-DoVe nasce per risolvere questo problema. L'app contiene la posizione GPS precisa di ogni numero civico di Venezia, organizzata per i 7 sestieri storici: Cannaregio, Castello, Dorsoduro, Giudecca, San Marco, San Polo e Santa Croce.
 
 ## Il nome
 
-"DoVe" viene dalla domanda più frequente che ci si pone cercando un indirizzo a Venezia: "Dove?" La V maiuscola sottolinea il legame con Venezia.
+"DoVe" viene dalla domanda che ci si fa ogni volta che si cerca un indirizzo a Venezia: *"Dove?"* La V maiuscola è un omaggio a Venezia.
+
+## Cos'è un nizioleto?
+
+I nizioleti sono i cartelli bianchi dipinti direttamente sui muri di Venezia che indicano strade, campi e direzioni. Il nome viene dal veneziano *"lenzuoletto"*: piccoli rettangoli bianchi con scritte nere che da secoli guidano chi cammina per la città.
+
+## Due sistemi di indirizzamento
+
+Il centro storico è diviso in sei sestieri, ognuno con una numerazione civica progressiva indipendente. Conoscere solo il numero non basta: serve il sestiere. Le isole della laguna e alcune zone del centro usano invece il sistema ordinario, con via e numero civico come nel resto d'Italia.
+
+## Come funziona DoVe
+
+Scegli un sestiere e digita il numero civico per trovarlo sulla mappa. Per le isole e le zone normali, seleziona prima la via e poi il numero. Tocca "Naviga" per aprire le indicazioni in Apple Maps o Google Maps.
 
 ## Il progetto
 
-DoVe è un progetto indipendente, gratuito e senza pubblicità. Tutti i dati sono inclusi nell'app e funziona completamente offline — perfetto per chi non ha connessione mentre cammina per le calli veneziane.
+DoVe è un progetto indipendente, gratuito e senza pubblicità. Tutti i civici sono inclusi nell'app e funziona completamente offline.
 
-Il progetto si ispira al lavoro originale di iZioleti, che per primo ha raccolto e georeferenziato i numeri civici veneziani.
+Il progetto si ispira al lavoro di iZioleti, che per primo ha raccolto e georeferenziato i numeri civici veneziani.
+
+---
+
+*Fatto con cura a Venezia*

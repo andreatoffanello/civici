@@ -1,12 +1,11 @@
 {
   "meta": {
     "title": "DoVe — Find Venice civic numbers",
-    "description": "Find the exact location of civic numbers in Venice's sestieri and lagoon islands. 47,261 addresses, free and offline."
+    "description": "Find the exact location of civic numbers in Venice's sestieri and lagoon islands. Free and offline."
   },
   "nav": {
     "home": "Home",
-    "howItWorks": "How it works",
-    "about": "About",
+    "about": "Info",
     "contact": "Contact",
     "support": "Support"
   },
@@ -16,24 +15,26 @@
     "cta": "Try the search",
     "download": "Download the app"
   },
-  "features": {
-    "title": "Why DoVe",
-    "offline": {
-      "title": "Works offline",
-      "description": "All 47,261 civic numbers are included in the app. No connection needed."
-    },
-    "sestieri": {
-      "title": "Sestieri & islands",
-      "description": "7 sestieri with progressive numbering and 11 zones with street-based addresses."
-    },
-    "precise": {
-      "title": "Precise coordinates",
-      "description": "Exact GPS position for every civic number, from San Marco to Pellestrina."
-    },
-    "free": {
-      "title": "Free",
-      "description": "No cost, no ads, no tracking."
-    }
+  "problem": {
+    "headline": "In Venice, finding an address is a different story.",
+    "body": "In the historic center, civic numbers don't follow streets — they follow sestieri. \"San Marco 3456\" doesn't indicate any specific street: you need to know where that number sits within the sestiere. On the islands it works differently. DoVe knows both systems.",
+    "sestieriTitle": "Historic center — by sestiere",
+    "sestieriDesc": "Cannaregio, Castello, Dorsoduro, San Marco, San Polo, Santa Croce and Giudecca each have their own independent progressive numbering. The same number exists in every sestiere.",
+    "isoleTitle": "Islands & lagoon — by street",
+    "isoleDesc": "Murano, Burano, Lido, Pellestrina and the other islands use the classic street + number system, like the rest of Italy."
+  },
+  "showcase": {
+    "title": "Find it in three taps.",
+    "feature1Title": "Works offline",
+    "feature1Desc": "All civic numbers are in the app. No connection needed, even without signal.",
+    "feature2Title": "Exact location",
+    "feature2Desc": "Precise GPS coordinates for every number. Opens directly in Apple Maps or Google Maps.",
+    "feature3Title": "Free, forever",
+    "feature3Desc": "No subscription, no tracking, no sign-up."
+  },
+  "searchDemo": {
+    "title": "Try it now",
+    "subtitle": "Choose a sestiere or island, enter the civic number and find it on the map."
   },
   "sestieri": {
     "CN": "Cannaregio",
@@ -58,13 +59,7 @@
       "exampleDesc": "Street + number + island, like on the mainland."
     },
     "example": "Example",
-    "demoSubtitle": "Select a sestiere or island, search for a civic number, and see it on the map.",
-    "stats": {
-      "civici": "Civic numbers",
-      "sestieri": "Sestieri",
-      "zone": "Zones/Islands",
-      "streets": "Streets on islands"
-    }
+    "demoSubtitle": "Select a sestiere or island, search for a civic number, and see it on the map."
   },
   "search": {
     "title": "Try the search",
@@ -98,7 +93,7 @@
     "free": "Free"
   },
   "about": {
-    "title": "About"
+    "title": "Info"
   },
   "contact": {
     "title": "Contact"

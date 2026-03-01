@@ -2,6 +2,7 @@ import SwiftUI
 
 struct StreetListView: View {
     @Environment(SearchViewModel.self) private var viewModel
+    @Environment(\.strings) private var strings
     @FocusState private var isSearchFocused: Bool
     @State private var appeared = false
 
@@ -31,7 +32,7 @@ struct StreetListView: View {
                             .font(.custom("Sotoportego-Medium", size: 22))
                             .foregroundStyle(zona.color)
 
-                        Text("\(viewModel.streets.count) vie")
+                        Text(strings.streetsLabel(viewModel.streets.count))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -45,10 +46,7 @@ struct StreetListView: View {
                             .font(.body.weight(.semibold))
                             .foregroundStyle(.secondary)
                             .frame(width: 32, height: 32)
-                            .glassEffect(
-                                .regular.interactive(),
-                                in: .circle
-                            )
+                            .adaptiveGlassEffect(interactive: true, in: Circle())
                     }
                     .buttonStyle(.plain)
                 }
@@ -62,7 +60,7 @@ struct StreetListView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
 
-                TextField("Cerca via, calle, fondamenta...", text: $vm.streetSearchText)
+                TextField(strings.streetSearchPlaceholder, text: $vm.streetSearchText)
                     .focused($isSearchFocused)
                     .font(.body)
 
@@ -77,10 +75,7 @@ struct StreetListView: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
-            .glassEffect(
-                .regular,
-                in: RoundedRectangle(cornerRadius: 16)
-            )
+            .adaptiveGlassEffect(in: RoundedRectangle(cornerRadius: 16))
             .padding(.horizontal, 20)
 
             // Streets list
@@ -93,7 +88,7 @@ struct StreetListView: View {
                             HStack {
                                 Text(street.uppercased())
                                     .font(.custom("Sotoportego-Medium", size: 18))
-                                    .foregroundStyle(Color(hex: "2A2A2A"))
+                                    .foregroundStyle(.primary)
 
                                 Spacer()
 

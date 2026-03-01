@@ -12,14 +12,14 @@ struct CivicoRow: View {
                 Text(number)
                     .font(.system(size: 20, weight: .bold, design: .serif))
                     .monospacedDigit()
-                    .foregroundStyle(Color(hex: "C2452D"))
+                    .foregroundStyle(Color.doVeAccent)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color(hex: "F5F0E6"))
+                    .background(Color.niziolettoBackground)
                     .clipShape(NiziolettoShape())
                     .overlay(
                         NiziolettoShape()
-                            .stroke(Color(hex: "C2452D").opacity(0.3), lineWidth: 1)
+                            .stroke(Color.doVeAccent.opacity(0.3), lineWidth: 1)
                     )
 
                 Spacer()

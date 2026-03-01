@@ -1,88 +1,120 @@
 import SwiftUI
 
 struct InfoView: View {
+    @Environment(\.strings) private var strings
+
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 32) {
+
                 // Header
                 VStack(alignment: .leading, spacing: 8) {
                     Text("DoVe")
                         .font(.system(size: 36, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color(hex: "C2452D"))
+                        .foregroundStyle(Color.doVeAccent)
 
-                    Text("Trova ogni civico di Venezia")
+                    Text(strings.tagline)
                         .font(.title3)
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 8)
 
-                // What is a nizioleto
+                // Nizioleto
                 InfoSection(
-                    title: "Cos'è un nizioleto?",
+                    title: strings.whatIsNizioleto,
                     icon: "text.quote",
-                    content: "I nizioleti sono i cartelli dipinti sui muri di Venezia che indicano strade, campi e direzioni. Il nome viene dal veneziano \"lenzuoletto\" — piccoli rettangoli bianchi con scritte nere che da secoli guidano chi cammina per la città."
+                    content: strings.whatIsNizioletoCont
                 )
 
-                // How Venice addressing works
+                // I due sistemi di indirizzamento
                 InfoSection(
-                    title: "I numeri civici di Venezia",
+                    title: strings.twoAddressingSystems,
                     icon: "number",
-                    content: "A Venezia i numeri civici non seguono le strade come nel resto del mondo: seguono i sestieri. Ogni sestiere ha una propria numerazione progressiva che può arrivare a migliaia. Per questo, sapere che un indirizzo è \"Cannaregio 2345\" non dice nulla su dove si trovi fisicamente — a meno di non avere DoVe."
+                    content: strings.twoAddressingSystemsContent
                 )
 
-                // How the app works
+                // Come funziona
                 InfoSection(
-                    title: "Come funziona",
+                    title: strings.howItWorks,
                     icon: "sparkles",
-                    content: "Scegli un sestiere, digita il numero civico, e DoVe ti mostra la posizione esatta sulla mappa. Puoi aprire la navigazione in Apple Maps per raggiungerlo a piedi."
+                    content: strings.howItWorksContent
                 )
 
-                // Sestieri
+                // Numerazione per sestiere
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("I sestieri", systemImage: "map")
+                    Text(strings.numberingBySestiere)
                         .font(.headline)
 
-                    GlassEffectContainer {
+                    let sestieri = Sestiere.allCases.filter { $0 != .giudecca }
+                    let tuttiSestieri = sestieri + [.giudecca]
+                    AdaptiveGlassContainer {
                         VStack(spacing: 0) {
-                            ForEach(Sestiere.allCases) { sestiere in
-                                HStack(spacing: 12) {
-                                    Circle()
-                                        .fill(sestiere.color)
-                                        .frame(width: 10, height: 10)
-
+                            ForEach(tuttiSestieri) { sestiere in
+                                HStack {
                                     Text(sestiere.name)
                                         .font(.body)
 
                                     Spacer()
 
-                                    Text(sestiere.numberRange)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
+                                    if sestiere == .giudecca {
+                                        Text(strings.islandLabel)
+                                            .font(.caption)
+                                            .foregroundStyle(.tertiary)
+                                    }
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 10)
 
-                                if sestiere != Sestiere.allCases.last {
+                                if sestiere != tuttiSestieri.last {
                                     Divider()
-                                        .padding(.leading, 38)
+                                        .padding(.leading, 16)
                                 }
                             }
                         }
-                        .glassEffect(
-                            .regular,
-                            in: RoundedRectangle(cornerRadius: 16)
-                        )
+                        .adaptiveGlassEffect(in: RoundedRectangle(cornerRadius: 16))
+                    }
+                }
+
+                // Toponomastica ordinaria
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(strings.ordinaryToponymy)
+                        .font(.headline)
+
+                    AdaptiveGlassContainer {
+                        VStack(spacing: 0) {
+                            let allZone = ZonaNormale.isole + ZonaNormale.zoneCentro
+                            ForEach(allZone) { zona in
+                                HStack {
+                                    Text(zona.name)
+                                        .font(.body)
+
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+
+                                if zona.id != allZone.last?.id {
+                                    Divider()
+                                        .padding(.leading, 16)
+                                }
+                            }
+                        }
+                        .adaptiveGlassEffect(in: RoundedRectangle(cornerRadius: 16))
                     }
                 }
 
                 // Credits
                 VStack(alignment: .center, spacing: 8) {
-                    Text("Fatto con cura a Venezia")
+                    Text(strings.madeWithCare)
                         .font(.footnote)
                         .foregroundStyle(.tertiary)
 
-                    Text("v1.0")
+                    Text("v\(appVersion)")
                         .font(.caption2)
                         .foregroundStyle(.quaternary)
                 }
@@ -92,7 +124,7 @@ struct InfoView: View {
             }
             .padding(.horizontal, 20)
         }
-        .navigationTitle("Info")
+        .navigationTitle(strings.tabInfo)
         .navigationBarTitleDisplayMode(.large)
     }
 }

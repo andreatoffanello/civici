@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		012E4AB9A8923F437A25754F /* SearchFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023D65D215B94B3FBFAE1B64 /* SearchFlowView.swift */; };
+		0DCC5DABB354F8968E43F92B /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5731BE7E9A1EEEC1C58F98FD /* SplashScreenView.swift */; };
 		11ED38C0B8AE6A909EBEC21F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731ECE7841A0667C983C294B /* ContentView.swift */; };
 		1383E096BEF93F0515382F5A /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A306022D33E0A90FD3BD76 /* InfoView.swift */; };
 		1AE3A20E60E423AF0716D8C3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8CA4D09667862999C25BA6D8 /* PrivacyInfo.xcprivacy */; };
@@ -25,6 +26,7 @@
 		89F94D0815B9382B6CD4E113 /* StreetNumbersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E9F0BA9B1D26FB36F7D171 /* StreetNumbersView.swift */; };
 		8A250774F24C23E55C6E0EDA /* CivicoRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B29367A4C01701FD0DC4A00 /* CivicoRow.swift */; };
 		9147263B5A040DB4251D7304 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F71E5180DFEC43B27286C8B /* ColorExtension.swift */; };
+		93A2B26AE6203E63CDFB8D20 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FE17BF8B9E3045C2A6AFE5 /* L10n.swift */; };
 		9E7C1B89BA4232CF4FC0C5EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C033A0EA1C4FFF137625EE6C /* Assets.xcassets */; };
 		A5A3D36A71B91FCFD1CE0BD0 /* Sotoportego.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C6166B14D41AD5EC394CCDC /* Sotoportego.otf */; };
 		A9C889A884425A4EC738D1F0 /* Sestiere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F012F4FBB670C0F5D2910A5 /* Sestiere.swift */; };
@@ -36,6 +38,7 @@
 		D240FB8412C54C6E85CA9074 /* civici.json in Resources */ = {isa = PBXBuildFile; fileRef = 16C7BAC2F8DDE706B40ACA9E /* civici.json */; };
 		E19CD43578F45D7D8BA96A9C /* ZonaNormale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DEE968C2FAF4248F32662C /* ZonaNormale.swift */; };
 		E59DA5AE113A7D3B28272AD9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7DC30F0FE529D7D47474E7 /* LocationManager.swift */; };
+		E833A9ACC6BB8DF694047C81 /* GlassCompat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A11298FBE0618A8CCE0E141 /* GlassCompat.swift */; };
 		F9B6FEA12F5D639338F25422 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB13E24367BB1EC8E3EF29FE /* SettingsView.swift */; };
 		FEA87BBF82705A993123DD7D /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B95319AD2B43AB0008E86C6 /* NotificationManager.swift */; };
 /* End PBXBuildFile section */
@@ -53,7 +56,9 @@
 		2D500652DEC0DB8A40F14A3B /* DoVeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoVeApp.swift; sourceTree = "<group>"; };
 		3B29367A4C01701FD0DC4A00 /* CivicoRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CivicoRow.swift; sourceTree = "<group>"; };
 		52CCE6950C0DC119822DE03C /* DoVe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DoVe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5731BE7E9A1EEEC1C58F98FD /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
 		57DEE968C2FAF4248F32662C /* ZonaNormale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonaNormale.swift; sourceTree = "<group>"; };
+		5A11298FBE0618A8CCE0E141 /* GlassCompat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCompat.swift; sourceTree = "<group>"; };
 		6B95319AD2B43AB0008E86C6 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		731ECE7841A0667C983C294B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7744282CEFA87CBC29FF3DC2 /* DataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataLoader.swift; sourceTree = "<group>"; };
@@ -71,6 +76,7 @@
 		A9E9F0BA9B1D26FB36F7D171 /* StreetNumbersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreetNumbersView.swift; sourceTree = "<group>"; };
 		C033A0EA1C4FFF137625EE6C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C72E86AAEE09C40665ABC219 /* zone_normali.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = zone_normali.json; sourceTree = "<group>"; };
+		C7FE17BF8B9E3045C2A6AFE5 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		D69366B41EE568BF33524730 /* NiziolettoShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NiziolettoShape.swift; sourceTree = "<group>"; };
 		EB13E24367BB1EC8E3EF29FE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		FE4AF60EBC6AC9248A7F1B5D /* Civico.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Civico.swift; sourceTree = "<group>"; };
@@ -158,6 +164,8 @@
 			children = (
 				9F71E5180DFEC43B27286C8B /* ColorExtension.swift */,
 				7744282CEFA87CBC29FF3DC2 /* DataLoader.swift */,
+				5A11298FBE0618A8CCE0E141 /* GlassCompat.swift */,
+				C7FE17BF8B9E3045C2A6AFE5 /* L10n.swift */,
 				1C7DC30F0FE529D7D47474E7 /* LocationManager.swift */,
 				6B95319AD2B43AB0008E86C6 /* NotificationManager.swift */,
 			);
@@ -198,6 +206,7 @@
 				29A6F9548EFDE01612D80578 /* SearchView.swift */,
 				882126E98EC6E1622625244D /* SestieriView.swift */,
 				EB13E24367BB1EC8E3EF29FE /* SettingsView.swift */,
+				5731BE7E9A1EEEC1C58F98FD /* SplashScreenView.swift */,
 				A151B7596A4F836401775E52 /* StreetListView.swift */,
 				A9E9F0BA9B1D26FB36F7D171 /* StreetNumbersView.swift */,
 			);
@@ -287,7 +296,9 @@
 				11ED38C0B8AE6A909EBEC21F /* ContentView.swift in Sources */,
 				584D74C0ACEB0E3D481B162E /* DataLoader.swift in Sources */,
 				5EA465FD481AB16029B2C75F /* DoVeApp.swift in Sources */,
+				E833A9ACC6BB8DF694047C81 /* GlassCompat.swift in Sources */,
 				1383E096BEF93F0515382F5A /* InfoView.swift in Sources */,
+				93A2B26AE6203E63CDFB8D20 /* L10n.swift in Sources */,
 				E59DA5AE113A7D3B28272AD9 /* LocationManager.swift in Sources */,
 				1C30EBC6CEAA87AF55EE82FF /* NiziolettoShape.swift in Sources */,
 				FEA87BBF82705A993123DD7D /* NotificationManager.swift in Sources */,
@@ -300,6 +311,7 @@
 				7DF5FB7086B8FD321083B02B /* SestiereShape.swift in Sources */,
 				7F5352EDF29A13090F5292A4 /* SestieriView.swift in Sources */,
 				F9B6FEA12F5D639338F25422 /* SettingsView.swift in Sources */,
+				0DCC5DABB354F8968E43F92B /* SplashScreenView.swift in Sources */,
 				D22EDF6FCA908B7F7385ED0E /* StreetListView.swift in Sources */,
 				89F94D0815B9382B6CD4E113 /* StreetNumbersView.swift in Sources */,
 				E19CD43578F45D7D8BA96A9C /* ZonaNormale.swift in Sources */,
@@ -355,7 +367,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -373,7 +385,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DoVe/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DoVe;
@@ -390,7 +402,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dovevenezia.app;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -445,7 +457,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -464,7 +476,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DoVe/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DoVe;
@@ -481,7 +493,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dovevenezia.app;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

@@ -44,7 +44,6 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 
 const navItems = computed(() => [
-  { to: '/come-funziona', label: t('nav.howItWorks') },
   { to: '/about', label: t('nav.about') },
   { to: '/contatti', label: t('nav.contact') },
 ])

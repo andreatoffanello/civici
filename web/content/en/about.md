@@ -1,21 +1,29 @@
 ---
-title: About
+title: Info
 ---
-
-## The problem
-
-In Venice, civic numbers don't work like in other cities. Each sestiere has its own numbering system starting from 1 and going up to nearly 7,000. An address like "Cannaregio 2345" says nothing about the actual location: it could be anywhere in the district.
-
-## The solution
-
-DoVe was created to solve this problem. The app contains the precise GPS location of every civic number in Venice, organized by the 7 historic sestieri: Cannaregio, Castello, Dorsoduro, Giudecca, San Marco, San Polo, and Santa Croce.
 
 ## The name
 
-"DoVe" comes from the most common question asked when looking for an address in Venice: "Dove?" (Where?) The capital V highlights the connection to Venice (Venezia).
+"DoVe" comes from the question you ask yourself every time you look for an address in Venice: *"Dove?"* (Where?). The capital V is a nod to Venice.
+
+## What is a nizioleto?
+
+Nizioleti are white signs painted directly on Venice's walls, indicating streets, squares and directions. The name comes from the Venetian word for *"little sheet"*: small white rectangles with black text that have guided walkers through the city for centuries.
+
+## Two addressing systems
+
+The historic center is divided into six sestieri, each with its own independent progressive civic numbering. Knowing just the number isn't enough: you also need the sestiere. The lagoon islands and some central areas use the standard system instead, with street name and number like the rest of Italy.
+
+## How DoVe works
+
+Choose a sestiere and type the civic number to find it on the map. For islands and standard areas, select the street first and then the number. Tap "Navigate" to open directions in Apple Maps or Google Maps.
 
 ## The project
 
-DoVe is an independent project, free and ad-free. All data is included in the app and it works completely offline — perfect for those without connectivity while walking through Venice's narrow streets.
+DoVe is an independent project, free and ad-free. All civic numbers are included in the app and it works completely offline.
 
-The project draws inspiration from the original iZioleti work, which first collected and georeferenced Venetian civic numbers.
+The project draws inspiration from iZioleti, who first collected and georeferenced Venetian civic numbers.
+
+---
+
+*Made with care in Venice*
