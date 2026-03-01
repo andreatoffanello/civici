@@ -27,7 +27,7 @@ struct SearchView: View {
                     .frame(width: 44, height: 36)
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(sestiere.name.lowercased())
+                        Text(sestiere.name.uppercased())
                             .font(.custom("Sotoportego-Medium", size: 22))
                             .foregroundStyle(sestiere.color)
 

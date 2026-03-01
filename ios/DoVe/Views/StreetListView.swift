@@ -27,7 +27,7 @@ struct StreetListView: View {
                     .frame(width: 44, height: 36)
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(zona.name.lowercased())
+                        Text(zona.name.uppercased())
                             .font(.custom("Sotoportego-Medium", size: 22))
                             .foregroundStyle(zona.color)
 
@@ -91,7 +91,7 @@ struct StreetListView: View {
                             viewModel.selectStreet(street)
                         } label: {
                             HStack {
-                                Text(street.lowercased())
+                                Text(street.uppercased())
                                     .font(.custom("Sotoportego-Medium", size: 18))
                                     .foregroundStyle(Color(hex: "2A2A2A"))
 

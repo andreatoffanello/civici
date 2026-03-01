@@ -10,7 +10,7 @@ struct SestiereCard: View {
         Button(action: action) {
             HStack(spacing: 0) {
                 // Nome sestiere
-                Text(sestiere.name.lowercased())
+                Text(sestiere.name.uppercased())
                     .font(.custom("Sotoportego-Medium", size: 28))
                     .tracking(0.5)
                     .foregroundStyle(sestiere.color)

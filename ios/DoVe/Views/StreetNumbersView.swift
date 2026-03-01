@@ -24,11 +24,11 @@ struct StreetNumbersView: View {
                     .buttonStyle(.plain)
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(zona.name.lowercased())
+                        Text(zona.name.uppercased())
                             .font(.custom("Sotoportego-Medium", size: 13))
                             .foregroundStyle(.secondary)
 
-                        Text(street.lowercased())
+                        Text(street.uppercased())
                             .font(.custom("Sotoportego-Medium", size: 20))
                             .foregroundStyle(zona.color)
                     }

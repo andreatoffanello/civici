@@ -123,12 +123,12 @@ struct ResultView: View {
 
                         // Nizioleto address card
                         VStack(spacing: 4) {
-                            Text(civico.areaName.lowercased())
+                            Text(civico.areaName.uppercased())
                                 .font(.custom("Sotoportego-Medium", size: 13))
                                 .foregroundStyle(Color(hex: "2A2A2A"))
 
                             if let via = civico.via {
-                                Text(via.lowercased())
+                                Text(via.uppercased())
                                     .font(.custom("Sotoportego-Medium", size: 18))
                                     .foregroundStyle(Color(hex: "2A2A2A"))
                                     .multilineTextAlignment(.center)

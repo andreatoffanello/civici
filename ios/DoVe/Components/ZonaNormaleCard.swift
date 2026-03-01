@@ -10,7 +10,7 @@ struct ZonaNormaleCard: View {
         Button(action: action) {
             HStack(spacing: 0) {
                 // Nome zona
-                Text(zona.name.lowercased())
+                Text(zona.name.uppercased())
                     .font(.custom("Sotoportego-Medium", size: 28))
                     .tracking(0.5)
                     .foregroundStyle(zona.color)
