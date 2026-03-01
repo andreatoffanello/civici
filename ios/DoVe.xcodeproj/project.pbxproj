@@ -10,6 +10,7 @@
 		012E4AB9A8923F437A25754F /* SearchFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023D65D215B94B3FBFAE1B64 /* SearchFlowView.swift */; };
 		11ED38C0B8AE6A909EBEC21F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731ECE7841A0667C983C294B /* ContentView.swift */; };
 		1383E096BEF93F0515382F5A /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A306022D33E0A90FD3BD76 /* InfoView.swift */; };
+		1AE3A20E60E423AF0716D8C3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8CA4D09667862999C25BA6D8 /* PrivacyInfo.xcprivacy */; };
 		1C30EBC6CEAA87AF55EE82FF /* NiziolettoShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69366B41EE568BF33524730 /* NiziolettoShape.swift */; };
 		22FAEA588D96BF44258F50FF /* zone_normali.json in Resources */ = {isa = PBXBuildFile; fileRef = C72E86AAEE09C40665ABC219 /* zone_normali.json */; };
 		2CE82310E2A9381E1B4C3F98 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152DD52CA3372636F29E68E1 /* SearchViewModel.swift */; };
@@ -25,11 +26,12 @@
 		8A250774F24C23E55C6E0EDA /* CivicoRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B29367A4C01701FD0DC4A00 /* CivicoRow.swift */; };
 		9147263B5A040DB4251D7304 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F71E5180DFEC43B27286C8B /* ColorExtension.swift */; };
 		9E7C1B89BA4232CF4FC0C5EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C033A0EA1C4FFF137625EE6C /* Assets.xcassets */; };
+		A5A3D36A71B91FCFD1CE0BD0 /* Sotoportego.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C6166B14D41AD5EC394CCDC /* Sotoportego.otf */; };
 		A9C889A884425A4EC738D1F0 /* Sestiere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F012F4FBB670C0F5D2910A5 /* Sestiere.swift */; };
 		AB5307BB9017E309747F2010 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835064C2EAAEA0691895BF3F /* ResultView.swift */; };
 		C400CFC2DEDD4D4D61B27810 /* ZonaNormaleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0284E171F6705A22BE225077 /* ZonaNormaleCard.swift */; };
 		C48E127989510815E4F09545 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A6F9548EFDE01612D80578 /* SearchView.swift */; };
-		CCFEAADFDC3DBF96C0AE9EEA /* Sotoportego.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9D32D2824BAE66DF152FE777 /* Sotoportego.otf */; };
+		CCFEAADFDC3DBF96C0AE9EEA /* CCXLKSNizioleti-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D32D2824BAE66DF152FE777 /* CCXLKSNizioleti-Regular.ttf */; };
 		D22EDF6FCA908B7F7385ED0E /* StreetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A151B7596A4F836401775E52 /* StreetListView.swift */; };
 		D240FB8412C54C6E85CA9074 /* civici.json in Resources */ = {isa = PBXBuildFile; fileRef = 16C7BAC2F8DDE706B40ACA9E /* civici.json */; };
 		E19CD43578F45D7D8BA96A9C /* ZonaNormale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DEE968C2FAF4248F32662C /* ZonaNormale.swift */; };
@@ -56,11 +58,13 @@
 		731ECE7841A0667C983C294B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7744282CEFA87CBC29FF3DC2 /* DataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataLoader.swift; sourceTree = "<group>"; };
 		78A306022D33E0A90FD3BD76 /* InfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
+		7C6166B14D41AD5EC394CCDC /* Sotoportego.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sotoportego.otf; sourceTree = "<group>"; };
 		835064C2EAAEA0691895BF3F /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		83E337F917E5E60EF8D2E03D /* SestiereCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SestiereCard.swift; sourceTree = "<group>"; };
 		882126E98EC6E1622625244D /* SestieriView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SestieriView.swift; sourceTree = "<group>"; };
+		8CA4D09667862999C25BA6D8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		8EED5CA726C02686B803F1F7 /* civici_backup.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = civici_backup.json; sourceTree = "<group>"; };
-		9D32D2824BAE66DF152FE777 /* Sotoportego.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Sotoportego.otf"; sourceTree = "<group>"; };
+		9D32D2824BAE66DF152FE777 /* CCXLKSNizioleti-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CCXLKSNizioleti-Regular.ttf"; sourceTree = "<group>"; };
 		9F012F4FBB670C0F5D2910A5 /* Sestiere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sestiere.swift; sourceTree = "<group>"; };
 		9F71E5180DFEC43B27286C8B /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		A151B7596A4F836401775E52 /* StreetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreetListView.swift; sourceTree = "<group>"; };
@@ -142,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				C033A0EA1C4FFF137625EE6C /* Assets.xcassets */,
+				8CA4D09667862999C25BA6D8 /* PrivacyInfo.xcprivacy */,
 				6F57F29418FB7E5DD449B47A /* Data */,
 				D35E4BB662EF63AFA7078E33 /* Fonts */,
 			);
@@ -177,7 +182,8 @@
 		D35E4BB662EF63AFA7078E33 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				9D32D2824BAE66DF152FE777 /* Sotoportego.otf */,
+				9D32D2824BAE66DF152FE777 /* CCXLKSNizioleti-Regular.ttf */,
+				7C6166B14D41AD5EC394CCDC /* Sotoportego.otf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -258,7 +264,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				9E7C1B89BA4232CF4FC0C5EB /* Assets.xcassets in Resources */,
-				CCFEAADFDC3DBF96C0AE9EEA /* Sotoportego.otf in Resources */,
+				CCFEAADFDC3DBF96C0AE9EEA /* CCXLKSNizioleti-Regular.ttf in Resources */,
+				1AE3A20E60E423AF0716D8C3 /* PrivacyInfo.xcprivacy in Resources */,
+				A5A3D36A71B91FCFD1CE0BD0 /* Sotoportego.otf in Resources */,
 				D240FB8412C54C6E85CA9074 /* civici.json in Resources */,
 				5C5FBA2FB926111D87BBE09E /* civici_backup.json in Resources */,
 				3465E3E959551EDFBD791195 /* sestieri_shapes.json in Resources */,
