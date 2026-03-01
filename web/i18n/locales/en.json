@@ -1,0 +1,117 @@
+{
+  "meta": {
+    "title": "DoVe — Find Venice civic numbers",
+    "description": "Find the exact location of civic numbers in Venice's sestieri and lagoon islands. 47,261 addresses, free and offline."
+  },
+  "nav": {
+    "home": "Home",
+    "howItWorks": "How it works",
+    "about": "About",
+    "contact": "Contact",
+    "support": "Support"
+  },
+  "hero": {
+    "title": "DoVe?",
+    "subtitle": "Find the real location of civic numbers in Venice's sestieri and lagoon islands",
+    "cta": "Try the search",
+    "download": "Download the app"
+  },
+  "features": {
+    "title": "Why DoVe",
+    "offline": {
+      "title": "Works offline",
+      "description": "All 47,261 civic numbers are included in the app. No connection needed."
+    },
+    "sestieri": {
+      "title": "Sestieri & islands",
+      "description": "7 sestieri with progressive numbering and 11 zones with street-based addresses."
+    },
+    "precise": {
+      "title": "Precise coordinates",
+      "description": "Exact GPS position for every civic number, from San Marco to Pellestrina."
+    },
+    "free": {
+      "title": "Free",
+      "description": "No cost, no ads, no tracking."
+    }
+  },
+  "sestieri": {
+    "CN": "Cannaregio",
+    "CS": "Castello",
+    "DD": "Dorsoduro",
+    "GD": "Giudecca",
+    "SM": "San Marco",
+    "SP": "San Polo",
+    "SC": "Santa Croce"
+  },
+  "howItWorks": {
+    "title": "How Venice numbering works",
+    "intro": "Venice has a civic numbering system unlike anywhere else in the world. The historic center uses progressive numbering by sestiere, while the lagoon islands use standard street addresses. DoVe covers both systems.",
+    "sestieriSystem": {
+      "title": "Sestiere numbering",
+      "description": "The historic center of Venice is divided into six sestieri (plus Giudecca), each with its own independent progressive numbering. Addresses prioritize the sestiere over the street name: the same street name can exist in different sestieri.",
+      "exampleDesc": "Sestiere + number. The street name is secondary."
+    },
+    "zoneSystem": {
+      "title": "Standard addressing",
+      "description": "The lagoon islands — Murano, Burano, Lido, Pellestrina and others — and some areas like Sant'Elena use the classic street + number system, like the rest of Italy.",
+      "exampleDesc": "Street + number + island, like on the mainland."
+    },
+    "example": "Example",
+    "demoSubtitle": "Select a sestiere or island, search for a civic number, and see it on the map.",
+    "stats": {
+      "civici": "Civic numbers",
+      "sestieri": "Sestieri",
+      "zone": "Zones/Islands",
+      "streets": "Streets on islands"
+    }
+  },
+  "search": {
+    "title": "Try the search",
+    "modeSestieri": "Sestieri",
+    "modeZone": "Islands & zones",
+    "sestieriDesc": "The historic center uses progressive numbering by sestiere. Choose the sestiere and search by number.",
+    "zoneDesc": "Lagoon islands use street addresses. Choose the island, search for the street and number.",
+    "selectSestiere": "Sestiere",
+    "selectZona": "Island or zone",
+    "inputNumber": "Civic number",
+    "searchStreet": "Search street",
+    "streetPlaceholder": "e.g. Fondamenta, Via, Calle...",
+    "selectNumber": "Civic number",
+    "search": "Search",
+    "result": "Result",
+    "noResult": "No result found",
+    "noStreets": "No streets found",
+    "openMaps": "Open in maps",
+    "lat": "Latitude",
+    "lng": "Longitude"
+  },
+  "download": {
+    "title": "Download DoVe",
+    "subtitle": "Available for free on iOS and Android",
+    "appStore": "App Store",
+    "playStore": "Google Play",
+    "comingSoon": "Coming soon"
+  },
+  "banner": {
+    "open": "Open",
+    "free": "Free"
+  },
+  "about": {
+    "title": "About"
+  },
+  "contact": {
+    "title": "Contact"
+  },
+  "footer": {
+    "madeWith": "Made with care in Venice",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "privacy": {
+    "title": "Privacy Policy"
+  },
+  "support": {
+    "title": "Support"
+  }
+}

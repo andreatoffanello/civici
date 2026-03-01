@@ -1,0 +1,504 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		012E4AB9A8923F437A25754F /* SearchFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023D65D215B94B3FBFAE1B64 /* SearchFlowView.swift */; };
+		11ED38C0B8AE6A909EBEC21F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731ECE7841A0667C983C294B /* ContentView.swift */; };
+		1383E096BEF93F0515382F5A /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A306022D33E0A90FD3BD76 /* InfoView.swift */; };
+		1C30EBC6CEAA87AF55EE82FF /* NiziolettoShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69366B41EE568BF33524730 /* NiziolettoShape.swift */; };
+		22FAEA588D96BF44258F50FF /* zone_normali.json in Resources */ = {isa = PBXBuildFile; fileRef = C72E86AAEE09C40665ABC219 /* zone_normali.json */; };
+		2CE82310E2A9381E1B4C3F98 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152DD52CA3372636F29E68E1 /* SearchViewModel.swift */; };
+		2FDF936E44865B3600789343 /* Civico.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE4AF60EBC6AC9248A7F1B5D /* Civico.swift */; };
+		3465E3E959551EDFBD791195 /* sestieri_shapes.json in Resources */ = {isa = PBXBuildFile; fileRef = 199478B9E9D9E4F1000EA02F /* sestieri_shapes.json */; };
+		34E821CFA8ED627FAA4CB2F2 /* SestiereCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E337F917E5E60EF8D2E03D /* SestiereCard.swift */; };
+		584D74C0ACEB0E3D481B162E /* DataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7744282CEFA87CBC29FF3DC2 /* DataLoader.swift */; };
+		5C5FBA2FB926111D87BBE09E /* civici_backup.json in Resources */ = {isa = PBXBuildFile; fileRef = 8EED5CA726C02686B803F1F7 /* civici_backup.json */; };
+		5EA465FD481AB16029B2C75F /* DoVeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D500652DEC0DB8A40F14A3B /* DoVeApp.swift */; };
+		7DF5FB7086B8FD321083B02B /* SestiereShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B6EE0AF857471687E14303 /* SestiereShape.swift */; };
+		7F5352EDF29A13090F5292A4 /* SestieriView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882126E98EC6E1622625244D /* SestieriView.swift */; };
+		89F94D0815B9382B6CD4E113 /* StreetNumbersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E9F0BA9B1D26FB36F7D171 /* StreetNumbersView.swift */; };
+		8A250774F24C23E55C6E0EDA /* CivicoRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B29367A4C01701FD0DC4A00 /* CivicoRow.swift */; };
+		9147263B5A040DB4251D7304 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F71E5180DFEC43B27286C8B /* ColorExtension.swift */; };
+		9E7C1B89BA4232CF4FC0C5EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C033A0EA1C4FFF137625EE6C /* Assets.xcassets */; };
+		A9C889A884425A4EC738D1F0 /* Sestiere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F012F4FBB670C0F5D2910A5 /* Sestiere.swift */; };
+		AB5307BB9017E309747F2010 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835064C2EAAEA0691895BF3F /* ResultView.swift */; };
+		C400CFC2DEDD4D4D61B27810 /* ZonaNormaleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0284E171F6705A22BE225077 /* ZonaNormaleCard.swift */; };
+		C48E127989510815E4F09545 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A6F9548EFDE01612D80578 /* SearchView.swift */; };
+		CCFEAADFDC3DBF96C0AE9EEA /* Sotoportego.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9D32D2824BAE66DF152FE777 /* Sotoportego.otf */; };
+		D22EDF6FCA908B7F7385ED0E /* StreetListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A151B7596A4F836401775E52 /* StreetListView.swift */; };
+		D240FB8412C54C6E85CA9074 /* civici.json in Resources */ = {isa = PBXBuildFile; fileRef = 16C7BAC2F8DDE706B40ACA9E /* civici.json */; };
+		E19CD43578F45D7D8BA96A9C /* ZonaNormale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DEE968C2FAF4248F32662C /* ZonaNormale.swift */; };
+		E59DA5AE113A7D3B28272AD9 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7DC30F0FE529D7D47474E7 /* LocationManager.swift */; };
+		F9B6FEA12F5D639338F25422 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB13E24367BB1EC8E3EF29FE /* SettingsView.swift */; };
+		FEA87BBF82705A993123DD7D /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B95319AD2B43AB0008E86C6 /* NotificationManager.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		023D65D215B94B3FBFAE1B64 /* SearchFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFlowView.swift; sourceTree = "<group>"; };
+		0284E171F6705A22BE225077 /* ZonaNormaleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonaNormaleCard.swift; sourceTree = "<group>"; };
+		152DD52CA3372636F29E68E1 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		16C7BAC2F8DDE706B40ACA9E /* civici.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = civici.json; sourceTree = "<group>"; };
+		199478B9E9D9E4F1000EA02F /* sestieri_shapes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sestieri_shapes.json; sourceTree = "<group>"; };
+		1C7DC30F0FE529D7D47474E7 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		26B6EE0AF857471687E14303 /* SestiereShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SestiereShape.swift; sourceTree = "<group>"; };
+		29A6F9548EFDE01612D80578 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		2B1B6B4DD4A92C57A7362666 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2D500652DEC0DB8A40F14A3B /* DoVeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoVeApp.swift; sourceTree = "<group>"; };
+		3B29367A4C01701FD0DC4A00 /* CivicoRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CivicoRow.swift; sourceTree = "<group>"; };
+		52CCE6950C0DC119822DE03C /* DoVe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DoVe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		57DEE968C2FAF4248F32662C /* ZonaNormale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonaNormale.swift; sourceTree = "<group>"; };
+		6B95319AD2B43AB0008E86C6 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		731ECE7841A0667C983C294B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7744282CEFA87CBC29FF3DC2 /* DataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataLoader.swift; sourceTree = "<group>"; };
+		78A306022D33E0A90FD3BD76 /* InfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
+		835064C2EAAEA0691895BF3F /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
+		83E337F917E5E60EF8D2E03D /* SestiereCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SestiereCard.swift; sourceTree = "<group>"; };
+		882126E98EC6E1622625244D /* SestieriView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SestieriView.swift; sourceTree = "<group>"; };
+		8EED5CA726C02686B803F1F7 /* civici_backup.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = civici_backup.json; sourceTree = "<group>"; };
+		9D32D2824BAE66DF152FE777 /* Sotoportego.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Sotoportego.otf"; sourceTree = "<group>"; };
+		9F012F4FBB670C0F5D2910A5 /* Sestiere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sestiere.swift; sourceTree = "<group>"; };
+		9F71E5180DFEC43B27286C8B /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
+		A151B7596A4F836401775E52 /* StreetListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreetListView.swift; sourceTree = "<group>"; };
+		A9E9F0BA9B1D26FB36F7D171 /* StreetNumbersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreetNumbersView.swift; sourceTree = "<group>"; };
+		C033A0EA1C4FFF137625EE6C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C72E86AAEE09C40665ABC219 /* zone_normali.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = zone_normali.json; sourceTree = "<group>"; };
+		D69366B41EE568BF33524730 /* NiziolettoShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NiziolettoShape.swift; sourceTree = "<group>"; };
+		EB13E24367BB1EC8E3EF29FE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		FE4AF60EBC6AC9248A7F1B5D /* Civico.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Civico.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		001D674F0C33235CF145D170 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				3B29367A4C01701FD0DC4A00 /* CivicoRow.swift */,
+				D69366B41EE568BF33524730 /* NiziolettoShape.swift */,
+				83E337F917E5E60EF8D2E03D /* SestiereCard.swift */,
+				26B6EE0AF857471687E14303 /* SestiereShape.swift */,
+				0284E171F6705A22BE225077 /* ZonaNormaleCard.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		41FC5856A8B082B52DA4BF5D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				152DD52CA3372636F29E68E1 /* SearchViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4A1E7A991533B9D3AC0BA877 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				FE4AF60EBC6AC9248A7F1B5D /* Civico.swift */,
+				9F012F4FBB670C0F5D2910A5 /* Sestiere.swift */,
+				57DEE968C2FAF4248F32662C /* ZonaNormale.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		6F57F29418FB7E5DD449B47A /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				8EED5CA726C02686B803F1F7 /* civici_backup.json */,
+				16C7BAC2F8DDE706B40ACA9E /* civici.json */,
+				199478B9E9D9E4F1000EA02F /* sestieri_shapes.json */,
+				C72E86AAEE09C40665ABC219 /* zone_normali.json */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		9E41E9FA537DE1FDFD701D86 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				2D500652DEC0DB8A40F14A3B /* DoVeApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		AA7023493B5E3C2B78931BD5 = {
+			isa = PBXGroup;
+			children = (
+				D0889F0E98C3F2D85778D1A1 /* DoVe */,
+				B43F319E6B3912C9483843A6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B43F319E6B3912C9483843A6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				52CCE6950C0DC119822DE03C /* DoVe.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B957879E3540F6B0AB9EE8C4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C033A0EA1C4FFF137625EE6C /* Assets.xcassets */,
+				6F57F29418FB7E5DD449B47A /* Data */,
+				D35E4BB662EF63AFA7078E33 /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		BA58DF03BDD1A3EC035DBE41 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				9F71E5180DFEC43B27286C8B /* ColorExtension.swift */,
+				7744282CEFA87CBC29FF3DC2 /* DataLoader.swift */,
+				1C7DC30F0FE529D7D47474E7 /* LocationManager.swift */,
+				6B95319AD2B43AB0008E86C6 /* NotificationManager.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		D0889F0E98C3F2D85778D1A1 /* DoVe */ = {
+			isa = PBXGroup;
+			children = (
+				2B1B6B4DD4A92C57A7362666 /* Info.plist */,
+				9E41E9FA537DE1FDFD701D86 /* App */,
+				001D674F0C33235CF145D170 /* Components */,
+				4A1E7A991533B9D3AC0BA877 /* Models */,
+				B957879E3540F6B0AB9EE8C4 /* Resources */,
+				BA58DF03BDD1A3EC035DBE41 /* Utilities */,
+				41FC5856A8B082B52DA4BF5D /* ViewModels */,
+				E14986F33292AC8D1280EA44 /* Views */,
+			);
+			path = DoVe;
+			sourceTree = "<group>";
+		};
+		D35E4BB662EF63AFA7078E33 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				9D32D2824BAE66DF152FE777 /* Sotoportego.otf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		E14986F33292AC8D1280EA44 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				731ECE7841A0667C983C294B /* ContentView.swift */,
+				78A306022D33E0A90FD3BD76 /* InfoView.swift */,
+				835064C2EAAEA0691895BF3F /* ResultView.swift */,
+				023D65D215B94B3FBFAE1B64 /* SearchFlowView.swift */,
+				29A6F9548EFDE01612D80578 /* SearchView.swift */,
+				882126E98EC6E1622625244D /* SestieriView.swift */,
+				EB13E24367BB1EC8E3EF29FE /* SettingsView.swift */,
+				A151B7596A4F836401775E52 /* StreetListView.swift */,
+				A9E9F0BA9B1D26FB36F7D171 /* StreetNumbersView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		262CF2F9F2AB87E31D5BAC29 /* DoVe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CE0093F93137A86B7DEB0A0 /* Build configuration list for PBXNativeTarget "DoVe" */;
+			buildPhases = (
+				89A061771BF124AE1D23412A /* Sources */,
+				84F564AFF2B24D339B0C1A34 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DoVe;
+			packageProductDependencies = (
+			);
+			productName = DoVe;
+			productReference = 52CCE6950C0DC119822DE03C /* DoVe.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B82DA63EAD7AB255525FD16B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					262CF2F9F2AB87E31D5BAC29 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 33AE47891701C97E1A49CD1D /* Build configuration list for PBXProject "DoVe" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = it;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				it,
+			);
+			mainGroup = AA7023493B5E3C2B78931BD5;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				262CF2F9F2AB87E31D5BAC29 /* DoVe */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		84F564AFF2B24D339B0C1A34 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9E7C1B89BA4232CF4FC0C5EB /* Assets.xcassets in Resources */,
+				CCFEAADFDC3DBF96C0AE9EEA /* Sotoportego.otf in Resources */,
+				D240FB8412C54C6E85CA9074 /* civici.json in Resources */,
+				5C5FBA2FB926111D87BBE09E /* civici_backup.json in Resources */,
+				3465E3E959551EDFBD791195 /* sestieri_shapes.json in Resources */,
+				22FAEA588D96BF44258F50FF /* zone_normali.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		89A061771BF124AE1D23412A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2FDF936E44865B3600789343 /* Civico.swift in Sources */,
+				8A250774F24C23E55C6E0EDA /* CivicoRow.swift in Sources */,
+				9147263B5A040DB4251D7304 /* ColorExtension.swift in Sources */,
+				11ED38C0B8AE6A909EBEC21F /* ContentView.swift in Sources */,
+				584D74C0ACEB0E3D481B162E /* DataLoader.swift in Sources */,
+				5EA465FD481AB16029B2C75F /* DoVeApp.swift in Sources */,
+				1383E096BEF93F0515382F5A /* InfoView.swift in Sources */,
+				E59DA5AE113A7D3B28272AD9 /* LocationManager.swift in Sources */,
+				1C30EBC6CEAA87AF55EE82FF /* NiziolettoShape.swift in Sources */,
+				FEA87BBF82705A993123DD7D /* NotificationManager.swift in Sources */,
+				AB5307BB9017E309747F2010 /* ResultView.swift in Sources */,
+				012E4AB9A8923F437A25754F /* SearchFlowView.swift in Sources */,
+				C48E127989510815E4F09545 /* SearchView.swift in Sources */,
+				2CE82310E2A9381E1B4C3F98 /* SearchViewModel.swift in Sources */,
+				A9C889A884425A4EC738D1F0 /* Sestiere.swift in Sources */,
+				34E821CFA8ED627FAA4CB2F2 /* SestiereCard.swift in Sources */,
+				7DF5FB7086B8FD321083B02B /* SestiereShape.swift in Sources */,
+				7F5352EDF29A13090F5292A4 /* SestieriView.swift in Sources */,
+				F9B6FEA12F5D639338F25422 /* SettingsView.swift in Sources */,
+				D22EDF6FCA908B7F7385ED0E /* StreetListView.swift in Sources */,
+				89F94D0815B9382B6CD4E113 /* StreetNumbersView.swift in Sources */,
+				E19CD43578F45D7D8BA96A9C /* ZonaNormale.swift in Sources */,
+				C400CFC2DEDD4D4D61B27810 /* ZonaNormaleCard.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1AA5DA25E411D68AD7595BE9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		4A49720945347BD41E3EC318 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DoVe/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DoVe;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dovevenezia.app;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		52486FF34A97AF927892451C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		C55D9EE5FBA2FC52FAB95B5D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DoVe/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DoVe;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dovevenezia.app;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		33AE47891701C97E1A49CD1D /* Build configuration list for PBXProject "DoVe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				52486FF34A97AF927892451C /* Debug */,
+				1AA5DA25E411D68AD7595BE9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4CE0093F93137A86B7DEB0A0 /* Build configuration list for PBXNativeTarget "DoVe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A49720945347BD41E3EC318 /* Debug */,
+				C55D9EE5FBA2FC52FAB95B5D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B82DA63EAD7AB255525FD16B /* Project object */;
+}

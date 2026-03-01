@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Sotoportego.otf</string>
+	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>DoVe usa la tua posizione per mostrarti dove ti trovi rispetto al civico cercato e calcolare la distanza.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>comgooglemaps</string>
+		<string>waze</string>
+	</array>
+</dict>
+</plist>

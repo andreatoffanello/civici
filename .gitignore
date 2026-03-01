@@ -1,24 +1,40 @@
-# Nuxt dev/build outputs
+# Dependencies
+node_modules/
+
+# Nuxt (legacy)
+.nuxt/
 .output
 .data
-.nuxt
 .nitro
 .cache
 dist
 
-# Node dependencies
-node_modules
+# macOS
+.DS_Store
+
+# Xcode
+ios/**/xcuserdata/
+ios/**/*.xcuserstate
+ios/**/build/
+ios/**/DerivedData/
+
+# Android
+android/.gradle/
+android/**/build/
+android/local.properties
+
+# IDE
+.idea/
+.vscode/
+.fleet
+*.swp
+*~
+
+# Environment
+.env
+.env.*
+!.env.example
 
 # Logs
 logs
 *.log
-
-# Misc
-.DS_Store
-.fleet
-.idea
-
-# Local env files
-.env
-.env.*
-!.env.example

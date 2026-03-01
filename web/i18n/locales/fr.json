@@ -1,0 +1,117 @@
+{
+  "meta": {
+    "title": "DoVe — Trouvez les numéros civiques de Venise",
+    "description": "Trouvez l'emplacement exact des numéros civiques dans les sestieri et les îles de Venise. 47 261 adresses, recherche gratuite et hors ligne."
+  },
+  "nav": {
+    "home": "Accueil",
+    "howItWorks": "Comment ça marche",
+    "about": "À propos",
+    "contact": "Contact",
+    "support": "Support"
+  },
+  "hero": {
+    "title": "DoVe?",
+    "subtitle": "Trouvez l'emplacement réel des numéros civiques dans les sestieri et les îles de la lagune de Venise",
+    "cta": "Essayez la recherche",
+    "download": "Télécharger l'app"
+  },
+  "features": {
+    "title": "Pourquoi DoVe",
+    "offline": {
+      "title": "Fonctionne hors ligne",
+      "description": "Les 47 261 numéros civiques sont inclus dans l'app. Aucune connexion nécessaire."
+    },
+    "sestieri": {
+      "title": "Sestieri et îles",
+      "description": "7 sestieri avec numérotation progressive et 11 zones avec adresses de rue."
+    },
+    "precise": {
+      "title": "Coordonnées précises",
+      "description": "Position GPS exacte pour chaque numéro civique, de San Marco à Pellestrina."
+    },
+    "free": {
+      "title": "Gratuit",
+      "description": "Sans frais, sans publicité, sans suivi."
+    }
+  },
+  "sestieri": {
+    "CN": "Cannaregio",
+    "CS": "Castello",
+    "DD": "Dorsoduro",
+    "GD": "Giudecca",
+    "SM": "San Marco",
+    "SP": "San Polo",
+    "SC": "Santa Croce"
+  },
+  "howItWorks": {
+    "title": "Comment fonctionne la numérotation à Venise",
+    "intro": "Venise possède un système de numérotation civique unique au monde. Le centre historique utilise une numérotation progressive par sestiere, tandis que les îles de la lagune utilisent des adresses de rue classiques. DoVe couvre les deux systèmes.",
+    "sestieriSystem": {
+      "title": "Numérotation par sestiere",
+      "description": "Le centre historique de Venise est divisé en six sestieri (plus la Giudecca), chacun avec sa propre numérotation progressive indépendante. L'adresse privilégie le sestiere au nom de rue : le même nom de rue peut exister dans différents sestieri.",
+      "exampleDesc": "Sestiere + numéro. Le nom de rue est secondaire."
+    },
+    "zoneSystem": {
+      "title": "Adressage standard",
+      "description": "Les îles de la lagune — Murano, Burano, Lido, Pellestrina et autres — et certaines zones comme Sant'Elena utilisent le système classique rue + numéro, comme dans le reste de l'Italie.",
+      "exampleDesc": "Rue + numéro + île, comme sur le continent."
+    },
+    "example": "Exemple",
+    "demoSubtitle": "Sélectionnez un sestiere ou une île, cherchez le numéro civique et visualisez-le sur la carte.",
+    "stats": {
+      "civici": "Numéros civiques",
+      "sestieri": "Sestieri",
+      "zone": "Zones/Îles",
+      "streets": "Rues sur les îles"
+    }
+  },
+  "search": {
+    "title": "Essayez la recherche",
+    "modeSestieri": "Sestieri",
+    "modeZone": "Îles et zones",
+    "sestieriDesc": "Le centre historique utilise une numérotation progressive par sestiere. Choisissez le sestiere et cherchez par numéro.",
+    "zoneDesc": "Les îles de la lagune utilisent des adresses de rue. Choisissez l'île, cherchez la rue et le numéro.",
+    "selectSestiere": "Sestiere",
+    "selectZona": "Île ou zone",
+    "inputNumber": "Numéro civique",
+    "searchStreet": "Chercher une rue",
+    "streetPlaceholder": "Ex. Fondamenta, Via, Calle...",
+    "selectNumber": "Numéro civique",
+    "search": "Chercher",
+    "result": "Résultat",
+    "noResult": "Aucun résultat trouvé",
+    "noStreets": "Aucune rue trouvée",
+    "openMaps": "Ouvrir dans la carte",
+    "lat": "Latitude",
+    "lng": "Longitude"
+  },
+  "download": {
+    "title": "Télécharger DoVe",
+    "subtitle": "Disponible gratuitement pour iOS et Android",
+    "appStore": "App Store",
+    "playStore": "Google Play",
+    "comingSoon": "Bientôt disponible"
+  },
+  "banner": {
+    "open": "Ouvrir",
+    "free": "Gratuit"
+  },
+  "about": {
+    "title": "À propos"
+  },
+  "contact": {
+    "title": "Contact"
+  },
+  "footer": {
+    "madeWith": "Fait avec soin à Venise",
+    "privacy": "Confidentialité",
+    "terms": "Conditions"
+  },
+  "privacy": {
+    "title": "Politique de Confidentialité"
+  },
+  "support": {
+    "title": "Support"
+  }
+}

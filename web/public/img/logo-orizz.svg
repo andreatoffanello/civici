@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Livello_1" data-name="Livello 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1300 399.29">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        font-family: Sotoportego-Medium, Sotoportego;
+        font-size: 220px;
+        font-weight: 500;
+      }
+
+      .cls-2 {
+        fill: #c2452d;
+      }
+    </style>
+    <filter id="luminosity-invert" x="-1881.24" y="-114.06" width="1946.88" height="1102.9" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feColorMatrix result="cm" values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0"/>
+    </filter>
+    <mask id="mask" x="-1881.24" y="-114.06" width="1946.88" height="1102.9" maskUnits="userSpaceOnUse"/>
+  </defs>
+  <text class="cls-1" transform="translate(111.12 278.8)"><tspan x="0" y="0">D</tspan></text>
+  <text class="cls-1" transform="translate(401.99 278.8)"><tspan x="0" y="0">O</tspan></text>
+  <text class="cls-2" transform="translate(711.19 278.8)"><tspan x="0" y="0">V</tspan></text>
+  <text class="cls-2" transform="translate(1026.74 278.8)"><tspan x="0" y="0">E</tspan></text>
+</svg>

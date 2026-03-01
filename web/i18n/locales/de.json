@@ -1,0 +1,117 @@
+{
+  "meta": {
+    "title": "DoVe — Finde Hausnummern in Venedig",
+    "description": "Finden Sie den genauen Standort der Hausnummern in Venedigs Sestieri und Laguneninseln. 47.261 Adressen, kostenlose Offline-Suche."
+  },
+  "nav": {
+    "home": "Startseite",
+    "howItWorks": "Wie es funktioniert",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "support": "Support"
+  },
+  "hero": {
+    "title": "DoVe?",
+    "subtitle": "Finden Sie den genauen Standort der Hausnummern in Venedigs Sestieri und Laguneninseln",
+    "cta": "Suche ausprobieren",
+    "download": "App herunterladen"
+  },
+  "features": {
+    "title": "Warum DoVe",
+    "offline": {
+      "title": "Funktioniert offline",
+      "description": "Alle 47.261 Hausnummern sind in der App enthalten. Keine Verbindung nötig."
+    },
+    "sestieri": {
+      "title": "Sestieri & Inseln",
+      "description": "7 Sestieri mit fortlaufender Nummerierung und 11 Zonen mit Straßenadressen."
+    },
+    "precise": {
+      "title": "Präzise Koordinaten",
+      "description": "Exakte GPS-Position für jede Hausnummer, von San Marco bis Pellestrina."
+    },
+    "free": {
+      "title": "Kostenlos",
+      "description": "Keine Kosten, keine Werbung, kein Tracking."
+    }
+  },
+  "sestieri": {
+    "CN": "Cannaregio",
+    "CS": "Castello",
+    "DD": "Dorsoduro",
+    "GD": "Giudecca",
+    "SM": "San Marco",
+    "SP": "San Polo",
+    "SC": "Santa Croce"
+  },
+  "howItWorks": {
+    "title": "Wie die Nummerierung in Venedig funktioniert",
+    "intro": "Venedig hat ein weltweit einzigartiges Hausnummern-System. Das historische Zentrum verwendet eine fortlaufende Nummerierung nach Sestiere, während die Laguneninseln Standard-Straßenadressen nutzen. DoVe deckt beide Systeme ab.",
+    "sestieriSystem": {
+      "title": "Sestiere-Nummerierung",
+      "description": "Das historische Zentrum Venedigs ist in sechs Sestieri (plus Giudecca) unterteilt, jeder mit eigener fortlaufender Nummerierung. Die Adresse bevorzugt den Sestiere vor dem Straßennamen: derselbe Straßenname kann in verschiedenen Sestieri vorkommen.",
+      "exampleDesc": "Sestiere + Nummer. Der Straßenname ist zweitrangig."
+    },
+    "zoneSystem": {
+      "title": "Standard-Adressierung",
+      "description": "Die Laguneninseln — Murano, Burano, Lido, Pellestrina und andere — sowie einige Gebiete wie Sant'Elena verwenden das klassische Straße + Nummer System, wie im restlichen Italien.",
+      "exampleDesc": "Straße + Nummer + Insel, wie auf dem Festland."
+    },
+    "example": "Beispiel",
+    "demoSubtitle": "Wählen Sie einen Sestiere oder eine Insel, suchen Sie die Hausnummer und sehen Sie sie auf der Karte.",
+    "stats": {
+      "civici": "Hausnummern",
+      "sestieri": "Sestieri",
+      "zone": "Zonen/Inseln",
+      "streets": "Straßen auf Inseln"
+    }
+  },
+  "search": {
+    "title": "Suche ausprobieren",
+    "modeSestieri": "Sestieri",
+    "modeZone": "Inseln & Zonen",
+    "sestieriDesc": "Das historische Zentrum nutzt fortlaufende Nummerierung nach Sestiere. Wählen Sie den Sestiere und suchen Sie nach Nummer.",
+    "zoneDesc": "Die Laguneninseln nutzen Straßenadressen. Wählen Sie die Insel, suchen Sie die Straße und Nummer.",
+    "selectSestiere": "Sestiere",
+    "selectZona": "Insel oder Zone",
+    "inputNumber": "Hausnummer",
+    "searchStreet": "Straße suchen",
+    "streetPlaceholder": "z.B. Fondamenta, Via, Calle...",
+    "selectNumber": "Hausnummer",
+    "search": "Suchen",
+    "result": "Ergebnis",
+    "noResult": "Kein Ergebnis gefunden",
+    "noStreets": "Keine Straßen gefunden",
+    "openMaps": "In Karte öffnen",
+    "lat": "Breitengrad",
+    "lng": "Längengrad"
+  },
+  "download": {
+    "title": "DoVe herunterladen",
+    "subtitle": "Kostenlos verfügbar für iOS und Android",
+    "appStore": "App Store",
+    "playStore": "Google Play",
+    "comingSoon": "Bald verfügbar"
+  },
+  "banner": {
+    "open": "Öffnen",
+    "free": "Gratis"
+  },
+  "about": {
+    "title": "Über uns"
+  },
+  "contact": {
+    "title": "Kontakt"
+  },
+  "footer": {
+    "madeWith": "Mit Sorgfalt in Venedig gemacht",
+    "privacy": "Datenschutz",
+    "terms": "AGB"
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung"
+  },
+  "support": {
+    "title": "Support"
+  }
+}

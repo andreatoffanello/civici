@@ -1,0 +1,117 @@
+{
+  "meta": {
+    "title": "DoVe — Trova i numeri civici di Venezia",
+    "description": "Trova la posizione esatta dei numeri civici nei sestieri e nelle isole di Venezia. 47.261 civici, ricerca gratuita e offline."
+  },
+  "nav": {
+    "home": "Home",
+    "howItWorks": "Come funziona",
+    "about": "Chi siamo",
+    "contact": "Contatti",
+    "support": "Supporto"
+  },
+  "hero": {
+    "title": "DoVe?",
+    "subtitle": "Trova la posizione reale dei numeri civici nei sestieri e nelle isole della laguna di Venezia",
+    "cta": "Prova la ricerca",
+    "download": "Scarica l'app"
+  },
+  "features": {
+    "title": "Perché DoVe",
+    "offline": {
+      "title": "Funziona offline",
+      "description": "Tutti i 47.261 civici sono inclusi nell'app. Nessuna connessione necessaria."
+    },
+    "sestieri": {
+      "title": "Sestieri e isole",
+      "description": "7 sestieri con numerazione progressiva e 11 zone con indirizzamento stradale."
+    },
+    "precise": {
+      "title": "Coordinate precise",
+      "description": "Posizione GPS esatta per ogni numero civico, da San Marco a Pellestrina."
+    },
+    "free": {
+      "title": "Gratuito",
+      "description": "Nessun costo, nessuna pubblicità, nessun tracciamento."
+    }
+  },
+  "sestieri": {
+    "CN": "Cannaregio",
+    "CS": "Castello",
+    "DD": "Dorsoduro",
+    "GD": "Giudecca",
+    "SM": "San Marco",
+    "SP": "San Polo",
+    "SC": "Santa Croce"
+  },
+  "howItWorks": {
+    "title": "Come funziona la numerazione a Venezia",
+    "intro": "Venezia ha un sistema di numerazione civica unico al mondo. Il centro storico usa una numerazione progressiva per sestiere, mentre le isole e alcune zone usano il classico indirizzo stradale. DoVe copre entrambi i sistemi.",
+    "sestieriSystem": {
+      "title": "Numerazione per sestiere",
+      "description": "Il centro storico di Venezia è diviso in sei sestieri (più la Giudecca) ognuno con una numerazione civica progressiva indipendente. L'indirizzo privilegia il sestiere sul toponimo: lo stesso nome di calle può esistere in sestieri diversi.",
+      "exampleDesc": "Sestiere + numero. Il toponimo è secondario."
+    },
+    "zoneSystem": {
+      "title": "Indirizzamento normale",
+      "description": "Le isole della laguna — Murano, Burano, Lido, Pellestrina e altre — e alcune zone del centro storico come Sant'Elena usano il classico sistema via + civico, come nel resto d'Italia.",
+      "exampleDesc": "Via + numero + isola, come nella terraferma."
+    },
+    "example": "Esempio",
+    "demoSubtitle": "Seleziona un sestiere o un'isola, cerca il numero civico e visualizzalo sulla mappa.",
+    "stats": {
+      "civici": "Numeri civici",
+      "sestieri": "Sestieri",
+      "zone": "Zone/Isole",
+      "streets": "Strade nelle isole"
+    }
+  },
+  "search": {
+    "title": "Prova la ricerca",
+    "modeSestieri": "Sestieri",
+    "modeZone": "Isole e zone",
+    "sestieriDesc": "Il centro storico usa una numerazione progressiva per sestiere. Scegli il sestiere e cerca il numero.",
+    "zoneDesc": "Le isole della laguna usano indirizzi stradali. Scegli l'isola, cerca la via e il numero.",
+    "selectSestiere": "Sestiere",
+    "selectZona": "Isola o zona",
+    "inputNumber": "Numero civico",
+    "searchStreet": "Cerca via",
+    "streetPlaceholder": "Es. Fondamenta, Via, Calle...",
+    "selectNumber": "Numero civico",
+    "search": "Cerca",
+    "result": "Risultato",
+    "noResult": "Nessun risultato trovato",
+    "noStreets": "Nessuna via trovata",
+    "openMaps": "Apri nella mappa",
+    "lat": "Latitudine",
+    "lng": "Longitudine"
+  },
+  "download": {
+    "title": "Scarica DoVe",
+    "subtitle": "Disponibile gratuitamente per iOS e Android",
+    "appStore": "App Store",
+    "playStore": "Google Play",
+    "comingSoon": "Presto disponibile"
+  },
+  "banner": {
+    "open": "Apri",
+    "free": "Gratis"
+  },
+  "about": {
+    "title": "Chi siamo"
+  },
+  "contact": {
+    "title": "Contatti"
+  },
+  "footer": {
+    "madeWith": "Fatto con cura a Venezia",
+    "privacy": "Privacy",
+    "terms": "Termini"
+  },
+  "privacy": {
+    "title": "Informativa sulla Privacy"
+  },
+  "support": {
+    "title": "Supporto"
+  }
+}
