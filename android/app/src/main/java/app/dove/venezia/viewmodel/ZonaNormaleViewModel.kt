@@ -1,6 +1,7 @@
 package app.dove.venezia.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import app.dove.venezia.data.model.CivicoCoordinate
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 sealed interface ZonaNormaleUiState {
     data object Loading : ZonaNormaleUiState
     data class  Ready(val items: List<String>) : ZonaNormaleUiState
+    data object Error : ZonaNormaleUiState
 }
 
 class ZonaNormaleViewModel(application: Application) : AndroidViewModel(application) {
@@ -25,16 +27,20 @@ class ZonaNormaleViewModel(application: Application) : AndroidViewModel(applicat
     private val _isLoading  = MutableStateFlow(false)
     private val _allItems   = MutableStateFlow<List<String>>(emptyList())
     private val _query      = MutableStateFlow("")
+    private val _hasError   = MutableStateFlow(false)
 
     val query: StateFlow<String> = _query.asStateFlow()
 
     val uiState: StateFlow<ZonaNormaleUiState> =
-        combine(_isLoading, _allItems, _query) { loading, items, q ->
-            if (loading) ZonaNormaleUiState.Loading
-            else {
-                val filtered = if (q.isEmpty()) items
-                               else items.filter { it.contains(q, ignoreCase = true) }
-                ZonaNormaleUiState.Ready(filtered)
+        combine(_isLoading, _allItems, _query, _hasError) { loading, items, q, error ->
+            when {
+                error   -> ZonaNormaleUiState.Error
+                loading -> ZonaNormaleUiState.Loading
+                else -> {
+                    val filtered = if (q.isEmpty()) items
+                                   else items.filter { it.contains(q, ignoreCase = true) }
+                    ZonaNormaleUiState.Ready(filtered)
+                }
             }
         }.stateIn(
             scope          = viewModelScope,
@@ -44,24 +50,43 @@ class ZonaNormaleViewModel(application: Application) : AndroidViewModel(applicat
 
     fun loadStreets(zonaCode: String) {
         _query.value    = ""
+        _hasError.value  = false
         _isLoading.value = true
         viewModelScope.launch {
-            _allItems.value  = repository.getStreets(zonaCode)
-            _isLoading.value = false
+            try {
+                _allItems.value  = repository.getStreets(zonaCode)
+            } catch (e: Exception) {
+                Log.e("ZonaNormaleVM", "Errore caricamento strade per $zonaCode", e)
+                _hasError.value = true
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
     fun loadNumbers(zonaCode: String, street: String) {
         _query.value    = ""
+        _hasError.value  = false
         _isLoading.value = true
         viewModelScope.launch {
-            _allItems.value  = repository.getNumbers(zonaCode, street)
-            _isLoading.value = false
+            try {
+                _allItems.value  = repository.getNumbers(zonaCode, street)
+            } catch (e: Exception) {
+                Log.e("ZonaNormaleVM", "Errore caricamento numeri per $zonaCode/$street", e)
+                _hasError.value = true
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
     fun setQuery(q: String) { _query.value = q }
 
     suspend fun getCoordinate(zonaCode: String, street: String, numero: String): CivicoCoordinate? =
-        repository.getCoordinate(zonaCode, street, numero)
+        try {
+            repository.getCoordinate(zonaCode, street, numero)
+        } catch (e: Exception) {
+            Log.e("ZonaNormaleVM", "Errore getCoordinate $zonaCode/$street/$numero", e)
+            null
+        }
 }

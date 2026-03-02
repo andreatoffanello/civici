@@ -105,6 +105,15 @@ fun StreetNumbersScreen(
                         CircularProgressIndicator(color = accentColor)
                     }
                 }
+                is ZonaNormaleUiState.Error -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text  = stringResource(R.string.error_loading),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
                 is ZonaNormaleUiState.Ready -> {
                     if (state.items.isEmpty()) {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

@@ -1,6 +1,7 @@
 package app.dove.venezia.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import app.dove.venezia.data.model.CivicoCoordinate
@@ -28,12 +29,14 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     private val _query = MutableStateFlow("")
     private val _allNumbers = MutableStateFlow<List<String>>(emptyList())
     private val _isLoading = MutableStateFlow(false)
+    private val _hasError  = MutableStateFlow(false)
 
     val query: StateFlow<String> = _query.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val uiState: StateFlow<SearchUiState> = combine(_isLoading, _allNumbers, _query) { loading, numbers, q ->
+    val uiState: StateFlow<SearchUiState> = combine(_isLoading, _allNumbers, _query, _hasError) { loading, numbers, q, error ->
         when {
+            error   -> SearchUiState.Error
             loading -> SearchUiState.Loading
             else -> {
                 val filtered = if (q.isEmpty()) numbers
@@ -51,12 +54,19 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
         if (_currentSestiere.value == code && _allNumbers.value.isNotEmpty()) return
         _currentSestiere.value = code
         _query.value = ""
+        _hasError.value = false
         _isLoading.value = true
         viewModelScope.launch {
-            val numbers = repository.getNumbers(code)
-                .sortedWith(compareBy { it.toIntOrNull() ?: Int.MAX_VALUE })
-            _allNumbers.value = numbers
-            _isLoading.value = false
+            try {
+                val numbers = repository.getNumbers(code)
+                    .sortedWith(compareBy { it.toIntOrNull() ?: Int.MAX_VALUE })
+                _allNumbers.value = numbers
+            } catch (e: Exception) {
+                Log.e("SearchViewModel", "Errore caricamento civici per $code", e)
+                _hasError.value = true
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
@@ -65,6 +75,11 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     suspend fun getCoordinate(sestiereCode: String, numero: String): CivicoCoordinate? {
-        return repository.getCoordinate(sestiereCode, numero)
+        return try {
+            repository.getCoordinate(sestiereCode, numero)
+        } catch (e: Exception) {
+            Log.e("SearchViewModel", "Errore getCoordinate $sestiereCode/$numero", e)
+            null
+        }
     }
 }

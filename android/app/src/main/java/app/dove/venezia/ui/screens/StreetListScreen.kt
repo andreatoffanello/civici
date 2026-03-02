@@ -43,7 +43,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,7 +60,7 @@ import app.dove.venezia.ui.theme.SotoportegoFontFamily
 import app.dove.venezia.viewmodel.ZonaNormaleUiState
 import app.dove.venezia.viewmodel.ZonaNormaleViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun StreetListScreen(
     zonaCode: String,
@@ -69,8 +73,17 @@ fun StreetListScreen(
     val uiState      by viewModel.uiState.collectAsState()
     val query        by viewModel.query.collectAsState()
     val focusManager = LocalFocusManager.current
+    val focusRequester = FocusRequester()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(zonaCode) { viewModel.loadStreets(zonaCode) }
+
+    // Focus automatico sul campo di ricerca + apertura tastiera
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(300)
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
 
     Scaffold(
         topBar = {
@@ -111,7 +124,7 @@ fun StreetListScreen(
             OutlinedTextField(
                 value         = query,
                 onValueChange = viewModel::setQuery,
-                modifier      = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier      = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).focusRequester(focusRequester),
                 placeholder   = {
                     Text(stringResource(R.string.search_street_placeholder),
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -143,6 +156,15 @@ fun StreetListScreen(
                 is ZonaNormaleUiState.Loading -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(color = accentColor)
+                    }
+                }
+                is ZonaNormaleUiState.Error -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text  = stringResource(R.string.error_loading),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
                 is ZonaNormaleUiState.Ready -> {

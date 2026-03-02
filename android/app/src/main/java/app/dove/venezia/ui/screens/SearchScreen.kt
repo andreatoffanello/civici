@@ -45,12 +45,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.border
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -67,7 +71,7 @@ import app.dove.venezia.viewmodel.SearchUiState
 import app.dove.venezia.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(
     sestiereCode: String,
@@ -86,8 +90,17 @@ fun SearchScreen(
     val query by viewModel.query.collectAsState()
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+    val focusRequester = FocusRequester()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(sestiereCode) { viewModel.loadSestiere(sestiereCode) }
+
+    // Focus automatico sul campo di ricerca + apertura tastiera
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(300)
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
 
     Scaffold(
         topBar = {
@@ -127,7 +140,7 @@ fun SearchScreen(
             OutlinedTextField(
                 value = query,
                 onValueChange = viewModel::setQuery,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).focusRequester(focusRequester),
                 placeholder = {
                     Text(stringResource(R.string.search_placeholder), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 },

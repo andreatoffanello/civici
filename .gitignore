@@ -20,8 +20,11 @@ ios/**/DerivedData/
 
 # Android
 android/.gradle/
+android/.kotlin/
 android/**/build/
 android/local.properties
+android/app/src/main/assets/civici.json
+android/app/src/main/res/font/nizioleti_regular.ttf
 
 # IDE
 .idea/
