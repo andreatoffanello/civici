@@ -11,26 +11,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val VeneziaOnPrimaryContainer = Color(0xFF410001)
-private val VeneziaDarkPrimary        = Color(0xFFFFB4A9)
-private val VeneziaDarkOnPrimary      = Color(0xFF690001)
-private val VeneziaDarkContainer      = Color(0xFF930001)
-
 private val LightColors = lightColorScheme(
-    primary            = VeneziaPrimary,
+    primary            = VeneziaPrimary,        // #C2452D — corallo veneziano
     onPrimary          = VeneziaOnPrimary,
     primaryContainer   = VeneziaContainer,
-    onPrimaryContainer = VeneziaOnPrimaryContainer,
+    onPrimaryContainer = Color(0xFF410001),
     background         = Color.White,
     surface            = Color.White,
     surfaceVariant     = Color(0xFFF5F5F5),
 )
 
 private val DarkColors = darkColorScheme(
-    primary            = VeneziaDarkPrimary,
-    onPrimary          = VeneziaDarkOnPrimary,
-    primaryContainer   = VeneziaDarkContainer,
+    primary            = VeneziaPrimaryDark,    // #E06D51 — corallo più chiaro in dark (come iOS)
+    onPrimary          = Color(0xFF1A0000),
+    primaryContainer   = Color(0xFF5A2010),
     onPrimaryContainer = VeneziaContainer,
+    background         = Color(0xFF121212),
+    surface            = Color(0xFF1E1E1E),
+    surfaceVariant     = Color(0xFF2A2A2A),
 )
 
 @Composable

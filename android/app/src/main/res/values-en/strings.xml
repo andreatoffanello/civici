@@ -15,9 +15,14 @@
     <string name="no_data_zona">Civic data not yet available for this area</string>
 
     <!-- ResultScreen -->
-    <string name="open_maps">Google Maps</string>
-    <string name="open_waze">Waze</string>
+    <string name="naviga">Navigate</string>
     <string name="share">Share</string>
+
+    <!-- StreetListScreen / StreetNumbersScreen -->
+    <string name="search_street_placeholder">Search a street…</string>
+    <string name="no_street_results">No street found for "%1$s"</string>
+    <string name="streets_count">%1$d streets</string>
+    <string name="civici_count">%1$d civic numbers</string>
 
     <!-- InfoScreen -->
     <string name="info_title">About</string>

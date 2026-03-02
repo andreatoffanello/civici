@@ -46,6 +46,7 @@ import app.dove.venezia.data.model.Sestiere
 import app.dove.venezia.data.model.ZonaNormale
 import app.dove.venezia.ui.theme.SotoportegoFontFamily
 import app.dove.venezia.ui.theme.VeneziaPrimary
+import androidx.compose.ui.graphics.luminance
 
 @Composable
 fun SestieriScreen(
@@ -128,13 +129,17 @@ fun SestieriScreen(
 
 @Composable
 private fun DoVeHeader() {
+    // In dark mode usa logo_dove_white (testo tutto bianco, elegante su sfondo scuro)
+    // In light usa logo_dove_alt (DO nero + VE terracotta)
+    val isDark  = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+    val logoRes = if (isDark) R.drawable.logo_dove_white else R.drawable.logo_dove_alt
+
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Logo ufficiale: DO nero / VE terracotta su sfondo trasparente
         Image(
-            painter = painterResource(R.drawable.logo_dove_alt),
+            painter = painterResource(logoRes),
             contentDescription = "DoVe",
             contentScale = ContentScale.Fit,
             modifier = Modifier.size(160.dp)

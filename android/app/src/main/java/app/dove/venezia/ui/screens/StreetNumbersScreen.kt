@@ -45,6 +45,8 @@ import app.dove.venezia.R
 import app.dove.venezia.data.model.ZonaNormale
 import app.dove.venezia.ui.theme.SotoportegoFontFamily
 import app.dove.venezia.ui.theme.VeneziaPrimary
+import app.dove.venezia.ui.theme.VeneziaPrimaryDark
+import androidx.compose.ui.graphics.luminance
 import app.dove.venezia.viewmodel.ZonaNormaleUiState
 import app.dove.venezia.viewmodel.ZonaNormaleViewModel
 import kotlinx.coroutines.launch
@@ -78,10 +80,10 @@ fun StreetNumbersScreen(
                             color         = accentColor.copy(alpha = 0.7f)
                         )
                         Text(
-                            text          = street,
+                            text          = street.uppercase(),
                             fontFamily    = SotoportegoFontFamily,
                             fontSize      = 16.sp,
-                            letterSpacing = 0.5.sp,
+                            letterSpacing = 1.sp,
                             color         = accentColor,
                             fontWeight    = FontWeight.Normal
                         )
@@ -126,7 +128,7 @@ fun StreetNumbersScreen(
                             items(state.items, key = { it }) { numero ->
                                 CivicoPillRow(
                                     numero      = numero,
-                                    accentColor = VeneziaPrimary,
+                                    accentColor = if (MaterialTheme.colorScheme.surface.luminance() < 0.5f) VeneziaPrimaryDark else VeneziaPrimary,
                                     onClick     = {
                                         scope.launch {
                                             val coord = viewModel.getCoordinate(zonaCode, street, numero)

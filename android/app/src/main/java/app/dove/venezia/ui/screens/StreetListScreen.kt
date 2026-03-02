@@ -1,5 +1,6 @@
 package app.dove.venezia.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +33,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,7 +55,6 @@ import app.dove.venezia.data.model.ZonaNormale
 import app.dove.venezia.ui.theme.SotoportegoFontFamily
 import app.dove.venezia.viewmodel.ZonaNormaleUiState
 import app.dove.venezia.viewmodel.ZonaNormaleViewModel
-import androidx.compose.foundation.Image
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,17 +78,17 @@ fun StreetListScreen(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         zona?.drawableRes?.let { res ->
-                            androidx.compose.foundation.Image(
-                                painter = painterResource(res),
+                            Image(
+                                painter      = painterResource(res),
                                 contentDescription = null,
-                                colorFilter = ColorFilter.tint(accentColor.copy(alpha = 0.7f)),
+                                colorFilter  = ColorFilter.tint(accentColor.copy(alpha = 0.7f)),
                                 contentScale = ContentScale.Fit,
-                                modifier = Modifier.size(32.dp)
+                                modifier     = Modifier.size(32.dp)
                             )
                             Spacer(Modifier.width(10.dp))
                         }
                         Text(
-                            text = (zona?.displayName ?: zonaCode).uppercase(),
+                            text          = (zona?.displayName ?: zonaCode).uppercase(),
                             fontFamily    = SotoportegoFontFamily,
                             fontSize      = 18.sp,
                             letterSpacing = 2.sp,
@@ -110,17 +109,19 @@ fun StreetListScreen(
 
             // Campo ricerca strade
             OutlinedTextField(
-                value          = query,
-                onValueChange  = viewModel::setQuery,
-                modifier       = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                placeholder    = { Text(stringResource(R.string.search_street_placeholder),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                leadingIcon    = {
+                value         = query,
+                onValueChange = viewModel::setQuery,
+                modifier      = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                placeholder   = {
+                    Text(stringResource(R.string.search_street_placeholder),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                },
+                leadingIcon   = {
                     Icon(Icons.Default.Search, contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint     = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 4.dp))
                 },
-                trailingIcon   = {
+                trailingIcon  = {
                     if (query.isNotEmpty()) {
                         IconButton(onClick = { viewModel.setQuery("") }) {
                             Icon(Icons.Default.Clear, contentDescription = null,
@@ -158,14 +159,14 @@ fun StreetListScreen(
                     } else {
                         if (query.isNotEmpty()) {
                             Text(
-                                text  = stringResource(R.string.streets_count, state.items.size),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                text     = stringResource(R.string.streets_count, state.items.size),
+                                style    = MaterialTheme.typography.labelMedium,
+                                color    = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp)
                             )
                         }
                         LazyColumn(
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            contentPadding      = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                             verticalArrangement = Arrangement.spacedBy(0.dp)
                         ) {
                             items(state.items, key = { it }) { street ->
@@ -194,7 +195,7 @@ fun StreetListScreen(
 @Composable
 private fun StreetRow(
     name: String,
-    accentColor: Color,
+    @Suppress("UNUSED_PARAMETER") accentColor: Color,
     onClick: () -> Unit
 ) {
     Surface(
@@ -202,18 +203,20 @@ private fun StreetRow(
         color   = Color.Transparent
     ) {
         Row(
-            modifier            = Modifier
+            modifier              = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 4.dp, vertical = 14.dp),
-            verticalAlignment   = Alignment.CenterVertically,
+            verticalAlignment     = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text       = name,
-                style      = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Normal,
-                color      = MaterialTheme.colorScheme.onSurface,
-                modifier   = Modifier.weight(1f)
+                text          = name.uppercase(),
+                fontFamily    = SotoportegoFontFamily,
+                fontSize      = 15.sp,
+                fontWeight    = FontWeight.Normal,
+                letterSpacing = 1.sp,
+                color         = MaterialTheme.colorScheme.onSurface,
+                modifier      = Modifier.weight(1f)
             )
             Icon(
                 Icons.AutoMirrored.Filled.KeyboardArrowRight,

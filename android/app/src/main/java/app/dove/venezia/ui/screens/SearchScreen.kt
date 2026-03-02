@@ -42,10 +42,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.border
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalFocusManager
@@ -60,6 +62,7 @@ import app.dove.venezia.data.model.Sestiere
 import app.dove.venezia.data.model.ZonaNormale
 import app.dove.venezia.ui.theme.SotoportegoFontFamily
 import app.dove.venezia.ui.theme.VeneziaPrimary
+import app.dove.venezia.ui.theme.VeneziaPrimaryDark
 import app.dove.venezia.viewmodel.SearchUiState
 import app.dove.venezia.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
@@ -75,8 +78,10 @@ fun SearchScreen(
     val sestiere = Sestiere.fromCode(sestiereCode)
     val zona = if (sestiere == null) ZonaNormale.fromCode(sestiereCode) else null
     val zonaDisplay = zona?.displayName
-    val accentColor = sestiere?.color ?: zona?.color ?: VeneziaPrimary
-    val pillColor = VeneziaPrimary   // pill sempre corallo, indipendente dal sestiere
+    val isDarkTheme = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+    val accentColor = sestiere?.color ?: zona?.color ?: if (isDarkTheme) VeneziaPrimaryDark else VeneziaPrimary
+    // Pill corallo: più chiaro in dark mode per migliore contrasto
+    val pillColor   = if (isDarkTheme) VeneziaPrimaryDark else VeneziaPrimary
     val uiState by viewModel.uiState.collectAsState()
     val query by viewModel.query.collectAsState()
     val scope = rememberCoroutineScope()
@@ -216,17 +221,30 @@ fun SearchScreen(
 }
 
 @Composable
-private fun CivicoPillRow(numero: String, accentColor: Color, onClick: () -> Unit) {
+internal fun CivicoPillRow(numero: String, accentColor: Color, onClick: () -> Unit) {
+    val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+    val shape  = RoundedCornerShape(12.dp)
+
     Row(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 4.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Pill arrotondata come iOS
         Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .background(accentColor.copy(alpha = 0.12f))
-                .padding(horizontal = 20.dp, vertical = 10.dp),
+            modifier = if (isDark) {
+                // Dark mode: bordo corallo definito + sfondo quasi trasparente + testo bianco
+                // Evita il brownish degradato dell'alpha-blend su nero
+                Modifier
+                    .clip(shape)
+                    .border(1.5.dp, accentColor.copy(alpha = 0.75f), shape)
+                    .background(accentColor.copy(alpha = 0.12f))
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
+            } else {
+                // Light mode: pill tinta leggera senza bordo (invariato)
+                Modifier
+                    .clip(shape)
+                    .background(accentColor.copy(alpha = 0.12f))
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
+            },
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -234,7 +252,8 @@ private fun CivicoPillRow(numero: String, accentColor: Color, onClick: () -> Uni
                 fontFamily = SotoportegoFontFamily,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Normal,
-                color = accentColor
+                // Dark: testo bianco (massimo contrasto), light: colore sestiere
+                color = if (isDark) Color.White else accentColor
             )
         }
         Spacer(Modifier.weight(1f))

@@ -3,9 +3,19 @@ package app.dove.venezia.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Accento primario — rosso veneziano terracotta
-val VeneziaPrimary   = Color(0xFFC2452D)
-val VeneziaOnPrimary = Color(0xFFFFFFFF)
-val VeneziaContainer = Color(0xFFFFDAD5)
+// Light: #C2452D  |  Dark: #E06D51 (più chiaro per leggibilità su sfondo scuro, come iOS)
+val VeneziaPrimary     = Color(0xFFC2452D)
+val VeneziaPrimaryDark = Color(0xFFE06D51)
+val VeneziaOnPrimary   = Color(0xFFFFFFFF)
+val VeneziaContainer   = Color(0xFFFFDAD5)
+
+// Nizioleto — light: bianco/nero  |  dark: caldo scuro / testo chiaro (come iOS)
+val NizioletoBgLight     = Color.White
+val NizioletoBgDark      = Color(0xFF2A2520)
+val NizioletoBorderLight = Color(0xFF2A2A2A)
+val NizioletoBorderDark  = Color(0xFFF0EBE0)
+val NizoletoTextLight    = Color(0xFF2A2A2A)
+val NizoletoTextDark     = Color(0xFFF0EBE0)
 
 // Sestieri — stessi hex dell'app iOS
 val Sestiere_Cannaregio  = Color(0xFF4A90B8)

@@ -15,9 +15,14 @@
     <string name="no_data_zona">Dati civici non ancora disponibili per questa zona</string>
 
     <!-- ResultScreen -->
-    <string name="open_maps">Google Maps</string>
-    <string name="open_waze">Waze</string>
+    <string name="naviga">Naviga</string>
     <string name="share">Condividi</string>
+
+    <!-- StreetListScreen / StreetNumbersScreen -->
+    <string name="search_street_placeholder">Cerca una strada…</string>
+    <string name="no_street_results">Nessuna strada trovata per "%1$s"</string>
+    <string name="streets_count">%1$d strade</string>
+    <string name="civici_count">%1$d civici</string>
 
     <!-- InfoScreen -->
     <string name="info_title">Informazioni</string>

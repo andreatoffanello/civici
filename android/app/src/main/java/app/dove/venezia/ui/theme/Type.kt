@@ -8,53 +8,56 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import app.dove.venezia.R
 
-// Font Sotoportego — serif veneziano, usato per nomi sestieri e logo
-// NOTA: in iOS era CCXLKSNizioleti-Regular, aggiornato a Sotoportego.otf
-// che è il font serif elegante usato nell'app iOS definitiva
+// Font Sotoportego — serif veneziano, usato SOLO per:
+// 1. Label sestieri/zone nell'elenco SestieriScreen
+// 2. TopBar quando si ricerca (SearchScreen, StreetListScreen, StreetNumbersScreen)
+// 3. Nomi via nella lista strade (StreetListScreen)
+// 4. Numeri civici nella lista (SearchScreen pill, StreetNumbersScreen)
+// 5. Nizioleto nella schermata mappa (ResultScreen)
+// Tutto il resto → FontFamily.Default (sistema)
 val SotoportegoFontFamily = FontFamily(
     Font(R.font.sotoportego, FontWeight.Normal)
 )
 
-// Alias per retrocompatibilità con codice che usa NizioletiFontFamily
+// Alias per retrocompatibilità
 val NizioletiFontFamily = SotoportegoFontFamily
 
 val DoVeTypography = Typography(
-    // Splash / logo DoVe grande
+    // Splash logo — immagine, non testo; tenuto system font per sicurezza
     displayLarge = TextStyle(
-        fontFamily    = SotoportegoFontFamily,
+        fontFamily    = FontFamily.Default,
         fontWeight    = FontWeight.Normal,
         fontSize      = 72.sp,
         lineHeight    = 80.sp,
         letterSpacing = 4.sp
     ),
-    // Numero civico nel risultato / heading principale
     headlineLarge = TextStyle(
-        fontFamily  = SotoportegoFontFamily,
+        fontFamily  = FontFamily.Default,
         fontWeight  = FontWeight.Normal,
         fontSize    = 36.sp,
         lineHeight  = 44.sp
     ),
-    // Nome sestiere nella lista (grande, colorato)
+    // Usato in InfoScreen titoli sezione → sistema
     titleLarge = TextStyle(
-        fontFamily    = SotoportegoFontFamily,
-        fontWeight    = FontWeight.Normal,
-        fontSize      = 26.sp,
-        lineHeight    = 32.sp,
-        letterSpacing = 2.sp
+        fontFamily    = FontFamily.Default,
+        fontWeight    = FontWeight.SemiBold,
+        fontSize      = 20.sp,
+        lineHeight    = 28.sp,
+        letterSpacing = 0.sp
     ),
-    // Nome sestiere nella topbar / header sezione
+    // Usato in SettingsScreen sezioni → sistema
     titleMedium = TextStyle(
-        fontFamily    = SotoportegoFontFamily,
-        fontWeight    = FontWeight.Normal,
-        fontSize      = 18.sp,
+        fontFamily    = FontFamily.Default,
+        fontWeight    = FontWeight.Medium,
+        fontSize      = 16.sp,
         lineHeight    = 24.sp,
-        letterSpacing = 1.5.sp
+        letterSpacing = 0.15.sp
     ),
-    // Numero civico nella pill (bold, terracotta)
+    // Usato in RadioButton labels, ecc. → sistema
     bodyLarge = TextStyle(
-        fontFamily    = SotoportegoFontFamily,
+        fontFamily    = FontFamily.Default,
         fontWeight    = FontWeight.Normal,
-        fontSize      = 17.sp,
+        fontSize      = 16.sp,
         lineHeight    = 24.sp,
         letterSpacing = 0.5.sp
     ),
