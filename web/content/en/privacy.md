@@ -26,7 +26,12 @@ The app may request access to the device's GPS location **solely** to display yo
 
 ## 4. Third-Party Services
 
-DoVe uses **Apple MapKit** for map display. MapKit is managed by Apple Inc. and subject to [Apple's Privacy Policy](https://www.apple.com/legal/privacy/). We do not use any other third-party SDKs.
+For map display, DoVe uses the following services depending on the platform:
+
+- **iOS**: Apple MapKit, managed by Apple Inc. and subject to [Apple's Privacy Policy](https://www.apple.com/legal/privacy/).
+- **Android**: MapLibre Native with map tiles provided by [OpenFreeMap](https://openfreemap.org) (an open-source project). Tiles are downloaded from public servers solely to render the map; no personal data is transmitted.
+
+We do not use any other third-party SDKs.
 
 ## 5. Analytics and Tracking
 
