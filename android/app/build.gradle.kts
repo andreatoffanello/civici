@@ -7,6 +7,12 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+// Legge keystore.properties (escluso da git)
+val keystoreProps = Properties().also { props ->
+    val f = rootProject.file("keystore.properties")
+    if (f.exists()) props.load(f.inputStream())
+}
+
 android {
     namespace = "app.dove.venezia"
     compileSdk = 35
@@ -23,23 +29,18 @@ android {
 
     signingConfigs {
         create("release") {
-            val props = rootProject.file("local.properties")
-            if (props.exists()) {
-                val localProps = Properties()
-                props.inputStream().use { stream -> localProps.load(stream) }
-                storeFile     = localProps.getProperty("RELEASE_STORE_FILE")?.let { file(it) }
-                storePassword = localProps.getProperty("RELEASE_STORE_PASSWORD")
-                keyAlias      = localProps.getProperty("RELEASE_KEY_ALIAS")
-                keyPassword   = localProps.getProperty("RELEASE_KEY_PASSWORD")
-            }
+            storeFile     = file(keystoreProps["storeFile"] as String)
+            storePassword = keystoreProps["storePassword"] as String
+            keyAlias      = keystoreProps["keyAlias"] as String
+            keyPassword   = keystoreProps["keyPassword"] as String
         }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled   = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig     = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -94,7 +95,4 @@ dependencies {
 
     // Maps
     implementation(libs.maplibre.android)
-
-    // DataStore
-    implementation(libs.datastore.preferences)
 }

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -55,7 +55,7 @@
 		2B1B6B4DD4A92C57A7362666 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2D500652DEC0DB8A40F14A3B /* DoVeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoVeApp.swift; sourceTree = "<group>"; };
 		3B29367A4C01701FD0DC4A00 /* CivicoRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CivicoRow.swift; sourceTree = "<group>"; };
-		52CCE6950C0DC119822DE03C /* DoVe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DoVe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		52CCE6950C0DC119822DE03C /* DoVe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoVe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5731BE7E9A1EEEC1C58F98FD /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
 		57DEE968C2FAF4248F32662C /* ZonaNormale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonaNormale.swift; sourceTree = "<group>"; };
 		5A11298FBE0618A8CCE0E141 /* GlassCompat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCompat.swift; sourceTree = "<group>"; };
@@ -67,7 +67,7 @@
 		835064C2EAAEA0691895BF3F /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		83E337F917E5E60EF8D2E03D /* SestiereCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SestiereCard.swift; sourceTree = "<group>"; };
 		882126E98EC6E1622625244D /* SestieriView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SestieriView.swift; sourceTree = "<group>"; };
-		8CA4D09667862999C25BA6D8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		8CA4D09667862999C25BA6D8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		8EED5CA726C02686B803F1F7 /* civici_backup.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = civici_backup.json; sourceTree = "<group>"; };
 		9D32D2824BAE66DF152FE777 /* CCXLKSNizioleti-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CCXLKSNizioleti-Regular.ttf"; sourceTree = "<group>"; };
 		9F012F4FBB670C0F5D2910A5 /* Sestiere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sestiere.swift; sourceTree = "<group>"; };
@@ -258,7 +258,6 @@
 			);
 			mainGroup = AA7023493B5E3C2B78931BD5;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -386,6 +385,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = R56VCP5L45;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DoVe/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DoVe;
@@ -477,6 +477,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = R56VCP5L45;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DoVe/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DoVe;

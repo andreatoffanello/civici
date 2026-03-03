@@ -12,23 +12,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val LightColors = lightColorScheme(
-    primary            = VeneziaPrimary,        // #C2452D — corallo veneziano
-    onPrimary          = VeneziaOnPrimary,
-    primaryContainer   = VeneziaContainer,
-    onPrimaryContainer = Color(0xFF410001),
-    background         = Color.White,
-    surface            = Color.White,
-    surfaceVariant     = Color(0xFFF5F5F5),
+    primary               = VeneziaPrimary,        // #C2452D — corallo veneziano
+    onPrimary             = VeneziaOnPrimary,
+    primaryContainer      = VeneziaContainer,
+    onPrimaryContainer    = Color(0xFF410001),
+    // NavigationBar indicator
+    secondaryContainer    = VeneziaContainer,      // #FFDAD5 — sfondo indicatore selezionato
+    onSecondaryContainer  = Color(0xFF5A1200),     // icona/label selezionata
+    background            = Color.White,
+    surface               = Color.White,
+    surfaceVariant        = Color(0xFFF5F5F5),
 )
 
 private val DarkColors = darkColorScheme(
-    primary            = VeneziaPrimaryDark,    // #E06D51 — corallo più chiaro in dark (come iOS)
-    onPrimary          = Color(0xFF1A0000),
-    primaryContainer   = Color(0xFF7A3520),  // schiarito per migliore contrasto WCAG
-    onPrimaryContainer = VeneziaContainer,
-    background         = Color(0xFF121212),
-    surface            = Color(0xFF1E1E1E),
-    surfaceVariant     = Color(0xFF2A2A2A),
+    primary               = VeneziaPrimaryDark,    // #E06D51 — corallo più chiaro in dark (come iOS)
+    onPrimary             = Color(0xFF1A0000),
+    primaryContainer      = Color(0xFF5A2010),
+    onPrimaryContainer    = VeneziaContainer,
+    // NavigationBar indicator
+    secondaryContainer    = Color(0xFF5A2010),     // sfondo indicatore selezionato
+    onSecondaryContainer  = VeneziaContainer,      // icona/label selezionata
+    background            = Color(0xFF121212),
+    surface               = Color(0xFF1E1E1E),
+    surfaceVariant        = Color(0xFF2A2A2A),
 )
 
 @Composable

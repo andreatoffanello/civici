@@ -1,9 +1,12 @@
 package app.dove.venezia.ui.screens
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,10 +14,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
@@ -27,18 +31,23 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.dove.venezia.R
@@ -46,7 +55,6 @@ import app.dove.venezia.data.model.Sestiere
 import app.dove.venezia.data.model.ZonaNormale
 import app.dove.venezia.ui.theme.SotoportegoFontFamily
 import app.dove.venezia.ui.theme.VeneziaPrimary
-import androidx.compose.ui.graphics.luminance
 
 @Composable
 fun SestieriScreen(
@@ -97,11 +105,12 @@ fun SestieriScreen(
                 )
             }
 
-            items(Sestiere.entries) { sestiere ->
+            itemsIndexed(Sestiere.entries) { idx, sestiere ->
                 SestiereRow(
                     name = sestiere.displayName,
                     color = sestiere.color,
                     silhouetteRes = sestiere.drawableRes,
+                    index = idx,
                     onClick = { onSestiereSelected(sestiere.code) }
                 )
                 HorizontalDivider(
@@ -111,14 +120,16 @@ fun SestieriScreen(
             }
 
             item { SectionLabel(stringResource(R.string.zone_centro_title)) }
-            items(ZonaNormale.zoneCentro) { zona ->
-                SestiereRow(name = zona.displayName, color = zona.color, silhouetteRes = zona.drawableRes, onClick = { onZonaSelected(zona.code) })
+            val sestieriCount = Sestiere.entries.size + 1
+            itemsIndexed(ZonaNormale.zoneCentro) { idx, zona ->
+                SestiereRow(name = zona.displayName, color = zona.color, silhouetteRes = zona.drawableRes, index = sestieriCount + idx, onClick = { onZonaSelected(zona.code) })
                 HorizontalDivider(modifier = Modifier.padding(start = 20.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
             }
 
             item { SectionLabel(stringResource(R.string.isole_title)) }
-            items(ZonaNormale.isole) { zona ->
-                SestiereRow(name = zona.displayName, color = zona.color, silhouetteRes = zona.drawableRes, onClick = { onZonaSelected(zona.code) })
+            val isoleBase = sestieriCount + ZonaNormale.zoneCentro.size + 1
+            itemsIndexed(ZonaNormale.isole) { idx, zona ->
+                SestiereRow(name = zona.displayName, color = zona.color, silhouetteRes = zona.drawableRes, index = isoleBase + idx, onClick = { onZonaSelected(zona.code) })
                 HorizontalDivider(modifier = Modifier.padding(start = 20.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
             }
 
@@ -169,10 +180,39 @@ private fun SestiereRow(
     name: String,
     color: Color,
     @DrawableRes silhouetteRes: Int?,
+    index: Int,
     onClick: () -> Unit
 ) {
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { visible = true }
+
+    val baseDelay = index * 55
+
+    // Row-level fade
+    val alpha by animateFloatAsState(
+        targetValue   = if (visible) 1f else 0f,
+        animationSpec = tween(durationMillis = 380, delayMillis = baseDelay, easing = FastOutSlowInEasing),
+        label         = "alpha_$index"
+    )
+    // Text slides in from left
+    val textOffsetX: Dp by animateDpAsState(
+        targetValue   = if (visible) 0.dp else (-28).dp,
+        animationSpec = tween(durationMillis = 380, delayMillis = baseDelay, easing = FastOutSlowInEasing),
+        label         = "textX_$index"
+    )
+    // Silhouette slides in from right, slightly later
+    val imgOffsetX: Dp by animateDpAsState(
+        targetValue   = if (visible) 0.dp else 28.dp,
+        animationSpec = tween(durationMillis = 380, delayMillis = baseDelay + 60, easing = FastOutSlowInEasing),
+        label         = "imgX_$index"
+    )
+
     Row(
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 20.dp, vertical = 14.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .alpha(alpha)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 20.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -182,7 +222,9 @@ private fun SestiereRow(
             fontSize = 22.sp,
             letterSpacing = 2.sp,
             color = color,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .offset(x = textOffsetX)
         )
         if (silhouetteRes != null) {
             Image(
@@ -190,7 +232,9 @@ private fun SestiereRow(
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(color.copy(alpha = 0.55f)),
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.size(54.dp)
+                modifier = Modifier
+                    .size(54.dp)
+                    .offset(x = imgOffsetX)
             )
         }
     }

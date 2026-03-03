@@ -93,7 +93,10 @@ fun SearchScreen(
     val focusRequester = FocusRequester()
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(sestiereCode) { viewModel.loadSestiere(sestiereCode) }
+    LaunchedEffect(sestiereCode) {
+        viewModel.loadSestiere(sestiereCode)
+        focusManager.clearFocus()
+    }
 
     // Focus automatico sul campo di ricerca + apertura tastiera
     LaunchedEffect(Unit) {

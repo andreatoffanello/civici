@@ -4,16 +4,9 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.RectF
-import android.graphics.Typeface
 import android.location.Location
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -52,13 +45,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -75,8 +67,6 @@ import app.dove.venezia.data.model.ZonaNormale
 import app.dove.venezia.ui.theme.SotoportegoFontFamily
 import app.dove.venezia.ui.theme.VeneziaPrimary
 import app.dove.venezia.ui.theme.VeneziaPrimaryDark
-import com.google.gson.JsonObject
-import com.google.gson.JsonArray
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.camera.CameraUpdateFactory
@@ -91,97 +81,17 @@ import org.maplibre.android.style.expressions.Expression
 import org.maplibre.android.style.layers.FillExtrusionLayer
 import org.maplibre.android.style.layers.Property
 import org.maplibre.android.style.layers.PropertyFactory
-import org.maplibre.android.style.layers.SymbolLayer
-import org.maplibre.android.style.sources.GeoJsonSource
+import kotlin.math.roundToInt
 
-// ─── Stili mappa ─────────────────────────────────────────────────────────────
-// Light: OpenFreeMap Liberty (dettagliato, colori caldi)
-// Dark: CartoDB Dark Matter (scuro ma leggibile, ottimo contrasto label)
-private const val OPENFREEMAP_STYLE      = "https://tiles.openfreemap.org/styles/liberty"
-private const val OPENFREEMAP_STYLE_DARK = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
+private const val OPENFREEMAP_STYLE      = "https://tiles.openfreemap.org/styles/positron"
+private const val OPENFREEMAP_STYLE_DARK = "https://tiles.openfreemap.org/styles/dark"
 private const val ZOOM_LEVEL        = 17.0
 private const val TILT_3D           = 45.0
 private const val TILT_2D           = 0.0
 
-// Source & layer IDs per il marker (SymbolLayer sopra gli edifici 3D)
-private const val MARKER_SOURCE_ID = "marker-source"
-private const val MARKER_LAYER_ID  = "marker-layer"
-private const val MARKER_ICON_ID   = "marker-icon"
-
-// ─── Marker bitmap ────────────────────────────────────────────────────────────
-
-private fun buildMarkerBitmap(
-    numero: String,
-    distanceText: String?,
-    accentArgb: Int
-): Bitmap {
-    val density      = 3f
-    val cornerRadius = 12f * density
-    val paddingH     = 16f * density
-    val paddingV     = 10f * density
-    val arrowHeight  = 10f * density
-    val arrowWidth   = 14f * density
-
-    val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color    = android.graphics.Color.WHITE
-        typeface = Typeface.DEFAULT_BOLD
-        textSize = 15f * density
-    }
-    val subPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color    = android.graphics.Color.WHITE
-        typeface = Typeface.DEFAULT
-        textSize = 10f * density
-        alpha    = 220
-    }
-
-    val textW  = textPaint.measureText(numero)
-    val subW   = if (distanceText != null) subPaint.measureText(distanceText) else 0f
-    val bodyW  = maxOf(textW, subW) + paddingH * 2
-    val bodyH  = if (distanceText != null)
-        paddingV + textPaint.textSize + 4f * density + subPaint.textSize + paddingV
-    else
-        paddingV + textPaint.textSize + paddingV
-    val totalH = bodyH + arrowHeight
-
-    val bmp     = Bitmap.createBitmap(bodyW.toInt(), totalH.toInt(), Bitmap.Config.ARGB_8888)
-    val canvas  = Canvas(bmp)
-    val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = accentArgb }
-
-    canvas.drawRoundRect(RectF(0f, 0f, bodyW, bodyH), cornerRadius, cornerRadius, bgPaint)
-    val arrowPath = Path().apply {
-        moveTo(bodyW / 2f - arrowWidth / 2f, bodyH)
-        lineTo(bodyW / 2f + arrowWidth / 2f, bodyH)
-        lineTo(bodyW / 2f, totalH)
-        close()
-    }
-    canvas.drawPath(arrowPath, bgPaint)
-    canvas.drawText(numero, (bodyW - textW) / 2f, paddingV + textPaint.textSize, textPaint)
-    if (distanceText != null) {
-        val subY = paddingV + textPaint.textSize + 4f * density + subPaint.textSize
-        canvas.drawText(distanceText, (bodyW - subW) / 2f, subY, subPaint)
-    }
-    return bmp
-}
-
 private fun formatDistance(meters: Float): String = when {
     meters < 1000f -> "%.0f m".format(meters)
     else           -> "%.1f km".format(meters / 1000f)
-}
-
-/** Costruisce un GeoJSON Point per il marker */
-private fun buildGeoJsonPoint(lat: Double, lng: Double): String {
-    val geometry = JsonObject().apply {
-        addProperty("type", "Point")
-        add("coordinates", JsonArray().apply {
-            add(lng)
-            add(lat)
-        })
-    }
-    return JsonObject().apply {
-        addProperty("type", "Feature")
-        add("geometry", geometry)
-        add("properties", JsonObject())
-    }.toString()
 }
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
@@ -201,114 +111,63 @@ fun ResultScreen(
     val zona           = if (sestiere == null) ZonaNormale.fromCode(sestiereCode) else null
     val displayName    = sestiere?.displayName ?: zona?.displayName ?: sestiereCode
 
-    // Dark mode: stile mappa adattivo, marker corallo corretto
     val isDark       = MaterialTheme.colorScheme.surface.luminance() < 0.5f
     val primaryColor = if (isDark) VeneziaPrimaryDark else VeneziaPrimary
     val mapStyleUrl  = if (isDark) OPENFREEMAP_STYLE_DARK else OPENFREEMAP_STYLE
-    val markerArgb   = primaryColor.toArgb()
 
-    // ── Colori pulsanti: bianco in light, scuro traslucido in dark ──────────
-    val btnBg   = if (isDark) Color.Black.copy(alpha = 0.50f) else Color.White.copy(alpha = 0.92f)
-    val btnTint = if (isDark) Color.White else Color(0xFF333333)
+    // Nizioleto card: sempre stile nizioleto (bianco/nero)
+    val nizBg     = Color.White
+    val nizBorder = Color(0xFF2A2A2A)
+    val nizText   = Color(0xFF2A2A2A)
 
-    // Nizioleto: adattivo — sfondo chiaro in light, scuro in dark (come iOS)
-    val nizBg     = if (isDark) Color(0xFF2A2520) else Color.White
-    val nizBorder = if (isDark) Color(0xFF8A8078) else Color(0xFF2A2A2A)
-    val nizText   = if (isDark) Color(0xFFF0EBE0) else Color(0xFF2A2A2A)
+    // Pulsanti mappa: adattivi al tema
+    val btnSurface  = if (isDark) Color.Black.copy(alpha = 0.45f) else Color.White.copy(alpha = 0.85f)
+    val btnContent  = if (isDark) Color.White else Color(0xFF1A1A1A)
+
+    // Vignette: adattiva al tema
+    val vigColor = MaterialTheme.colorScheme.surface
 
     var is3D           by remember { mutableStateOf(true) }
     var styleReady     by remember { mutableStateOf(false) }
     var mapRef         by remember { mutableStateOf<MapLibreMap?>(null) }
     val setupInitiated = remember { java.util.concurrent.atomic.AtomicBoolean(false) }
-    var distanceText      by remember { mutableStateOf<String?>(null) }
-    var locationGranted   by remember { mutableStateOf(
-        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ==
-            PackageManager.PERMISSION_GRANTED
-    ) }
+    var distanceText   by remember { mutableStateOf<String?>(null) }
 
-    // Richiesta permesso location a runtime
-    val locationLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        locationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-                          permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-    }
+    // Posizione marker sullo schermo (pixel device) — guida l'overlay Compose
+    var markerPx by remember { mutableStateOf<Pair<Float, Float>?>(null) }
 
-    // Chiedi permesso al primo avvio se non ancora concesso
+    // Calcola distanza utente → civico
     LaunchedEffect(Unit) {
-        if (!locationGranted) {
-            locationLauncher.launch(arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ))
-        }
-    }
-
-    // Calcola distanza utente → civico (ri-eseguito quando il permesso viene concesso)
-    LaunchedEffect(locationGranted) {
-        if (!locationGranted) return@LaunchedEffect
-        val lm = context.getSystemService(android.content.Context.LOCATION_SERVICE)
-            as android.location.LocationManager
-        val provider = if (lm.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER))
-            android.location.LocationManager.GPS_PROVIDER
-        else android.location.LocationManager.NETWORK_PROVIDER
-        @SuppressLint("MissingPermission")
-        val loc: Location? = lm.getLastKnownLocation(provider)
-        if (loc != null) {
-            val r = FloatArray(1)
-            Location.distanceBetween(loc.latitude, loc.longitude, lat, lng, r)
-            distanceText = formatDistance(r[0])
-        }
-    }
-
-    // (Re)aggiunge marker via SymbolLayer (sopra gli edifici 3D)
-    LaunchedEffect(styleReady, distanceText) {
-        if (!styleReady) return@LaunchedEffect
-        val map = mapRef ?: return@LaunchedEffect
-        map.getStyle { style ->
-            val bmp = buildMarkerBitmap(numero, distanceText, markerArgb)
-            style.addImage(MARKER_ICON_ID, bmp)
-
-            // Rimuovi layer/source precedente se esistono (aggiornamento distanza)
-            style.getLayer(MARKER_LAYER_ID)?.let { style.removeLayer(it) }
-            style.getSource(MARKER_SOURCE_ID)?.let { style.removeSource(it) }
-
-            // Aggiunge source GeoJSON + SymbolLayer (renderizzato sopra tutto)
-            style.addSource(GeoJsonSource(MARKER_SOURCE_ID, buildGeoJsonPoint(lat, lng)))
-            style.addLayer(
-                SymbolLayer(MARKER_LAYER_ID, MARKER_SOURCE_ID).apply {
-                    setProperties(
-                        PropertyFactory.iconImage(MARKER_ICON_ID),
-                        PropertyFactory.iconAllowOverlap(true),
-                        PropertyFactory.iconIgnorePlacement(true),
-                        PropertyFactory.iconAnchor(Property.ICON_ANCHOR_BOTTOM),
-                        PropertyFactory.iconOffset(arrayOf(0f, 0f))
-                    )
-                }
-            )
-        }
-    }
-
-    // Attiva location sulla mappa quando il permesso viene concesso dopo il setup
-    LaunchedEffect(locationGranted, styleReady) {
-        if (!locationGranted || !styleReady) return@LaunchedEffect
-        val map = mapRef ?: return@LaunchedEffect
-        map.getStyle { style ->
-            if (!map.locationComponent.isLocationComponentActivated) {
-                @Suppress("MissingPermission")
-                map.locationComponent.let { lc ->
-                    lc.activateLocationComponent(
-                        LocationComponentActivationOptions
-                            .builder(context, style)
-                            .useDefaultLocationEngine(true)
-                            .build()
-                    )
-                    lc.isLocationComponentEnabled = true
-                    lc.cameraMode  = CameraMode.NONE
-                    lc.renderMode  = RenderMode.COMPASS
-                }
+        if (ContextCompat.checkSelfPermission(
+                context, Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val lm = context.getSystemService(android.content.Context.LOCATION_SERVICE)
+                as android.location.LocationManager
+            val provider = if (lm.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER))
+                android.location.LocationManager.GPS_PROVIDER
+            else android.location.LocationManager.NETWORK_PROVIDER
+            @SuppressLint("MissingPermission")
+            val loc: Location? = lm.getLastKnownLocation(provider)
+            if (loc != null) {
+                val r = FloatArray(1)
+                Location.distanceBetween(loc.latitude, loc.longitude, lat, lng, r)
+                distanceText = formatDistance(r[0])
             }
         }
+    }
+
+    // Aggiorna posizione schermo del marker quando lo stile è pronto o la camera si muove
+    LaunchedEffect(styleReady) {
+        if (!styleReady) return@LaunchedEffect
+        val map = mapRef ?: return@LaunchedEffect
+        fun updatePos() {
+            val pt = map.projection.toScreenLocation(LatLng(lat, lng))
+            markerPx = Pair(pt.x, pt.y)
+        }
+        updatePos()
+        map.addOnCameraMoveListener { updatePos() }
+        map.addOnCameraIdleListener { updatePos() }
     }
 
     MapLibre.getInstance(context)
@@ -341,14 +200,11 @@ fun ResultScreen(
                         mapRef = map
                         map.setStyle(Style.Builder().fromUri(mapStyleUrl)) { style ->
 
-                            // Layer edifici 3D — colori più caldi come iOS
-                            // OpenFreeMap usa "openmaptiles", CartoDB usa "carto"
+                            // Layer edifici 3D
                             try {
-                                val extrusionColor = if (isDark) "#3A3530" else "#DDD5CC"
-                                val extrusionOpacity = if (isDark) 0.8f else 0.75f
-                                val vectorSourceId = if (isDark) "carto" else "openmaptiles"
+                                val extrusionColor = if (isDark) "#3A3530" else "#C8C0B8"
                                 style.addLayer(
-                                    FillExtrusionLayer("3d-buildings", vectorSourceId).apply {
+                                    FillExtrusionLayer("3d-buildings", "openmaptiles").apply {
                                         setSourceLayer("building")
                                         setProperties(
                                             PropertyFactory.fillExtrusionColor(extrusionColor),
@@ -364,14 +220,17 @@ fun ResultScreen(
                                                     Expression.literal(0)
                                                 )
                                             ),
-                                            PropertyFactory.fillExtrusionOpacity(extrusionOpacity)
+                                            PropertyFactory.fillExtrusionOpacity(0.7f)
                                         )
                                     }
                                 )
-                            } catch (_: Exception) { /* source non disponibile */ }
+                            } catch (_: Exception) { }
 
-                            // Posizione utente (attivata solo se permesso concesso)
-                            if (locationGranted) {
+                            // Posizione utente
+                            if (ContextCompat.checkSelfPermission(
+                                    context, Manifest.permission.ACCESS_FINE_LOCATION
+                                ) == PackageManager.PERMISSION_GRANTED
+                            ) {
                                 @Suppress("MissingPermission")
                                 map.locationComponent.let { lc ->
                                     lc.activateLocationComponent(
@@ -398,29 +257,79 @@ fun ResultScreen(
             }
         )
 
-        // ── Vignettatura radiale adattiva (come iOS) ────────────────────────
-        val vignetteColor = if (isDark) Color.Black else Color.White
-        val vignetteAlpha = if (isDark) 0.40f else 0.50f
+        // ── Vignettatura adattiva al tema ──────────────────────────────────────
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .drawBehind {
-                    drawRect(
-                        brush = Brush.radialGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                vignetteColor.copy(alpha = vignetteAlpha * 0.6f),
-                                vignetteColor.copy(alpha = vignetteAlpha)
-                            ),
-                            center = Offset(size.width / 2f, size.height / 2f),
-                            radius = size.maxDimension / 1.6f
-                        ),
-                        size = size
-                    )
-                }
+            modifier = Modifier.fillMaxSize().background(
+                Brush.verticalGradient(
+                    0f    to vigColor.copy(alpha = 0.80f),
+                    0.22f to vigColor.copy(alpha = 0.20f),
+                    0.30f to Color.Transparent,
+                    0.62f to Color.Transparent,
+                    0.76f to vigColor.copy(alpha = 0.30f),
+                    1f    to vigColor.copy(alpha = 0.90f)
+                )
+            )
         )
 
-        // ── Nizioleto (top center) ──────────────────────────────────────────
+        // ── Marker overlay (sempre sopra gli edifici) ─────────────────────────
+        markerPx?.let { (px, py) ->
+            Column(
+                modifier = Modifier
+                    .layout { measurable, constraints ->
+                        val placeable = measurable.measure(
+                            constraints.copy(minWidth = 0, minHeight = 0)
+                        )
+                        layout(constraints.maxWidth, constraints.maxHeight) {
+                            placeable.place(
+                                x = px.roundToInt() - placeable.width / 2,
+                                y = py.roundToInt() - placeable.height
+                            )
+                        }
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Bubble
+                Box(
+                    modifier = Modifier
+                        .background(primaryColor, RoundedCornerShape(10.dp))
+                        .padding(horizontal = 14.dp, vertical = 7.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text       = numero,
+                            fontFamily = SotoportegoFontFamily,
+                            fontSize   = 18.sp,
+                            color      = Color.White,
+                            fontWeight = FontWeight.Normal
+                        )
+                        distanceText?.let {
+                            Text(
+                                text  = it,
+                                color = Color.White.copy(alpha = 0.85f),
+                                fontSize = 10.sp,
+                                modifier = Modifier.padding(top = 1.dp)
+                            )
+                        }
+                    }
+                }
+                // Freccia
+                val arrowColor = primaryColor
+                Canvas(modifier = Modifier.size(width = 14.dp, height = 8.dp)) {
+                    drawPath(
+                        path = Path().apply {
+                            moveTo(0f, 0f)
+                            lineTo(size.width, 0f)
+                            lineTo(size.width / 2f, size.height)
+                            close()
+                        },
+                        color = arrowColor
+                    )
+                }
+            }
+        }
+
+        // ── Nizioleto (top center) ─────────────────────────────────────────────
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -461,26 +370,26 @@ fun ResultScreen(
             }
         }
 
-        // ── Back (top left) ─────────────────────────────────────────────────
+        // ── Back (top left) ───────────────────────────────────────────────────
         MapCircleButton(
+            surface  = btnSurface,
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .statusBarsPadding()
                 .padding(12.dp),
-            backgroundColor = btnBg,
             onClick  = onBack
         ) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = btnTint,
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = btnContent,
                 modifier = Modifier.size(20.dp))
         }
 
-        // ── Share (top right) ───────────────────────────────────────────────
+        // ── Share (top right) ─────────────────────────────────────────────────
         MapCircleButton(
+            surface  = btnSurface,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .statusBarsPadding()
                 .padding(12.dp),
-            backgroundColor = btnBg,
             onClick  = {
                 val shareText = "$displayName $numero\ngeo:$lat,$lng"
                 context.startActivity(
@@ -493,11 +402,11 @@ fun ResultScreen(
                 )
             }
         ) {
-            Icon(Icons.Default.Share, null, tint = btnTint,
+            Icon(Icons.Default.Share, null, tint = btnContent,
                 modifier = Modifier.size(20.dp))
         }
 
-        // ── Bottom: controlli mappa (sinistra) + pulsante Naviga ────────────
+        // ── Bottom: controlli mappa + pulsante Naviga ─────────────────────────
         Row(
             modifier              = Modifier
                 .align(Alignment.BottomStart)
@@ -507,11 +416,10 @@ fun ResultScreen(
             verticalAlignment     = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Colonna sinistra: controlli mappa
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
 
                 // 2D / 3D toggle
-                MapCircleButton(backgroundColor = btnBg, onClick = {
+                MapCircleButton(surface = btnSurface, onClick = {
                     val next = !is3D
                     is3D = next
                     mapRef?.animateCamera(
@@ -531,12 +439,12 @@ fun ResultScreen(
                         } catch (_: Exception) { }
                     }
                 }) {
-                    Text(if (is3D) "2D" else "3D", color = btnTint,
+                    Text(if (is3D) "2D" else "3D", color = btnContent,
                         fontSize = 13.sp, fontWeight = FontWeight.Bold)
                 }
 
                 // Centra sul civico
-                MapCircleButton(backgroundColor = btnBg, onClick = {
+                MapCircleButton(surface = btnSurface, onClick = {
                     mapRef?.animateCamera(
                         CameraUpdateFactory.newCameraPosition(
                             CameraPosition.Builder()
@@ -545,12 +453,12 @@ fun ResultScreen(
                         ), 600
                     )
                 }) {
-                    Icon(Icons.Default.MyLocation, null, tint = btnTint,
+                    Icon(Icons.Default.MyLocation, null, tint = btnContent,
                         modifier = Modifier.size(20.dp))
                 }
 
                 // Orienta verso nord
-                MapCircleButton(backgroundColor = btnBg, onClick = {
+                MapCircleButton(surface = btnSurface, onClick = {
                     mapRef?.animateCamera(
                         CameraUpdateFactory.newCameraPosition(
                             CameraPosition.Builder()
@@ -560,12 +468,12 @@ fun ResultScreen(
                         ), 600
                     )
                 }) {
-                    Icon(Icons.Default.Explore, null, tint = btnTint,
+                    Icon(Icons.Default.Explore, null, tint = btnContent,
                         modifier = Modifier.size(20.dp))
                 }
             }
 
-            // Pulsante Naviga — adattivo light/dark
+            // Pulsante Naviga
             Button(
                 onClick = {
                     val uri = Uri.parse("geo:$lat,$lng?q=$lat,$lng($displayName $numero)")
@@ -576,9 +484,8 @@ fun ResultScreen(
                     .height(52.dp),
                 shape  = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isDark) Color(0xFF2A2A2A).copy(alpha = 0.85f)
-                                     else Color.White.copy(alpha = 0.92f),
-                    contentColor   = if (isDark) Color.White else Color(0xFF333333)
+                    containerColor = primaryColor,
+                    contentColor   = Color.White
                 )
             ) {
                 Icon(Icons.Default.Navigation, null, modifier = Modifier.size(18.dp))
@@ -593,19 +500,18 @@ fun ResultScreen(
     }
 }
 
-// ─── Bottone cerchio riutilizzabile ─────────────────────────────────────────
+// ─── Bottone cerchio riutilizzabile ───────────────────────────────────────────
 @Composable
 private fun MapCircleButton(
+    surface:  Color,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color.Black.copy(alpha = 0.40f),
-    onClick: () -> Unit,
-    content: @Composable () -> Unit
+    onClick:  () -> Unit,
+    content:  @Composable () -> Unit
 ) {
     Surface(
         onClick  = onClick,
         shape    = CircleShape,
-        color    = backgroundColor,
-        shadowElevation = 4.dp,
+        color    = surface,
         modifier = modifier.size(44.dp)
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
