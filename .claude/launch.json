@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dove-web",
+      "runtimeExecutable": "/opt/homebrew/bin/node",
+      "runtimeArgs": ["node_modules/.bin/nuxt", "dev"],
+      "port": 3000,
+      "cwd": "web"
+    }
+  ]
+}
