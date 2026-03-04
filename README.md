@@ -2,16 +2,31 @@
 
 Trova la posizione reale di ogni numero civico nei sestieri di Venezia.
 
-Vedi [MASTERPLAN.md](./MASTERPLAN.md) per il piano completo del progetto.
+Venezia ha un sistema di numerazione civica unico al mondo: i numeri non seguono le strade ma i **sestieri**. DoVe ti mostra esattamente dove si trova ogni civico sulla mappa.
+
+## Stato
+
+| Piattaforma | Stack | Stato |
+|-------------|-------|-------|
+| **iOS** | Swift 6, SwiftUI, Liquid Glass, MapKit | In review App Store |
+| **Android** | Kotlin, Jetpack Compose, Material 3, MapLibre | APK debug compilato |
+| **Web** | Nuxt 4, Vue 3, multilingua (IT/EN/FR/DE) | Sito funzionante |
 
 ## Struttura
 
 ```
-dove/
-├── data/          # Dataset civici e confini sestieri
-├── ios/           # App iOS (SwiftUI)
-├── android/       # App Android (Compose) — futuro
-├── web/           # Web app — futuro
-├── design/        # Palette, riferimenti, asset
+civici/
+├── data/          # Dataset civici e confini sestieri (JSON)
+├── scripts/       # Script Python per arricchimento dati
+├── ios/           # App iOS (SwiftUI, Liquid Glass)
+├── android/       # App Android (Compose, Material 3)
+├── web/           # Sito web (Nuxt 4)
+├── design/        # Asset di design
 └── legacy/        # Vecchio progetto Nuxt (archivio)
 ```
+
+## Documentazione
+
+- [MASTERPLAN.md](./MASTERPLAN.md) — Piano completo del progetto
+- [STATUS.md](./STATUS.md) — Stato avanzamento dettagliato
+- [android/ANDROID_PLAN.md](./android/ANDROID_PLAN.md) — Piano sviluppo Android

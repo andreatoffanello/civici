@@ -33,6 +33,20 @@
     <string name="info_credits_title">Credits</string>
     <string name="info_credits_body">DoVe utilizza dati aperti del Comune di Venezia e mappe OpenStreetMap via OpenFreeMap.\n\nApp sviluppata con passione per Venezia.</string>
 
+    <!-- InfoScreen — Storia -->
+    <string name="info_history_title">Storia del sistema</string>
+    <string name="info_history_oral_title">Prima dei cartelli: la toponomastica orale</string>
+    <string name="info_history_oral_body">Sotto la Serenissima non esistevano nizioleti, né una numerazione civica. Venezia era divisa in circa settanta contrade — le parrocchie — e ci si orientava a memoria, per prossimità a chiese, pozzi e campi. Chi non era del posto chiedeva ai passanti. I nomi delle strade esistevano, ma solo nella voce delle persone.</string>
+    <string name="info_history_naming_title">Come nascevano i nomi</string>
+    <string name="info_history_naming_body">I nomi erano pratici e descrittivi: indicavano chi lavorava lì, cosa si vendeva, o chi ci abitava. I Calegheri erano i calzolai, i Pistori i fornai, i Calafati i carpentieri navali. La Frezzeria vendeva frecce per balestre, la Naranzaria arance. Comunità straniere lasciarono il nome ai loro quartieri: Furlani, Albanesi, Greci, Bergamaschi. I tedeschi e i turchi avevano i loro fondaci a Rialto. Persino le insegne delle osterie diventavano toponomastica: Calle del Gambaro, dello Storione, della Scimmia. Il ghetto di Cannaregio ha dato il suo nome a tutte le lingue del mondo.</string>
+    <string name="info_history_napoleon_title">1797–1813: Napoleone scrive i nomi sui muri</string>
+    <string name="info_history_napoleon_body">Con la caduta della Serenissima nel 1797, l\'amministrazione francese introduce la razionalizzazione burocratica. Il 24 settembre 1801, sotto Francesco II, viene adottata ufficialmente la numerazione civica progressiva per sestiere — un sistema mutuato da quello che Giuseppe II aveva già applicato a Milano nel 1786. Tra il 1808 e il 1813 i francesi istituiscono il catasto e fanno dipingere fisicamente i nizioleti sui muri: i nomi che la città si dava da secoli vengono per la prima volta scritti sulla pietra.</string>
+    <string name="info_history_austrian_title">1814–1866: gli austriaci consolidano il sistema</string>
+    <string name="info_history_austrian_body">Tornata all\'Austria dopo la caduta di Napoleone, Venezia affida il proprio territorio alla precisione burocratica asburgica. Il catasto austriaco (1838–1842) standardizza e completa il lavoro iniziato dai francesi. È in questo periodo che il sistema raggiunge la forma definitiva che usiamo ancora oggi. Quando nel 1866 Venezia entra nel Regno d\'Italia, il sistema viene mantenuto invariato — segno che era già radicato e funzionale.</string>
+
+    <!-- Footer -->
+    <string name="crafted_in_venice">Crafted in Venice by</string>
+
     <!-- SettingsScreen -->
     <string name="settings_title">Impostazioni</string>
     <string name="settings_theme">Tema</string>

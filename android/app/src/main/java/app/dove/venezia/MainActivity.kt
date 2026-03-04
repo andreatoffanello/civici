@@ -1,7 +1,7 @@
 package app.dove.venezia
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -16,6 +16,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import android.os.LocaleList
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import app.dove.venezia.data.AppLanguage
 import app.dove.venezia.data.AppPrefs
 import app.dove.venezia.data.AppTheme
 import app.dove.venezia.ui.navigation.NavRoutes
@@ -32,10 +36,24 @@ import app.dove.venezia.viewmodel.SearchViewModel
 import app.dove.venezia.viewmodel.ZonaNormaleViewModel
 import java.net.URLDecoder
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppPrefs.init(applicationContext)
+
+        // Ripristina la locale salvata dall'utente
+        val savedLang = AppPrefs.language.value
+        if (savedLang != AppLanguage.SYSTEM) {
+            val tag = when (savedLang) {
+                AppLanguage.ITALIAN -> "it"
+                AppLanguage.ENGLISH -> "en"
+                else -> ""
+            }
+            AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(tag)
+            )
+        }
+
         enableEdgeToEdge()
         setContent {
             val theme        by AppPrefs.theme.collectAsState()
