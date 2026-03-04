@@ -91,7 +91,8 @@
     "subtitle": "Kostenlos verfügbar für iOS und Android",
     "appStore": "App Store",
     "playStore": "Google Play",
-    "comingSoon": "Bald verfügbar"
+    "downloadOn": "Laden im",
+    "getItOn": "Jetzt bei"
   },
   "banner": {
     "open": "Öffnen",

@@ -43,8 +43,8 @@
 <script setup>
 const { t } = useI18n()
 
-const APP_STORE_URL = 'https://apps.apple.com/app/dove-venezia/id0000000000'
-const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.dovevenezia.app'
+const APP_STORE_URL = 'https://apps.apple.com/it/app/dove-venezia/id6759878973'
+const PLAY_STORE_URL = 'https://play.google.com/apps/testing/app.dove.venezia'
 const DISMISS_KEY = 'dove_banner_dismissed'
 const DISMISS_DAYS = 7
 
