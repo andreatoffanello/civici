@@ -60,6 +60,17 @@ enum L10n {
         let islandLabel: String
         let madeWithCare: String
 
+        // MARK: InfoView — Storia
+        let historyTitle: String
+        let historyOralTitle: String
+        let historyOralContent: String
+        let historyNamingTitle: String
+        let historyNamingContent: String
+        let historyNapoleonTitle: String
+        let historyNapoleonContent: String
+        let historyAustrianTitle: String
+        let historyAustrianContent: String
+
         // MARK: SettingsView
         let sectionAppearance: String
         let theme: String
@@ -121,6 +132,16 @@ enum L10n {
             islandLabel: "isola",
             madeWithCare: "Fatto con cura a Venezia",
 
+            historyTitle: "Storia del sistema",
+            historyOralTitle: "Prima dei cartelli: la toponomastica orale",
+            historyOralContent: "Sotto la Serenissima non esistevano nizioleti, né una numerazione civica. Venezia era divisa in circa settanta contrade — le parrocchie — e ci si orientava a memoria, per prossimità a chiese, pozzi e campi. Chi non era del posto chiedeva ai passanti. I nomi delle strade esistevano, ma solo nella voce delle persone.",
+            historyNamingTitle: "Come nascevano i nomi",
+            historyNamingContent: "I nomi erano pratici e descrittivi: indicavano chi lavorava lì, cosa si vendeva, o chi ci abitava. I Calegheri erano i calzolai, i Pistori i fornai, i Calafati i carpentieri navali. La Frezzeria vendeva frecce per balestre, la Naranzaria arance. Comunità straniere lasciarono il nome ai loro quartieri: Furlani, Albanesi, Greci, Bergamaschi. I tedeschi e i turchi avevano i loro fondaci a Rialto. Persino le insegne delle osterie diventavano toponomastica: Calle del Gambaro, dello Storione, della Scimmia. Il ghetto di Cannaregio ha dato il suo nome a tutte le lingue del mondo.",
+            historyNapoleonTitle: "1797–1813: Napoleone scrive i nomi sui muri",
+            historyNapoleonContent: "Con la caduta della Serenissima nel 1797, l'amministrazione francese introduce la razionalizzazione burocratica. Il 24 settembre 1801, sotto Francesco II, viene adottata ufficialmente la numerazione civica progressiva per sestiere — un sistema mutuato da quello che Giuseppe II aveva già applicato a Milano nel 1786. Tra il 1808 e il 1813 i francesi istituiscono il catasto e fanno dipingere fisicamente i nizioleti sui muri: i nomi che la città si dava da secoli vengono per la prima volta scritti sulla pietra.",
+            historyAustrianTitle: "1814–1866: gli austriaci consolidano il sistema",
+            historyAustrianContent: "Tornata all'Austria dopo la caduta di Napoleone, Venezia affida il proprio territorio alla precisione burocratica asburgica. Il catasto austriaco (1838–1842) standardizza e completa il lavoro iniziato dai francesi. È in questo periodo che il sistema raggiunge la forma definitiva che usiamo ancora oggi. Quando nel 1866 Venezia entra nel Regno d'Italia, il sistema viene mantenuto invariato — segno che era già radicato e funzionale.",
+
             sectionAppearance: "Aspetto",
             theme: "Tema",
             themeLight: "Chiara",
@@ -181,6 +202,16 @@ enum L10n {
             ordinaryToponymy: "Ordinary toponymy",
             islandLabel: "island",
             madeWithCare: "Made with care in Venice",
+
+            historyTitle: "History of the system",
+            historyOralTitle: "Before the signs: oral toponymy",
+            historyOralContent: "Under the Serenissima there were no nizioleti, nor any civic numbering. Venice was divided into roughly seventy contrade — parishes — and people navigated by memory, guided by proximity to churches, wells and squares. Strangers had to ask locals for directions. Street names existed, but only in people's voices.",
+            historyNamingTitle: "How names were born",
+            historyNamingContent: "Names were practical and descriptive: they indicated who worked there, what was sold, or who lived there. The Calegheri were shoemakers, the Pistori bakers, the Calafati ship carpenters. The Frezzeria sold crossbow arrows, the Naranzaria oranges. Foreign communities left their names on their neighborhoods: Furlani, Albanesi, Greci, Bergamaschi. Germans and Turks had their fondaci at Rialto. Even tavern signs became toponymy: Calle del Gambaro (Crab), dello Storione (Sturgeon), della Scimmia (Monkey). The Ghetto in Cannaregio gave its name to every language in the world.",
+            historyNapoleonTitle: "1797–1813: Napoleon writes names on walls",
+            historyNapoleonContent: "With the fall of the Serenissima in 1797, French administration introduced bureaucratic rationalization. On 24 September 1801, under Francis II, progressive civic numbering by sestiere was officially adopted — a system borrowed from the one Joseph II had already applied to Milan in 1786. Between 1808 and 1813 the French established the cadastre and had the nizioleti physically painted on walls: names the city had given itself for centuries were written in stone for the first time.",
+            historyAustrianTitle: "1814–1866: the Austrians consolidate the system",
+            historyAustrianContent: "Returned to Austria after Napoleon's fall, Venice entrusted its territory to Habsburg bureaucratic precision. The Austrian cadastre (1838–1842) standardized and completed the work begun by the French. It was during this period that the system reached the definitive form still in use today. When Venice joined the Kingdom of Italy in 1866, the system was kept unchanged — proof that it was already deeply rooted and functional.",
 
             sectionAppearance: "Appearance",
             theme: "Theme",

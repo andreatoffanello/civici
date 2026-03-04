@@ -108,11 +108,50 @@ struct InfoView: View {
                     }
                 }
 
+                // Storia del sistema
+                VStack(alignment: .leading, spacing: 20) {
+                    Text(strings.historyTitle)
+                        .font(.title3.weight(.semibold))
+
+                    InfoSection(
+                        title: strings.historyOralTitle,
+                        icon: "text.bubble",
+                        content: strings.historyOralContent
+                    )
+
+                    InfoSection(
+                        title: strings.historyNamingTitle,
+                        icon: "mappin.and.ellipse",
+                        content: strings.historyNamingContent
+                    )
+
+                    InfoSection(
+                        title: strings.historyNapoleonTitle,
+                        icon: "crown",
+                        content: strings.historyNapoleonContent
+                    )
+
+                    InfoSection(
+                        title: strings.historyAustrianTitle,
+                        icon: "building.columns",
+                        content: strings.historyAustrianContent
+                    )
+                }
+
                 // Credits
-                VStack(alignment: .center, spacing: 8) {
-                    Text(strings.madeWithCare)
-                        .font(.footnote)
+                VStack(alignment: .center, spacing: 12) {
+                    Link(destination: URL(string: "https://andreatoffanello.com")!) {
+                        HStack(spacing: 6) {
+                            Text("Crafted in Venice by")
+                                .font(.footnote)
+                            Image("at-logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 16)
+                        }
                         .foregroundStyle(.tertiary)
+                    }
+                    .buttonStyle(.plain)
 
                     Text("v\(appVersion)")
                         .font(.caption2)
