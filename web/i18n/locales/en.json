@@ -86,7 +86,8 @@
     "subtitle": "Available for free on iOS and Android",
     "appStore": "App Store",
     "playStore": "Google Play",
-    "comingSoon": "Coming soon"
+    "downloadOn": "Download on the",
+    "getItOn": "Get it on"
   },
   "banner": {
     "open": "Open",

@@ -33,6 +33,20 @@
     <string name="info_credits_title">Credits</string>
     <string name="info_credits_body">DoVe uses open data from the City of Venice and OpenStreetMap maps via OpenFreeMap.\n\nApp developed with love for Venice.</string>
 
+    <!-- InfoScreen — History -->
+    <string name="info_history_title">History of the system</string>
+    <string name="info_history_oral_title">Before the signs: oral toponymy</string>
+    <string name="info_history_oral_body">Under the Serenissima there were no nizioleti, nor any civic numbering. Venice was divided into roughly seventy contrade — parishes — and people navigated by memory, guided by proximity to churches, wells and squares. Strangers had to ask locals for directions. Street names existed, but only in people\'s voices.</string>
+    <string name="info_history_naming_title">How names were born</string>
+    <string name="info_history_naming_body">Names were practical and descriptive: they indicated who worked there, what was sold, or who lived there. The Calegheri were shoemakers, the Pistori bakers, the Calafati ship carpenters. The Frezzeria sold crossbow arrows, the Naranzaria oranges. Foreign communities left their names on their neighborhoods: Furlani, Albanesi, Greci, Bergamaschi. Germans and Turks had their fondaci at Rialto. Even tavern signs became toponymy: Calle del Gambaro (Crab), dello Storione (Sturgeon), della Scimmia (Monkey). The Ghetto in Cannaregio gave its name to every language in the world.</string>
+    <string name="info_history_napoleon_title">1797–1813: Napoleon writes names on walls</string>
+    <string name="info_history_napoleon_body">With the fall of the Serenissima in 1797, French administration introduced bureaucratic rationalization. On 24 September 1801, under Francis II, progressive civic numbering by sestiere was officially adopted — a system borrowed from the one Joseph II had already applied to Milan in 1786. Between 1808 and 1813 the French established the cadastre and had the nizioleti physically painted on walls: names the city had given itself for centuries were written in stone for the first time.</string>
+    <string name="info_history_austrian_title">1814–1866: the Austrians consolidate the system</string>
+    <string name="info_history_austrian_body">Returned to Austria after Napoleon\'s fall, Venice entrusted its territory to Habsburg bureaucratic precision. The Austrian cadastre (1838–1842) standardized and completed the work begun by the French. It was during this period that the system reached the definitive form still in use today. When Venice joined the Kingdom of Italy in 1866, the system was kept unchanged — proof that it was already deeply rooted and functional.</string>
+
+    <!-- Footer -->
+    <string name="crafted_in_venice">Crafted in Venice by</string>
+
     <!-- SettingsScreen -->
     <string name="settings_title">Settings</string>
     <string name="settings_theme">Theme</string>

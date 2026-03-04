@@ -32,27 +32,30 @@ Venezia ha un sistema di numerazione civica unico al mondo: i numeri non seguono
 
 ## 3. Piattaforme
 
-### 3.1 iOS (piattaforma primaria)
-- **Linguaggio**: Swift
-- **UI**: SwiftUI
-- **Target**: iOS 17+
+### 3.1 iOS (piattaforma primaria) — in review App Store
+- **Linguaggio**: Swift 6
+- **UI**: SwiftUI con Liquid Glass (iOS 26+)
+- **Target**: iOS 26+
 - **Mappe**: MapKit (nativo, gratuito, ottima integrazione)
+- **Stato**: MVP completo, submission App Store in review
 
-### 3.2 Android
-- **Linguaggio**: Kotlin
-- **UI**: Jetpack Compose
-- **Target**: Android 10+ (API 29)
-- **Mappe**: Google Maps SDK
+### 3.2 Android — APK debug compilato
+- **Linguaggio**: Kotlin 2.1
+- **UI**: Jetpack Compose + Material 3
+- **Target**: Android 10+ (API 29), target SDK 35
+- **Mappe**: MapLibre + OpenFreeMap (gratuito, no API key)
+- **Stato**: 90% completato, da rifinire (icona, animazioni) e rilasciare su Play Store
 
-### 3.3 Web (companion)
-- Versione leggera per chi non ha l'app
-- Stack da definire
-- Funzione primaria: landing page + ricerca base + link agli store
+### 3.3 Web — sito online
+- **Stack**: Nuxt 4 + Vue 3
+- **Funzione**: landing page + ricerca civici + mappa + link agli store
+- **Multilingua**: IT, EN, FR, DE
+- **Stato**: 80% completato, funzionante
 
-### Ordine di sviluppo
-1. **iOS** — design, validazione, rilascio
-2. **Android** — port della struttura MVVM
-3. **Web** — rifacimento del sito attuale
+### Ordine di sviluppo (realizzato)
+1. **iOS** — completato, in review App Store
+2. **Android** — port completato, da rilasciare
+3. **Web** — sito funzionante con ricerca e mappa
 
 ---
 
@@ -176,30 +179,77 @@ Sestieri:
 
 ## 7. Feature future (post-MVP)
 
-In ordine di priorità stimata:
+In ordine di priorità. Principio guida: **solo fonti ufficiali e verificabili**, no OSM (rischio dati obsoleti a Venezia). Meglio pochi dati certi che tanti inaffidabili. Focus su cittadini prima che turisti.
 
-### Evoluzione dell'app
+### 1. Vaporetti — priorità alta
 
-Queste feature trasformano DoVe da cercatore di civici a guida completa per Venezia. Richiedono una nuova alberatura con Home, TabBar e sezioni dedicate.
+Tab standalone nell'app (non legata alla ricerca civici). Un'alternativa a "chebateo": tabellone partenze digitale, non journey planner.
 
-1. **Nuova alberatura** — Home con accesso a sezioni multiple, la ricerca civici diventa la sezione "Civici"
-2. **Sezione Servizi** — Mappa con punti di pubblica utilità localizzati (farmacie, bagni pubblici, uffici comunali, pronto soccorso, fontanelle, ecc.). Fonte dati da individuare (open data Comune di Venezia?). Filtro per categoria, dettaglio con indirizzo/orari/contatti
-3. **Sezione Eventi** — Lista/calendario di eventi in città con localizzazione su mappa. Fonte dati da individuare (API Comune, feed RSS, curazione manuale?)
-4. **Impostazioni** — Lingua (italiano/inglese), preferenze mappa, about/info
+- **Dati**: GTFS ufficiali ACTV navigazione (22 linee, 149 fermate, ~87k stop_times) + Alilaguna (2 linee, 34 fermate)
+- **UX**: ricerca fermate come lista o selezione da mappa → dettaglio fermata con prossime partenze programmate, direzioni, pontili
+- **Fonti**:
+  - ACTV: `https://actv.avmspa.it/sites/default/files/attachments/opendata/navigazione/actv_nav.zip` (~1.2MB, aggiornato mensilmente)
+  - Alilaguna: `http://www.alilaguna.it/attuale/alilaguna.zip` (17KB, aggiornato stagionalmente)
+- **Pipeline**: GitHub Actions (cron settimanale) → scarica GTFS → converte in JSON ottimizzati → hosting statico (GitHub Pages o Cloudflare Pages). L'app scarica il JSON aggiornato
+- **No journey planner**: troppo complesso, Google Maps lo fa già. DoVe = tabellone partenze
 
-### Miglioramenti alla ricerca civici
+### 2. Farmacie di turno — priorità alta
 
-5. **Ricerca inversa** — Sei davanti a un edificio? Trova il civico dalla tua posizione GPS
-6. **Preferiti** — Salva i civici che cerchi spesso
-7. **Cronologia** — Ultime ricerche
-8. **OCR nizioleti** — Inquadra un nizioleto con la camera, l'app legge il numero
-9. **Condivisione smart** — "Ci vediamo al Cannaregio 2345" con link che apre l'app o il web
+Sapere quale farmacia è aperta/di turno, utile soprattutto per i residenti.
 
-### Piattaforma
+- **Dati**: ~15 farmacie nel centro storico, con indirizzi in formato sestiere+civico (geocodificabili con civici.json)
+- **Fonte**: Ordine dei Farmacisti di Venezia (`ordinefarmacistivenezia.it`) — export JSON/XML ufficiale dei turni
+- **Pipeline**: GitHub Actions (cron giornaliero o settimanale) → scraping turni → JSON con coordinate → hosting statico
+- **UX**: lista farmacie con stato aperta/turno, mappa con pin, dettaglio con indirizzo/orari/telefono
 
-10. **Widget iOS** — Ricerca rapida dalla home screen
-11. **Apple Watch** — Complicazione con ultimo civico cercato
-12. **Contribuzione dati** — Segnala civici mancanti o errati (richiede backend)
+### 3. Bagni pubblici — priorità media
+
+- **Dati**: 16 bagni pubblici gestiti da Veritas nel centro storico
+- **Fonte**: lista ufficiale Veritas (`gruppoveritas.it`)
+- **Formato**: JSON curato a mano (dato quasi statico, raramente cambia)
+- **UX**: lista + mappa con pin, orari, costo (€1.50)
+
+### 4. Fontanelle — priorità media-bassa
+
+- **Dati**: ~140 fontanelle funzionanti a Venezia
+- **Fonte**: mappa ufficiale Veritas delle fontanelle pubbliche
+- **Note**: serve verifica/curazione iniziale, poi dato relativamente statico
+- **UX**: mappa con pin, filtro per zona
+
+### 5. Tassini / Curiosità Veneziane — parcheggiato
+
+Storia e origine dei nomi delle vie veneziane, dal libro "Curiosità Veneziane" di Giuseppe Tassini (1863, pubblico dominio).
+
+- **Stato**: esiste già un lavoro di trascrizione e georeferenziazione su `curiositaveneziane.it` — da contattare l'autore per possibile collaborazione
+- **Alternativa**: OCR/trascrizione dal testo originale (pubblico dominio) + georeferenziazione propria
+- **Da valutare**: effort vs valore, questione copyright del lavoro derivato
+
+### Nuova alberatura
+
+Le feature sopra richiedono una nuova struttura dell'app con TabBar e sezioni dedicate:
+- **Civici** (ricerca civici, funzionalità core attuale)
+- **Vaporetti** (fermate e partenze)
+- **Servizi** (farmacie, bagni, fontanelle)
+- **Info** (about, impostazioni)
+
+### Infrastruttura dati
+
+- **Pipeline preferita**: GitHub Actions (cron) → scarica/scrape dati → JSON ottimizzati → GitHub Pages / Cloudflare Pages (gratis)
+- **Fallback**: VPS Hetzner già disponibile per job di scraping o backend leggero
+- **Principio**: l'app scarica JSON statici, nessun backend real-time necessario
+- **Aggiornamento dati**: settimanale per GTFS/farmacie, manuale per bagni/fontanelle
+
+### Feature scartate
+
+Valutate e scartate perché poco utili o non in scope:
+- ~~Cronologia ricerche~~ — non aggiunge valore reale
+- ~~Preferiti civici~~ — caso d'uso troppo raro
+- ~~Ricerca inversa GPS~~ — utilità marginale
+- ~~OCR nizioleti~~ — wow factor senza utilità pratica
+- ~~Journey planner vaporetti~~ — troppo complesso, Google Maps lo fa già
+- ~~Widget iOS / Apple Watch~~ — prematura
+- ~~Contribuzione dati~~ — richiede backend, moderazione, non prioritario
+- ~~Sezione Eventi~~ — fonte dati incerta, difficile da mantenere aggiornata
 
 ---
 
@@ -243,65 +293,61 @@ Queste feature trasformano DoVe da cercatore di civici a guida completa per Vene
 ## 10. Struttura repository
 
 ```
-dove/
+civici/
 ├── MASTERPLAN.md              # Questo documento
+├── STATUS.md                  # Stato avanzamento progetto
+├── README.md                  # Panoramica progetto
 ├── data/
 │   ├── civici.json            # Dataset completo civici
+│   ├── civici-plain.json      # Dataset semplificato
 │   └── sestieri/              # GeoJSON confini sestieri
 │       ├── cannaregio.json
 │       ├── castello.json
 │       ├── dorsoduro.json
 │       ├── giudecca.json
-│       ├── san-marco.json
-│       ├── san-polo.json
-│       └── santa-croce.json
-├── ios/                       # Progetto Xcode
+│       ├── sanmarco.json
+│       ├── sanpolo.json
+│       └── santacroce.json
+├── scripts/                   # Script utilità dati
+│   ├── add_more_islands.py
+│   ├── enrich_civici.py
+│   └── enrich_from_cartotecnica.py
+├── ios/                       # App iOS (SwiftUI, Liquid Glass)
 │   └── DoVe/
-│       ├── App/
-│       │   └── DoVeApp.swift
-│       ├── Models/
-│       │   ├── Civico.swift
-│       │   └── Sestiere.swift
-│       ├── ViewModels/
-│       │   ├── SearchViewModel.swift
-│       │   └── MapViewModel.swift
-│       ├── Views/
-│       │   ├── HomeView.swift
-│       │   ├── SestieriView.swift
-│       │   ├── SearchView.swift
-│       │   ├── ResultView.swift
-│       │   └── InfoView.swift
-│       ├── Components/
-│       │   ├── SestiereCard.swift
-│       │   ├── CivicoRow.swift
-│       │   └── MapPin.swift
-│       ├── Resources/
-│       │   ├── Assets.xcassets
-│       │   └── Data/           # civici.json copiato qui
-│       └── Utilities/
-│           └── DataLoader.swift
-├── android/                   # Progetto Android Studio (futuro)
-├── web/                       # Web app (futuro)
-├── design/                    # File di design, asset, riferimenti
-│   ├── palette.md
-│   └── references/
+│       ├── App/, Models/, ViewModels/, Views/
+│       ├── Components/, Utilities/, Resources/
+│       └── (dettaglio in STATUS.md)
+├── android/                   # App Android (Kotlin, Compose, Material 3)
+│   ├── ANDROID_PLAN.md        # Piano dettagliato Android
+│   └── app/src/main/java/app/dove/venezia/
+│       ├── data/, ui/, viewmodel/
+│       └── MainActivity.kt
+├── web/                       # Sito web (Nuxt 4, Vue 3)
+│   └── app/
+│       ├── pages/             # index, about, privacy, contatti, ...
+│       ├── components/        # Hero, CiviciSearch, VeniceMap, ...
+│       └── layouts/
+├── design/                    # Asset di design (logo, riferimenti)
 └── legacy/                    # Vecchio codice Nuxt (archivio)
-    ├── pages/
-    ├── components/
-    ├── stores/
-    ├── assets/
-    └── ...
 ```
 
 ---
 
 ## 11. Prossimi passi
 
-1. **Rinominare il repository** da `civici` a `dove` (o creare repo nuovo)
-2. **Riorganizzare le cartelle** secondo la struttura sopra
-3. **Creare il progetto Xcode** con SwiftUI
-4. **Definire il design** — palette, tipografia, componenti in Paper o su carta
-5. **Implementare MVP iOS** — le 5 schermate con dati reali
-6. **Test su dati** — verificare accuratezza su campione di civici noti
-7. **TestFlight** — beta con amici veneziani
-8. **Rilascio App Store**
+### Completati
+1. ~~Riorganizzare le cartelle~~ — fatto
+2. ~~Creare il progetto Xcode con SwiftUI~~ — fatto
+3. ~~Definire il design~~ — Liquid Glass, palette, tipografia
+4. ~~Implementare MVP iOS~~ — tutte le schermate con dati reali
+5. ~~Submission App Store~~ — in review
+6. ~~Port Android~~ — APK debug compilato
+7. ~~Sito web~~ — Nuxt 4, landing page + ricerca + mappa
+
+### Da fare
+- [ ] Rilascio App Store iOS (in attesa review)
+- [ ] Android: rifinitura (icona, animazioni, marker custom) e rilascio Play Store
+- [ ] Web: deploy definitivo
+- [ ] Test dati: spot check civici noti su entrambe le piattaforme
+- [ ] Cronologia ricerche + preferiti (iOS e Android)
+- [ ] Rinominare il repository da `civici` a `dove` (opzionale)

@@ -14,6 +14,7 @@ struct ZonaNormaleCard: View {
                     .font(.custom("Sotoportego-Medium", size: 28))
                     .tracking(0.5)
                     .foregroundStyle(zona.color)
+                    .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 24)
                     .opacity(appeared ? 1 : 0)
