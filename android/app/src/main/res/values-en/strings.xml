@@ -66,6 +66,30 @@
     <string name="tagline">Find every Venice civic number</string>
     <string name="seleziona_sestiere">SELECT A SESTIERE</string>
     <string name="tab_cerca">Search</string>
+    <string name="tab_servizi">Services</string>
     <string name="tab_info">Info</string>
     <string name="tab_impostazioni">Settings</string>
+
+    <!-- ServicesScreen -->
+    <string name="services_title">Services</string>
+    <string name="services_subtitle">Useful services to live and get around Venice</string>
+    <string name="services_available">AVAILABLE</string>
+    <string name="services_coming_soon">COMING SOON</string>
+    <string name="coming_soon_badge">SOON</string>
+    <string name="service_acqua_alta">High water</string>
+    <string name="service_vaporetti">Water buses</string>
+    <string name="service_eventi">Events</string>
+
+    <!-- Pharmacies -->
+    <string name="pharmacies_title">Pharmacies</string>
+    <string name="pharmacies_open_count">%1$d open out of %2$d</string>
+    <string name="pharmacies_all_closed">All closed</string>
+    <string name="pharmacies_open_now">Open now</string>
+    <string name="pharmacies_closed_now">Closed</string>
+    <string name="pharmacy_open">Open</string>
+    <string name="pharmacy_closed">Closed</string>
+    <string name="pharmacy_hours_label">Hours</string>
+    <string name="pharmacy_phone_label">Phone</string>
+    <string name="pharmacy_area_label">Area</string>
+    <string name="pharmacy_call">Call</string>
 </resources>

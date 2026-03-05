@@ -24,6 +24,7 @@ enum L10n {
     struct Strings: @unchecked Sendable {
         // MARK: Tabs
         let tabSearch: String
+        let tabServices: String
         let tabInfo: String
         let tabSettings: String
 
@@ -97,10 +98,35 @@ enum L10n {
         let settingsNavTitle: String
         let alwaysAsk: String
 
+        // MARK: ServicesView
+        let servicesTitle: String
+        let servicesSubtitle: String
+        let servicesAvailable: String
+        let servicesComingSoon: String
+        let comingSoonBadge: String
+        let serviceAcquaAlta: String
+        let serviceVaporetti: String
+        let serviceEventi: String
+
+        // MARK: Pharmacies
+        let pharmaciesTitle: String
+        let pharmaciesOpenCount: (Int, Int) -> String
+        let pharmaciesAllClosed: String
+        let pharmaciesOpenNow: String
+        let pharmaciesClosedNow: String
+        let pharmacyOpen: String
+        let pharmacyClosed: String
+        let pharmacyClosesAt: (String) -> String
+        let pharmacyHoursLabel: String
+        let pharmacyPhoneLabel: String
+        let pharmacyAreaLabel: String
+        let pharmacyCall: String
+
         // MARK: - Italian
 
         static let it = Strings(
             tabSearch: "Cerca",
+            tabServices: "Servizi",
             tabInfo: "Info",
             tabSettings: "Impostazioni",
 
@@ -165,13 +191,36 @@ enum L10n {
             sectionAbout: "Info",
             versionLabel: "Versione",
             settingsNavTitle: "Impostazioni",
-            alwaysAsk: "Chiedi sempre"
+            alwaysAsk: "Chiedi sempre",
+
+            servicesTitle: "Servizi",
+            servicesSubtitle: "Informazioni utili per chi vive e visita Venezia",
+            servicesAvailable: "DISPONIBILI",
+            servicesComingSoon: "PROSSIMAMENTE",
+            comingSoonBadge: "PRESTO",
+            serviceAcquaAlta: "Acqua alta",
+            serviceVaporetti: "Vaporetti",
+            serviceEventi: "Eventi",
+
+            pharmaciesTitle: "Farmacie",
+            pharmaciesOpenCount: { open, total in "\(open) aperte su \(total)" },
+            pharmaciesAllClosed: "Tutte chiuse in questo momento",
+            pharmaciesOpenNow: "APERTE ORA",
+            pharmaciesClosedNow: "CHIUSE",
+            pharmacyOpen: "Aperta",
+            pharmacyClosed: "Chiusa",
+            pharmacyClosesAt: { time in "Chiude alle \(time)" },
+            pharmacyHoursLabel: "Orario",
+            pharmacyPhoneLabel: "Telefono",
+            pharmacyAreaLabel: "Zona",
+            pharmacyCall: "Chiama"
         )
 
         // MARK: - English
 
         static let en = Strings(
             tabSearch: "Search",
+            tabServices: "Services",
             tabInfo: "Info",
             tabSettings: "Settings",
 
@@ -236,7 +285,29 @@ enum L10n {
             sectionAbout: "About",
             versionLabel: "Version",
             settingsNavTitle: "Settings",
-            alwaysAsk: "Always ask"
+            alwaysAsk: "Always ask",
+
+            servicesTitle: "Services",
+            servicesSubtitle: "Useful information for those who live in and visit Venice",
+            servicesAvailable: "AVAILABLE",
+            servicesComingSoon: "COMING SOON",
+            comingSoonBadge: "SOON",
+            serviceAcquaAlta: "High water",
+            serviceVaporetti: "Water buses",
+            serviceEventi: "Events",
+
+            pharmaciesTitle: "Pharmacies",
+            pharmaciesOpenCount: { open, total in "\(open) open out of \(total)" },
+            pharmaciesAllClosed: "All closed right now",
+            pharmaciesOpenNow: "OPEN NOW",
+            pharmaciesClosedNow: "CLOSED",
+            pharmacyOpen: "Open",
+            pharmacyClosed: "Closed",
+            pharmacyClosesAt: { time in "Closes at \(time)" },
+            pharmacyHoursLabel: "Hours",
+            pharmacyPhoneLabel: "Phone",
+            pharmacyAreaLabel: "Area",
+            pharmacyCall: "Call"
         )
     }
 }

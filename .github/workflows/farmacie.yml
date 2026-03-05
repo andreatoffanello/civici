@@ -1,0 +1,38 @@
+name: Aggiorna farmacie di turno
+
+on:
+  schedule:
+    # Ogni giorno alle 06:00 UTC (08:00 ora italiana)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Permette esecuzione manuale
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Installa dipendenze
+        run: pip install requests beautifulsoup4
+
+      - name: Esegui scraper
+        run: python .github/scripts/scrape_farmacie.py
+
+      - name: Commit e push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/api/farmacie.json android/app/src/main/assets/farmacie.json ios/DoVe/Resources/Data/farmacie.json
+          if git diff --staged --quiet; then
+            echo "Nessuna modifica ai dati"
+          else
+            git commit -m "chore: aggiorna turni farmacie $(date +%Y-%m-%d)"
+            git push
+          fi

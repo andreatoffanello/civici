@@ -66,6 +66,30 @@
     <string name="tagline">Trova ogni civico di Venezia</string>
     <string name="seleziona_sestiere">SELEZIONA UN SESTIERE</string>
     <string name="tab_cerca">Cerca</string>
+    <string name="tab_servizi">Servizi</string>
     <string name="tab_info">Info</string>
     <string name="tab_impostazioni">Impostazioni</string>
+
+    <!-- ServicesScreen -->
+    <string name="services_title">Servizi</string>
+    <string name="services_subtitle">Servizi utili per vivere e muoversi a Venezia</string>
+    <string name="services_available">DISPONIBILI</string>
+    <string name="services_coming_soon">PROSSIMAMENTE</string>
+    <string name="coming_soon_badge">PRESTO</string>
+    <string name="service_acqua_alta">Acqua alta</string>
+    <string name="service_vaporetti">Vaporetti</string>
+    <string name="service_eventi">Eventi</string>
+
+    <!-- Farmacie -->
+    <string name="pharmacies_title">Farmacie</string>
+    <string name="pharmacies_open_count">%1$d aperte su %2$d</string>
+    <string name="pharmacies_all_closed">Tutte chiuse</string>
+    <string name="pharmacies_open_now">Aperte ora</string>
+    <string name="pharmacies_closed_now">Chiuse</string>
+    <string name="pharmacy_open">Aperta</string>
+    <string name="pharmacy_closed">Chiusa</string>
+    <string name="pharmacy_hours_label">Orari</string>
+    <string name="pharmacy_phone_label">Telefono</string>
+    <string name="pharmacy_area_label">Zona</string>
+    <string name="pharmacy_call">Chiama</string>
 </resources>

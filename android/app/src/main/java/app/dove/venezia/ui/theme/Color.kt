@@ -38,3 +38,12 @@ val Zona_Vignole     = Color(0xFF7AAA6B)
 val Zona_Certosa     = Color(0xFF5A8A7A)
 val Zona_SantElena   = Color(0xFF5BA86B)
 val Zona_SaccaFisola = Color(0xFF8B7BB8)
+
+// Farmacie — colori stato
+val PharmacyOpen   = Color(0xFF38A169)
+val PharmacyClosed = Color(0xFFE53E3E)
+
+// Servizi — coming soon
+val ServiceAcquaAlta  = Color(0xFF4A90B8)
+val ServiceVaporetti  = Color(0xFFD4885A)
+val ServiceEventi     = Color(0xFF8B7BB8)

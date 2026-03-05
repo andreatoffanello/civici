@@ -52,6 +52,7 @@ import app.dove.venezia.ui.theme.VeneziaPrimary
 fun SestieriScreen(
     onSestiereSelected: (String) -> Unit,
     onZonaSelected: (String) -> Unit,
+    onServicesClick: () -> Unit,
     onInfoClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -68,13 +69,19 @@ fun SestieriScreen(
                 )
                 NavigationBarItem(
                     selected = selectedTab == 1,
-                    onClick = { selectedTab = 1; onInfoClick() },
+                    onClick = { selectedTab = 1; onServicesClick() },
+                    icon = { Icon(painterResource(R.drawable.ic_services_header), contentDescription = null, modifier = Modifier.size(24.dp)) },
+                    label = { Text(stringResource(R.string.tab_servizi)) }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2; onInfoClick() },
                     icon = { Icon(Icons.Default.Info, contentDescription = null) },
                     label = { Text(stringResource(R.string.tab_info)) }
                 )
                 NavigationBarItem(
-                    selected = selectedTab == 2,
-                    onClick = { selectedTab = 2; onSettingsClick() },
+                    selected = selectedTab == 3,
+                    onClick = { selectedTab = 3; onSettingsClick() },
                     icon = { Icon(Icons.Default.Settings, contentDescription = null) },
                     label = { Text(stringResource(R.string.tab_impostazioni)) }
                 )

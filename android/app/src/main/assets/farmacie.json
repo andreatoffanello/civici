@@ -1,0 +1,1035 @@
+{
+  "lastUpdated": "2026-03-05T20:55:28Z",
+  "source": "Ordine dei Farmacisti della provincia di Venezia",
+  "license": "ODC-BY 1.0",
+  "pharmacies": [
+    {
+      "id": "ph_01",
+      "name": "Santa Lucia",
+      "address": "Cannaregio 122",
+      "sestiereCode": "CN",
+      "zonaCode": null,
+      "phone": "+39041716332",
+      "lat": 45.441695,
+      "lng": 12.322879,
+      "turpiDates": [
+        "2026-02-27"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_02",
+      "name": "Salvadori",
+      "address": "Cannaregio 1339",
+      "sestiereCode": "CN",
+      "zonaCode": null,
+      "phone": "+39041717356",
+      "lat": 45.443773,
+      "lng": 12.326834,
+      "turpiDates": [
+        "2026-03-18",
+        "2026-03-19"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_03",
+      "name": "Checchia Anconeta",
+      "address": "Cannaregio 1825",
+      "sestiereCode": "CN",
+      "zonaCode": null,
+      "phone": "+39041720622",
+      "lat": 45.443826,
+      "lng": 12.329219,
+      "turpiDates": [
+        "2026-03-04",
+        "2026-03-05"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_04",
+      "name": "San Fosca",
+      "address": "Cannaregio 2233",
+      "sestiereCode": "CN",
+      "zonaCode": null,
+      "phone": "+39041720600",
+      "lat": 45.442746,
+      "lng": 12.332127,
+      "turpiDates": [
+        "2026-02-28",
+        "2026-03-01"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_05",
+      "name": "Alla Gatta",
+      "address": "Cannaregio 2651",
+      "sestiereCode": "CN",
+      "zonaCode": null,
+      "phone": "+39041720153",
+      "lat": 45.445215,
+      "lng": 12.329707,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_06",
+      "name": "Al Re d'Italia",
+      "address": "Cannaregio 3823",
+      "sestiereCode": "CN",
+      "zonaCode": null,
+      "phone": "+390415225970",
+      "lat": 45.44145,
+      "lng": 12.333532,
+      "turpiDates": [
+        "2026-03-14",
+        "2026-03-15"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_07",
+      "name": "Alla Fama",
+      "address": "Cannaregio 4437",
+      "sestiereCode": "CN",
+      "zonaCode": null,
+      "phone": "+390415224239",
+      "lat": 45.440497,
+      "lng": 12.3363,
+      "turpiDates": [
+        "2026-03-02",
+        "2026-03-03"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_08",
+      "name": "Alle due Colonne",
+      "address": "Cannaregio 6045",
+      "sestiereCode": "CN",
+      "zonaCode": null,
+      "phone": "+390415225411",
+      "lat": 45.43989,
+      "lng": 12.338701,
+      "turpiDates": [
+        "2026-03-10",
+        "2026-03-11"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_09",
+      "name": "Al Basilisco",
+      "address": "Castello 1778",
+      "sestiereCode": "CS",
+      "zonaCode": null,
+      "phone": "+390415224109",
+      "lat": 45.432299,
+      "lng": 12.352864,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_10",
+      "name": "Polito",
+      "address": "Castello 1792",
+      "sestiereCode": "CS",
+      "zonaCode": null,
+      "phone": "+390415224015",
+      "lat": 45.4324,
+      "lng": 12.353587,
+      "turpiDates": [
+        "2026-02-27"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_11",
+      "name": "Alla Croce di Malta",
+      "address": "Castello 3470",
+      "sestiereCode": "CS",
+      "zonaCode": null,
+      "phone": "+390415222653",
+      "lat": 45.435568,
+      "lng": 12.345915,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_12",
+      "name": "Al Lupo Coronato",
+      "address": "Castello 4513",
+      "sestiereCode": "CS",
+      "zonaCode": null,
+      "phone": "+390415220675",
+      "lat": 45.435051,
+      "lng": 12.341685,
+      "turpiDates": [
+        "2026-03-16",
+        "2026-03-17"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_13",
+      "name": "Al Pellegrino",
+      "address": "Castello 5620",
+      "sestiereCode": "CS",
+      "zonaCode": null,
+      "phone": "+390415222635",
+      "lat": 45.437584,
+      "lng": 12.338111,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_14",
+      "name": "Dell'Orso",
+      "address": "Castello 6127",
+      "sestiereCode": "CS",
+      "zonaCode": null,
+      "phone": "+390412960470",
+      "lat": 45.437536,
+      "lng": 12.341084,
+      "turpiDates": [
+        "2026-03-08",
+        "2026-03-09"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_15",
+      "name": "Dr. Max Dorsoduro",
+      "address": "Dorsoduro 1053",
+      "sestiereCode": "DD",
+      "zonaCode": null,
+      "phone": "+390415220840",
+      "lat": 45.431571,
+      "lng": 12.327871,
+      "turpiDates": [
+        "2026-02-28",
+        "2026-03-01"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_16",
+      "name": "Alla Cerva d'Oro",
+      "address": "Dorsoduro 2384",
+      "sestiereCode": "DD",
+      "zonaCode": null,
+      "phone": "+390415246565",
+      "lat": 45.43316,
+      "lng": 12.319707,
+      "turpiDates": [
+        "2026-03-14",
+        "2026-03-15"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_17",
+      "name": "Santa Margherita",
+      "address": "Dorsoduro 3692",
+      "sestiereCode": "DD",
+      "zonaCode": null,
+      "phone": "+390415223872",
+      "lat": 45.435274,
+      "lng": 12.324162,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_18",
+      "name": "Al Mondo",
+      "address": "San Marco 1676",
+      "sestiereCode": "SM",
+      "zonaCode": null,
+      "phone": "+390415225813",
+      "lat": 45.434256,
+      "lng": 12.336143,
+      "turpiDates": [
+        "2026-03-18",
+        "2026-03-19"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_19",
+      "name": "San Gaetano",
+      "address": "San Marco 2067",
+      "sestiereCode": "SM",
+      "zonaCode": null,
+      "phone": "+390415222311",
+      "lat": 45.433011,
+      "lng": 12.33505,
+      "turpiDates": [
+        "2026-03-04",
+        "2026-03-05"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_20",
+      "name": "San Teodoro",
+      "address": "San Marco 3467",
+      "sestiereCode": "SM",
+      "zonaCode": null,
+      "phone": "+390412602316",
+      "lat": 45.433866,
+      "lng": 12.330741,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_21",
+      "name": "Italo-Inglese",
+      "address": "San Marco 3717",
+      "sestiereCode": "SM",
+      "zonaCode": null,
+      "phone": "+390415224837",
+      "lat": 45.435035,
+      "lng": 12.333597,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_22",
+      "name": "Morelli - Campo San Luca",
+      "address": "San Marco 4598",
+      "sestiereCode": "SM",
+      "zonaCode": null,
+      "phone": "+390415233400",
+      "lat": 45.435994,
+      "lng": 12.335136,
+      "turpiDates": [
+        "2026-03-06",
+        "2026-03-07"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_23",
+      "name": "Morelli",
+      "address": "San Marco 5310",
+      "sestiereCode": "SM",
+      "zonaCode": null,
+      "phone": "+390415224196",
+      "lat": 45.437639,
+      "lng": 12.336891,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_24",
+      "name": "Al Castoro",
+      "address": "San Polo 482",
+      "sestiereCode": "SP",
+      "zonaCode": null,
+      "phone": "+390412378966",
+      "lat": 45.43863,
+      "lng": 12.334242,
+      "turpiDates": [
+        "2026-03-12",
+        "2026-03-13"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_25",
+      "name": "Alla Colonna e Mezza",
+      "address": "San Polo 2012",
+      "sestiereCode": "SP",
+      "zonaCode": null,
+      "phone": "+390415223527",
+      "lat": 45.437128,
+      "lng": 12.330093,
+      "turpiDates": [
+        "2026-03-08",
+        "2026-03-09"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_26",
+      "name": "Ai due San Marchi",
+      "address": "San Polo 2498",
+      "sestiereCode": "SP",
+      "zonaCode": null,
+      "phone": "+390415225865",
+      "lat": 45.437827,
+      "lng": 12.326881,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_27",
+      "name": "San Francesco",
+      "address": "Santa Croce 181",
+      "sestiereCode": "SC",
+      "zonaCode": null,
+      "phone": "+390415286936",
+      "lat": 45.437422,
+      "lng": 12.321237,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_28",
+      "name": "Ranaboldo",
+      "address": "Santa Croce 1659",
+      "sestiereCode": "SC",
+      "zonaCode": null,
+      "phone": "+39041718447",
+      "lat": 45.440612,
+      "lng": 12.328143,
+      "turpiDates": [
+        "2026-03-16",
+        "2026-03-17"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_29",
+      "name": "Del Redentore",
+      "address": "Giudecca 220",
+      "sestiereCode": "GD",
+      "zonaCode": null,
+      "phone": "+390415231677",
+      "lat": 45.425678,
+      "lng": 12.329674,
+      "turpiDates": [
+        "2026-03-02",
+        "2026-03-03"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_30",
+      "name": "SS. Cosma e Damiano",
+      "address": "Giudecca 446",
+      "sestiereCode": "GD",
+      "zonaCode": null,
+      "phone": "+390415220746",
+      "lat": 45.426329,
+      "lng": 12.326566,
+      "turpiDates": [
+        "2026-03-10",
+        "2026-03-11"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_31",
+      "name": "Comunale Risorta",
+      "address": "Sacca Fisola 30",
+      "sestiereCode": null,
+      "zonaCode": "SF",
+      "phone": "+390415204561",
+      "lat": 45.427819,
+      "lng": 12.314321,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_32",
+      "name": "Comunale S.Elena",
+      "address": "Castello 28",
+      "sestiereCode": "CS",
+      "zonaCode": null,
+      "phone": "+390415225468",
+      "lat": 45.42628,
+      "lng": 12.36293,
+      "turpiDates": [
+        "2026-03-12",
+        "2026-03-13"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_33",
+      "name": "Comunale Colleoni",
+      "address": "Murano 139",
+      "sestiereCode": null,
+      "zonaCode": "MU",
+      "phone": "+39041739046",
+      "lat": 45.455642,
+      "lng": 12.352644,
+      "turpiDates": [
+        "2026-03-06",
+        "2026-03-07"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_34",
+      "name": "Eredi Dezuanni",
+      "address": "Murano 9",
+      "sestiereCode": null,
+      "zonaCode": "MU",
+      "phone": "+39041739478",
+      "lat": 45.458454,
+      "lng": 12.355472,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_35",
+      "name": "Rinaldi",
+      "address": "Burano 357",
+      "sestiereCode": null,
+      "zonaCode": "BU",
+      "phone": "+39041730048",
+      "lat": 45.485576,
+      "lng": 12.41768,
+      "turpiDates": [
+        "2026-02-27",
+        "2026-02-28",
+        "2026-03-01",
+        "2026-03-02",
+        "2026-03-03",
+        "2026-03-04",
+        "2026-03-05"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_36",
+      "name": "Comunale Pellestrina",
+      "address": "Pellestrina 976",
+      "sestiereCode": null,
+      "zonaCode": "PE",
+      "phone": "+393355396721",
+      "lat": 45.28199,
+      "lng": 12.302035,
+      "turpiDates": [
+        "2026-02-27",
+        "2026-02-28",
+        "2026-03-01",
+        "2026-03-02",
+        "2026-03-03",
+        "2026-03-04",
+        "2026-03-05"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_37",
+      "name": "Excelsior",
+      "address": "Lido, Via Sandro Gallo 74",
+      "sestiereCode": null,
+      "zonaCode": "LI",
+      "phone": "+390415261587",
+      "lat": 45.407263,
+      "lng": 12.365137,
+      "turpiDates": [
+        "2026-03-13",
+        "2026-03-14",
+        "2026-03-15",
+        "2026-03-16",
+        "2026-03-17",
+        "2026-03-18",
+        "2026-03-19"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_38",
+      "name": "Ca' Bianca",
+      "address": "Lido, Via Sandro Gallo 211",
+      "sestiereCode": null,
+      "zonaCode": "LI",
+      "phone": "+390415267251",
+      "lat": 45.392928,
+      "lng": 12.354781,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_39",
+      "name": "Città Giardino",
+      "address": "Lido, Via Sandro Gallo 108",
+      "sestiereCode": null,
+      "zonaCode": "LI",
+      "phone": "+390415261130",
+      "lat": 45.40169,
+      "lng": 12.360934,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_40",
+      "name": "Internazionale",
+      "address": "Lido, Gran Viale S.M.E. 55/A",
+      "sestiereCode": null,
+      "zonaCode": "LI",
+      "phone": "+390415260117",
+      "lat": 45.416009,
+      "lng": 12.372407,
+      "turpiDates": [
+        "2026-02-27",
+        "2026-02-28",
+        "2026-03-01",
+        "2026-03-02",
+        "2026-03-03",
+        "2026-03-04",
+        "2026-03-05"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_41",
+      "name": "San Nicolò",
+      "address": "Lido, Via Tiro 1",
+      "sestiereCode": null,
+      "zonaCode": "LI",
+      "phone": "+390415269048",
+      "lat": 45.418929,
+      "lng": 12.375215,
+      "turpiDates": [],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    },
+    {
+      "id": "ph_42",
+      "name": "San Sebastiano",
+      "address": "Lido, Via Malamocco 37/F",
+      "sestiereCode": null,
+      "zonaCode": "LI",
+      "phone": "+39041770128",
+      "lat": 45.383541,
+      "lng": 12.347302,
+      "turpiDates": [
+        "2026-03-06",
+        "2026-03-07",
+        "2026-03-08",
+        "2026-03-09",
+        "2026-03-10",
+        "2026-03-11",
+        "2026-03-12"
+      ],
+      "hours": {
+        "weekday": {
+          "open": "8:45",
+          "close": "19:30"
+        },
+        "saturday": {
+          "open": "8:45",
+          "close": "12:30"
+        },
+        "sunday": null
+      }
+    }
+  ]
+}

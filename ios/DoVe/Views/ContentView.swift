@@ -12,6 +12,12 @@ struct ContentView: View {
                 }
             }
 
+            Tab(strings.tabServices, systemImage: "building.2.crop.circle") {
+                NavigationStack {
+                    ServicesView()
+                }
+            }
+
             Tab(strings.tabInfo, systemImage: "info.circle") {
                 NavigationStack {
                     InfoView()

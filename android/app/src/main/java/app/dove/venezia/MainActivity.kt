@@ -31,7 +31,11 @@ import app.dove.venezia.ui.screens.SettingsScreen
 import app.dove.venezia.ui.screens.SplashScreen
 import app.dove.venezia.ui.screens.StreetListScreen
 import app.dove.venezia.ui.screens.StreetNumbersScreen
+import app.dove.venezia.ui.screens.ServicesScreen
+import app.dove.venezia.ui.screens.PharmacyListScreen
+import app.dove.venezia.ui.screens.PharmacyDetailScreen
 import app.dove.venezia.ui.theme.DoVeTheme
+import app.dove.venezia.viewmodel.PharmacyViewModel
 import app.dove.venezia.viewmodel.SearchViewModel
 import app.dove.venezia.viewmodel.ZonaNormaleViewModel
 import java.net.URLDecoder
@@ -69,6 +73,7 @@ class MainActivity : AppCompatActivity() {
                     val navController        = rememberNavController()
                     val searchViewModel      : SearchViewModel      = viewModel()
                     val zonaNormaleViewModel : ZonaNormaleViewModel = viewModel()
+                    val pharmacyViewModel    : PharmacyViewModel    = viewModel()
 
                     NavHost(
                         navController    = navController,
@@ -94,6 +99,7 @@ class MainActivity : AppCompatActivity() {
                                 onZonaSelected  = { code ->
                                     navController.navigate(NavRoutes.streetList(code))
                                 },
+                                onServicesClick = { navController.navigate(NavRoutes.SERVICES) },
                                 onInfoClick     = { navController.navigate(NavRoutes.INFO) },
                                 onSettingsClick = { navController.navigate(NavRoutes.SETTINGS) }
                             )
@@ -200,6 +206,39 @@ class MainActivity : AppCompatActivity() {
                                 lng          = lng,
                                 via          = via.ifBlank { null },
                                 onBack       = { navController.popBackStack() }
+                            )
+                        }
+
+                        // ── Servizi ──────────────────────────────────────────
+                        composable(NavRoutes.SERVICES) {
+                            ServicesScreen(
+                                viewModel        = pharmacyViewModel,
+                                onPharmaciesClick = { navController.navigate(NavRoutes.PHARMACY_LIST) },
+                                onBack           = { navController.popBackStack() }
+                            )
+                        }
+
+                        // ── Lista farmacie ───────────────────────────────────
+                        composable(NavRoutes.PHARMACY_LIST) {
+                            PharmacyListScreen(
+                                viewModel       = pharmacyViewModel,
+                                onPharmacyClick = { id ->
+                                    navController.navigate(NavRoutes.pharmacyDetail(id))
+                                },
+                                onBack          = { navController.popBackStack() }
+                            )
+                        }
+
+                        // ── Dettaglio farmacia ──────────────────────────────
+                        composable(
+                            route     = NavRoutes.PHARMACY_DETAIL,
+                            arguments = listOf(navArgument("pharmacyId") { type = NavType.StringType })
+                        ) { backStack ->
+                            val pharmacyId = backStack.arguments?.getString("pharmacyId") ?: return@composable
+                            PharmacyDetailScreen(
+                                pharmacyId = pharmacyId,
+                                viewModel  = pharmacyViewModel,
+                                onBack     = { navController.popBackStack() }
                             )
                         }
 

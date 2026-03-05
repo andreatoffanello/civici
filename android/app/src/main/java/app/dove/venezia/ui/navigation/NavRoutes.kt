@@ -29,6 +29,12 @@ object NavRoutes {
     fun resultVia(code: String, numero: String, lat: Double, lng: Double, via: String) =
         "result_via/$code/$numero/$lat/$lng/${URLEncoder.encode(via, "UTF-8")}"
 
+    // Servizi
+    const val SERVICES       = "services"
+    const val PHARMACY_LIST  = "pharmacy_list"
+    const val PHARMACY_DETAIL = "pharmacy_detail/{pharmacyId}"
+    fun pharmacyDetail(id: String) = "pharmacy_detail/$id"
+
     const val INFO      = "info"
     const val SETTINGS  = "settings"
 }
