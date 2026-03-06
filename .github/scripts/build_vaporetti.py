@@ -1,0 +1,584 @@
+#!/usr/bin/env python3
+"""
+Converte i dati GTFS ufficiali ACTV + Alilaguna in un JSON ottimizzato
+per l'app DoVe — tabellone partenze vaporetti a Venezia.
+
+Fonti:
+- ACTV navigazione: https://actv.avmspa.it/sites/default/files/attachments/opendata/navigazione/actv_nav.zip
+- Alilaguna: http://www.alilaguna.it/attuale/alilaguna.zip
+
+Output: vaporetti.json con fermate, linee e orari per giorno della settimana.
+"""
+
+import csv
+import io
+import json
+import os
+import ssl
+import sys
+import zipfile
+from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
+from urllib.request import urlopen, Request
+
+# --- Config ---
+
+ACTV_URL = "https://actv.avmspa.it/sites/default/files/attachments/opendata/navigazione/actv_nav.zip"
+ALILAGUNA_URL = "http://www.alilaguna.it/attuale/alilaguna.zip"
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = SCRIPT_DIR.parent.parent
+
+DOCS_API_PATH = REPO_ROOT / "docs" / "api" / "vaporetti.json"
+IOS_PATH = REPO_ROOT / "ios" / "DoVe" / "Resources" / "Data" / "vaporetti.json"
+
+# Fermate "deposito" o "a richiesta" da escludere
+EXCLUDE_PATTERNS = ["Deposito", "A RICHIESTA", "A RICHIEST", "Capannone"]
+
+
+def download_gtfs(url: str) -> dict[str, list[dict]]:
+    """Scarica e parsa un file GTFS zip in memoria."""
+    print(f"  Scaricando {url}...")
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    req = Request(url, headers={"User-Agent": "DoVe-App/1.0"})
+    resp = urlopen(req, timeout=30, context=ctx)
+    data = resp.read()
+    print(f"  Scaricato: {len(data) / 1024:.0f} KB")
+
+    result = {}
+    with zipfile.ZipFile(io.BytesIO(data)) as zf:
+        for name in zf.namelist():
+            if name.endswith(".txt"):
+                key = name.replace(".txt", "")
+                with zf.open(name) as f:
+                    text = f.read().decode("utf-8-sig")
+                    reader = csv.DictReader(io.StringIO(text))
+                    result[key] = list(reader)
+    return result
+
+
+def clean_stop_name(name: str) -> str:
+    """Pulisce il nome fermata: rimuove virgolette CSV rotte."""
+    return name.strip().strip('"').strip()
+
+
+def is_excluded(name: str) -> bool:
+    """Verifica se la fermata va esclusa (depositi, a richiesta)."""
+    return any(p.lower() in name.lower() for p in EXCLUDE_PATTERNS)
+
+
+def parse_time(t: str) -> tuple[int, int] | None:
+    """Parsa orario GTFS (HH:MM:SS) in (ore, minuti). Gestisce ore > 24."""
+    if not t or not t.strip():
+        return None
+    parts = t.strip().split(":")
+    if len(parts) < 2:
+        return None
+    return int(parts[0]), int(parts[1])
+
+
+def time_to_minutes(h: int, m: int) -> int:
+    """Converte ore:minuti in minuti dalla mezzanotte."""
+    return h * 60 + m
+
+
+def format_time(h: int, m: int) -> str:
+    """Formatta orario per display. Gestisce ore > 24 (servizio notturno)."""
+    display_h = h % 24
+    return f"{display_h:02d}:{m:02d}"
+
+
+def build_service_day_map(calendar: list[dict]) -> dict[str, set[int]]:
+    """
+    Mappa service_id → set di giorni della settimana (0=lun, 6=dom).
+    """
+    day_fields = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    result = {}
+    for row in calendar:
+        sid = row["service_id"]
+        days = set()
+        for i, field in enumerate(day_fields):
+            if row.get(field, "0") == "1":
+                days.add(i)
+        result[sid] = days
+    return result
+
+
+def _extract_base_name(name: str) -> str:
+    """
+    Estrae il nome base di una fermata, rimuovendo la lettera del pontile.
+    'Rialto "A' → 'Rialto'
+    'F.te Nove "D' → 'F.te Nove'
+    'S. Giorgio' → 'S. Giorgio' (invariato)
+    """
+    import re
+    # Pattern: nome seguito da spazio e "lettera o "lettera"
+    m = re.match(r'^(.+?)\s*"[A-Z]"?\s*$', name)
+    if m:
+        return m.group(1).strip()
+    return name
+
+
+def parse_stops(stops_raw: list[dict], source: str) -> tuple[dict, dict]:
+    """
+    Parsa le fermate GTFS, raggruppando automaticamente i pontili
+    per nome base (es. Rialto "A", "B", "C", "D" → Rialto).
+    """
+    stations = {}
+    children = defaultdict(list)
+    all_stops_info = []
+
+    for s in stops_raw:
+        stop_id = s["stop_id"].strip()
+        name = clean_stop_name(s["stop_name"])
+        lat = float(s["stop_lat"]) if s.get("stop_lat") else 0.0
+        lng = float(s["stop_lon"]) if s.get("stop_lon") else 0.0
+        parent = s.get("parent_station", "").strip()
+
+        if is_excluded(name):
+            continue
+
+        all_stops_info.append({
+            "id": stop_id, "name": name, "lat": lat, "lng": lng, "parent": parent,
+        })
+
+        if parent:
+            children[parent].append(stop_id)
+
+    # Prima: gestisci parent_station esplicito (Alilaguna)
+    for si in all_stops_info:
+        if not si["parent"]:
+            # Potrebbe essere una stazione madre (con figli) o fermata singola
+            sid = si["id"]
+            if sid in [c for cs in children.values() for c in cs]:
+                continue  # È un figlio elencato altrove, skip
+            stations[sid] = {
+                "id": sid,
+                "name": si["name"],
+                "lat": si["lat"],
+                "lng": si["lng"],
+                "source": source,
+                "pontili": children.get(sid, [sid]),
+            }
+
+    # Se non ci sono parent (ACTV), raggruppa per nome base
+    has_parents = any(si["parent"] for si in all_stops_info)
+    if not has_parents:
+        # Raggruppa per nome base
+        base_groups = defaultdict(list)
+        for si in all_stops_info:
+            if is_excluded(si["name"]):
+                continue
+            base = _extract_base_name(si["name"])
+            base_groups[base].append(si)
+
+        stations = {}
+        for base_name, group in base_groups.items():
+            # Usa il primo come rappresentante
+            rep = group[0]
+            # Coordinate: media dei pontili
+            avg_lat = sum(s["lat"] for s in group) / len(group)
+            avg_lng = sum(s["lng"] for s in group) / len(group)
+            station_id = f"actv_{base_name.replace(' ', '_').replace('.', '').lower()}"
+
+            stations[station_id] = {
+                "id": station_id,
+                "name": base_name,
+                "lat": round(avg_lat, 6),
+                "lng": round(avg_lng, 6),
+                "source": source,
+                "pontili": [s["id"] for s in group],
+            }
+
+    # Build stop_to_station mapping
+    stop_to_station = {}
+    for sid, st in stations.items():
+        for p in st["pontili"]:
+            stop_to_station[p] = sid
+        stop_to_station[sid] = sid
+
+    return stations, stop_to_station
+
+
+def build_departures(
+    stop_times: list[dict],
+    trips: list[dict],
+    routes: list[dict],
+    service_day_map: dict[str, set[int]],
+    valid_stop_ids: set[str],
+    source: str,
+) -> dict:
+    """
+    Costruisce le partenze per fermata, raggruppate per giorno e linea.
+
+    Ritorna: {stop_id: {day_index: [{line, headsign, time, minutes}]}}
+    """
+    # Index trips by trip_id
+    trip_index = {}
+    for t in trips:
+        trip_index[t["trip_id"]] = t
+
+    # Index routes by route_id
+    route_index = {}
+    for r in routes:
+        route_index[r["route_id"]] = r
+
+    # Raccogli partenze per stop
+    departures = defaultdict(lambda: defaultdict(list))
+
+    for st in stop_times:
+        stop_id = st["stop_id"].strip()
+        if stop_id not in valid_stop_ids:
+            continue
+
+        trip_id = st["trip_id"].strip()
+        trip = trip_index.get(trip_id)
+        if not trip:
+            continue
+
+        dep_time = parse_time(st.get("departure_time", ""))
+        if not dep_time:
+            continue
+
+        route_id = trip["route_id"]
+        route = route_index.get(route_id, {})
+        service_id = trip["service_id"]
+        days = service_day_map.get(service_id, set())
+
+        line_name = route.get("route_short_name", route_id).strip()
+        headsign = trip.get("trip_headsign", "").strip().strip('"')
+        color = route.get("route_color", "000000").strip()
+        text_color = route.get("route_text_color", "FFFFFF").strip()
+
+        h, m = dep_time
+        minutes = time_to_minutes(h, m)
+        time_str = format_time(h, m)
+
+        dep_entry = {
+            "line": line_name,
+            "headsign": headsign,
+            "time": time_str,
+            "minutes": minutes,
+            "color": f"#{color}" if not color.startswith("#") else color,
+            "textColor": f"#{text_color}" if not text_color.startswith("#") else text_color,
+            "source": source,
+        }
+
+        for day in days:
+            departures[stop_id][day].append(dep_entry)
+
+    # Ordina per orario
+    for stop_id in departures:
+        for day in departures[stop_id]:
+            departures[stop_id][day].sort(key=lambda d: d["minutes"])
+
+    return departures
+
+
+def _haversine_m(lat1, lng1, lat2, lng2):
+    """Distanza approssimata in metri tra due punti."""
+    from math import radians, sin, cos, sqrt, atan2
+    R = 6371000
+    dlat = radians(lat2 - lat1)
+    dlng = radians(lng2 - lng1)
+    a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlng/2)**2
+    return R * 2 * atan2(sqrt(a), sqrt(1-a))
+
+
+def _normalize_name(name: str) -> str:
+    """Normalizza nome fermata per matching."""
+    n = name.lower().replace('"', '').replace("'", "").replace(".", "").strip()
+    # Rimuovi lettere pontile alla fine: "rialto a" → "rialto"
+    parts = n.rsplit(" ", 1)
+    if len(parts) == 2 and len(parts[1]) == 1 and parts[1].isalpha():
+        n = parts[0]
+    # Alias comuni
+    n = n.replace("s. marco-san zaccaria", "s zaccaria")
+    n = n.replace("s zaccaria", "s zaccaria")
+    n = n.replace("fte nove", "f.te nove").replace("f.te nove", "fondamente nove")
+    n = n.replace("lido (sme)", "lido sme").replace("lido sme", "lido santa maria elisabetta")
+    return n
+
+
+def merge_stations(
+    actv_stations: dict, ali_stations: dict,
+    actv_s2s: dict, ali_s2s: dict,
+) -> tuple[list[dict], dict]:
+    """
+    Unisce le fermate ACTV e Alilaguna per prossimità geografica (< 300m).
+    Ritorna (stations_list, merged_stop_to_station).
+    """
+    MERGE_RADIUS_M = 300
+
+    merged = dict(actv_stations)
+    merged_s2s = dict(actv_s2s)
+
+    for ali_id, ali_st in ali_stations.items():
+        # Cerca la stazione ACTV più vicina
+        best_match = None
+        best_dist = MERGE_RADIUS_M + 1
+
+        for actv_id, actv_st in merged.items():
+            if actv_st["source"] != "actv":
+                continue
+            dist = _haversine_m(ali_st["lat"], ali_st["lng"], actv_st["lat"], actv_st["lng"])
+            if dist < best_dist:
+                best_dist = dist
+                best_match = actv_id
+
+        if best_match and best_dist <= MERGE_RADIUS_M:
+            # Unisci pontili Alilaguna nella stazione ACTV
+            existing = merged[best_match]
+            for p in ali_st["pontili"]:
+                if p not in existing["pontili"]:
+                    existing["pontili"].append(p)
+                    merged_s2s[p] = best_match
+        else:
+            # Fermata solo Alilaguna
+            merged[ali_id] = ali_st
+            for p in ali_st["pontili"]:
+                merged_s2s[p] = ali_id
+
+    return list(merged.values()), merged_s2s
+
+
+def merge_departures(actv_deps: dict, ali_deps: dict) -> dict:
+    """Unisce le partenze ACTV e Alilaguna per stop_id."""
+    merged = defaultdict(lambda: defaultdict(list))
+
+    for deps in [actv_deps, ali_deps]:
+        for stop_id, days in deps.items():
+            for day, entries in days.items():
+                merged[stop_id][day].extend(entries)
+
+    # Ri-ordina
+    for stop_id in merged:
+        for day in merged[stop_id]:
+            merged[stop_id][day].sort(key=lambda d: d["minutes"])
+
+    return merged
+
+
+def build_routes_list(actv_routes: list[dict], ali_routes: list[dict]) -> list[dict]:
+    """Costruisce la lista di tutte le linee."""
+    routes = []
+    for r in actv_routes + ali_routes:
+        color = r.get("route_color", "000000").strip()
+        text_color = r.get("route_text_color", "FFFFFF").strip()
+        source = "alilaguna" if r.get("agency_id") == "ALILAGUNA" else "actv"
+        routes.append({
+            "id": r["route_id"].strip(),
+            "name": r.get("route_short_name", r["route_id"]).strip(),
+            "longName": r.get("route_long_name", "").strip().strip('"'),
+            "color": f"#{color}" if not color.startswith("#") else color,
+            "textColor": f"#{text_color}" if not text_color.startswith("#") else text_color,
+            "source": source,
+        })
+    return routes
+
+
+def build_stop_departures(
+    station: dict, all_departures: dict, pontile_to_station: dict
+) -> dict[str, list[list]]:
+    """
+    Raccoglie tutte le partenze per una stazione (da tutti i suoi pontili).
+    Formato compatto: ogni partenza = ["HH:MM", "linea", "direzione"]
+    Giorni identici vengono raggruppati: "mon,tue,wed,thu,fri" → unica lista.
+    """
+    DAY_NAMES = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+
+    collected = defaultdict(list)
+    for pontile in station["pontili"]:
+        if pontile in all_departures:
+            for day_idx, deps in all_departures[pontile].items():
+                collected[day_idx].extend(deps)
+
+    # Anche la stazione stessa potrebbe avere partenze (se non ha figli)
+    station_id = station["id"]
+    if station_id in all_departures:
+        for day_idx, deps in all_departures[station_id].items():
+            collected[day_idx].extend(deps)
+
+    # Deduplica, ordina, compatta
+    per_day = {}
+    for day_idx in range(7):
+        deps = collected.get(day_idx, [])
+        seen = set()
+        unique = []
+        for d in deps:
+            key = (d["line"], d["time"], d["headsign"])
+            if key not in seen:
+                seen.add(key)
+                unique.append(d)
+        unique.sort(key=lambda d: d["minutes"])
+        # Formato compatto: ["HH:MM", "linea", "direzione"]
+        compact = [[d["time"], d["line"], d["headsign"]] for d in unique]
+        if compact:
+            per_day[day_idx] = compact
+
+    # Raggruppa giorni con orari identici
+    result = {}
+    used = set()
+    for day_idx in range(7):
+        if day_idx in used or day_idx not in per_day:
+            continue
+        same_days = [day_idx]
+        for other in range(day_idx + 1, 7):
+            if other not in used and other in per_day:
+                if per_day[day_idx] == per_day[other]:
+                    same_days.append(other)
+        for d in same_days:
+            used.add(d)
+        key = ",".join(DAY_NAMES[d] for d in same_days)
+        result[key] = per_day[day_idx]
+
+    return result
+
+
+def build_output(
+    stations: list[dict],
+    all_departures: dict,
+    routes: list[dict],
+    actv_feed: dict,
+    ali_feed: dict,
+) -> dict:
+    """Costruisce il JSON finale ottimizzato per l'app."""
+
+    # Mappa pontile → station ID per aggregare partenze
+    pontile_to_station = {}
+    for st in stations:
+        for p in st["pontili"]:
+            pontile_to_station[p] = st["id"]
+
+    stops_output = []
+    for st in stations:
+        departures = build_stop_departures(st, all_departures, pontile_to_station)
+
+        # Calcola le linee che servono questa fermata (formato compatto: [time, line, headsign])
+        lines_serving = set()
+        for day_deps in departures.values():
+            for d in day_deps:
+                lines_serving.add(d[1])
+
+        # Skip fermate senza partenze
+        if not departures:
+            continue
+
+        stops_output.append({
+            "id": st["id"],
+            "name": st["name"],
+            "lat": st["lat"],
+            "lng": st["lng"],
+            "lines": sorted(lines_serving),
+            "departures": departures,
+        })
+
+    # Ordina fermate per nome
+    stops_output.sort(key=lambda s: s["name"])
+
+    # Validity range
+    actv_feed_info = actv_feed.get("feed_info", [{}])
+    ali_feed_info = ali_feed.get("feed_info", [{}])
+
+    actv_end = actv_feed_info[0].get("feed_end_date", "") if actv_feed_info else ""
+    ali_end = ali_feed_info[0].get("feed_end_date", "") if ali_feed_info else ""
+
+    return {
+        "lastUpdated": datetime.now(tz=__import__('datetime').timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "sources": {
+            "actv": {
+                "name": "ACTV S.p.A. — Navigazione",
+                "url": ACTV_URL,
+                "license": "Open Data",
+                "validUntil": actv_end,
+            },
+            "alilaguna": {
+                "name": "Alilaguna S.p.A.",
+                "url": ALILAGUNA_URL,
+                "license": "Open Data",
+                "validUntil": ali_end,
+            },
+        },
+        "routes": routes,
+        "stops": stops_output,
+    }
+
+
+def main():
+    print("=== DoVe Vaporetti — GTFS → JSON ===\n")
+
+    # 1. Scarica GTFS
+    print("[1/5] Scaricando GTFS ACTV navigazione...")
+    actv = download_gtfs(ACTV_URL)
+
+    print("[2/5] Scaricando GTFS Alilaguna...")
+    ali = download_gtfs(ALILAGUNA_URL)
+
+    # 2. Parsa calendario
+    print("[3/5] Processando dati...")
+    actv_service_days = build_service_day_map(actv.get("calendar", []))
+    ali_service_days = build_service_day_map(ali.get("calendar", []))
+
+    # 3. Parsa fermate
+    actv_stations, actv_s2s = parse_stops(actv.get("stops", []), "actv")
+    ali_stations, ali_s2s = parse_stops(ali.get("stops", []), "alilaguna")
+
+    # Raccogli tutti gli stop_id validi (pontili + stazioni)
+    actv_valid_stops = set(actv_s2s.keys())
+    ali_valid_stops = set(ali_s2s.keys())
+
+    # 4. Costruisci partenze
+    actv_departures = build_departures(
+        actv.get("stop_times", []),
+        actv.get("trips", []),
+        actv.get("routes", []),
+        actv_service_days,
+        actv_valid_stops,
+        "actv",
+    )
+    ali_departures = build_departures(
+        ali.get("stop_times", []),
+        ali.get("trips", []),
+        ali.get("routes", []),
+        ali_service_days,
+        ali_valid_stops,
+        "alilaguna",
+    )
+
+    # 5. Unisci stazioni e partenze
+    stations, merged_s2s = merge_stations(actv_stations, ali_stations, actv_s2s, ali_s2s)
+    all_departures = merge_departures(actv_departures, ali_departures)
+    routes = build_routes_list(actv.get("routes", []), ali.get("routes", []))
+
+    print(f"  Fermate: {len(stations)}")
+    print(f"  Linee: {len(routes)}")
+
+    # 6. Costruisci output
+    print("[4/5] Costruendo JSON...")
+    output = build_output(stations, all_departures, routes, actv, ali)
+
+    print(f"  Fermate con partenze: {len(output['stops'])}")
+    total_deps = sum(
+        sum(len(deps) for deps in s["departures"].values())
+        for s in output["stops"]
+    )
+    print(f"  Partenze totali: {total_deps}")
+
+    # 7. Salva
+    print("[5/5] Salvando file...")
+
+    for path in [DOCS_API_PATH, IOS_PATH]:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(output, f, ensure_ascii=False, separators=(",", ":"))
+        size_kb = path.stat().st_size / 1024
+        print(f"  {path.relative_to(REPO_ROOT)} ({size_kb:.0f} KB)")
+
+    print(f"\nFatto! {len(output['stops'])} fermate, {len(output['routes'])} linee.")
+
+
+if __name__ == "__main__":
+    main()

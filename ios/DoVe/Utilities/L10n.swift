@@ -108,6 +108,20 @@ enum L10n {
         let serviceVaporetti: String
         let serviceEventi: String
 
+        // MARK: Water Bus (Vaporetti)
+        let waterBusTitle: String
+        let waterBusSearchPlaceholder: String
+        let waterBusNoResults: String
+        let waterBusLines: String
+        let waterBusNextDepartures: String
+        let waterBusNavigate: String
+        let waterBusAllLines: String
+        let waterBusTime: String
+        let waterBusLine: String
+        let waterBusDirection: String
+        let waterBusNoDepartures: String
+        let waterBusStopsCount: (Int) -> String
+
         // MARK: Pharmacies
         let pharmaciesTitle: String
         let pharmaciesOpenCount: (Int, Int) -> String
@@ -202,6 +216,19 @@ enum L10n {
             serviceVaporetti: "Vaporetti",
             serviceEventi: "Eventi",
 
+            waterBusTitle: "Vaporetti",
+            waterBusSearchPlaceholder: "Cerca fermata o linea...",
+            waterBusNoResults: "Nessuna fermata trovata",
+            waterBusLines: "Linee",
+            waterBusNextDepartures: "Prossime partenze",
+            waterBusNavigate: "Naviga alla fermata",
+            waterBusAllLines: "Tutte",
+            waterBusTime: "Ora",
+            waterBusLine: "Linea",
+            waterBusDirection: "Direzione",
+            waterBusNoDepartures: "Nessuna partenza programmata",
+            waterBusStopsCount: { n in "\(n) \(n == 1 ? "fermata" : "fermate")" },
+
             pharmaciesTitle: "Farmacie",
             pharmaciesOpenCount: { open, total in "\(open) aperte su \(total)" },
             pharmaciesAllClosed: "Tutte chiuse in questo momento",
@@ -295,6 +322,19 @@ enum L10n {
             serviceAcquaAlta: "High water",
             serviceVaporetti: "Water buses",
             serviceEventi: "Events",
+
+            waterBusTitle: "Water Buses",
+            waterBusSearchPlaceholder: "Search stop or line...",
+            waterBusNoResults: "No stops found",
+            waterBusLines: "Lines",
+            waterBusNextDepartures: "Next departures",
+            waterBusNavigate: "Navigate to stop",
+            waterBusAllLines: "All",
+            waterBusTime: "Time",
+            waterBusLine: "Line",
+            waterBusDirection: "Direction",
+            waterBusNoDepartures: "No departures scheduled",
+            waterBusStopsCount: { n in "\(n) \(n == 1 ? "stop" : "stops")" },
 
             pharmaciesTitle: "Pharmacies",
             pharmaciesOpenCount: { open, total in "\(open) open out of \(total)" },

@@ -71,7 +71,6 @@ struct ServicesView: View {
                         .padding(.horizontal, 24)
 
                     comingSoonCard(icon: "drop.fill", color: Color(hex: "4A90B8"), title: strings.serviceAcquaAlta)
-                    comingSoonCard(icon: "ferry.fill", color: Color(hex: "D4885A"), title: strings.serviceVaporetti)
                     comingSoonCard(icon: "calendar", color: Color(hex: "8B7BB8"), title: strings.serviceEventi)
                 }
                 .padding(.top, 28)

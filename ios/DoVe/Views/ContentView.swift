@@ -12,6 +12,12 @@ struct ContentView: View {
                 }
             }
 
+            Tab(strings.waterBusTitle, systemImage: "ferry") {
+                NavigationStack {
+                    WaterBusListView()
+                }
+            }
+
             Tab(strings.tabServices, systemImage: "building.2.crop.circle") {
                 NavigationStack {
                     ServicesView()

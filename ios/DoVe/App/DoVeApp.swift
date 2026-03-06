@@ -4,6 +4,7 @@ import SwiftUI
 struct DoVeApp: App {
     @State private var searchViewModel = SearchViewModel()
     @State private var pharmacyViewModel = PharmacyViewModel()
+    @State private var waterBusViewModel = WaterBusViewModel()
     @State private var locationManager = LocationManager()
     @State private var notificationManager = NotificationManager()
     @AppStorage("appColorScheme") private var appColorScheme: String = AppColorScheme.light.rawValue
@@ -16,6 +17,7 @@ struct DoVeApp: App {
                 ContentView()
                     .environment(searchViewModel)
                     .environment(pharmacyViewModel)
+                    .environment(waterBusViewModel)
                     .environment(locationManager)
                     .environment(notificationManager)
                     .environment(\.strings, L10n.strings(for: appLanguage))
