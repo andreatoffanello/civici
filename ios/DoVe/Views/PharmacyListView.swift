@@ -74,6 +74,7 @@ struct PharmacyListView: View {
         }
         .navigationTitle(strings.pharmaciesTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .navigationDestination(for: Pharmacy.self) { pharmacy in
             PharmacyDetailView(pharmacy: pharmacy)
         }
@@ -284,7 +285,7 @@ struct PharmacyMapCard: View {
                     // Content
                     VStack(alignment: .leading, spacing: 4) {
                         Text(pharmacy.name)
-                            .font(.custom("Sotoportego-Medium", size: 17))
+                            .font(.system(size: 17, weight: .semibold))
                             .foregroundStyle(.primary)
                             .lineLimit(1)
 
@@ -447,7 +448,7 @@ struct PharmacyRow: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(pharmacy.name)
-                    .font(.custom("Sotoportego-Medium", size: 17))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 

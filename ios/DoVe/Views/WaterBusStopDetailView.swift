@@ -33,6 +33,7 @@ struct WaterBusStopDetailView: View {
         }
         .navigationTitle(stop.name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .onAppear {
             // Default to today's day group
             let today = Date()
@@ -128,7 +129,7 @@ struct WaterBusStopDetailView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
-                    .background(Color.doVeAccent)
+                    .background(Color.doVeNavigation)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
@@ -155,7 +156,7 @@ struct WaterBusStopDetailView: View {
                             .foregroundStyle(isSelected ? .white : .primary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
-                            .background(isSelected ? Color.doVeAccent : Color(.systemGray5))
+                            .background(isSelected ? Color.doVeNavigation : Color(.systemGray5))
                             .clipShape(Capsule())
                     }
                 }

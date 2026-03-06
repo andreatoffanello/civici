@@ -23,10 +23,15 @@ enum L10n {
 
     struct Strings: @unchecked Sendable {
         // MARK: Tabs
+        let tabHome: String
         let tabSearch: String
         let tabServices: String
         let tabInfo: String
         let tabSettings: String
+
+        // MARK: Home
+        let homeCiviciTitle: String
+        let homeTagline: String
 
         // MARK: SestieriView
         let tagline: String
@@ -102,11 +107,6 @@ enum L10n {
         let servicesTitle: String
         let servicesSubtitle: String
         let servicesAvailable: String
-        let servicesComingSoon: String
-        let comingSoonBadge: String
-        let serviceAcquaAlta: String
-        let serviceVaporetti: String
-        let serviceEventi: String
 
         // MARK: Water Bus (Vaporetti)
         let waterBusTitle: String
@@ -121,6 +121,9 @@ enum L10n {
         let waterBusDirection: String
         let waterBusNoDepartures: String
         let waterBusStopsCount: (Int) -> String
+        let waterBusStops: String
+        let waterBusNoLines: String
+        let waterBusRouteStops: String
 
         // MARK: Pharmacies
         let pharmaciesTitle: String
@@ -139,11 +142,14 @@ enum L10n {
         // MARK: - Italian
 
         static let it = Strings(
-            tabSearch: "Cerca",
+            tabHome: "Home",
+            tabSearch: "Civici",
             tabServices: "Servizi",
             tabInfo: "Info",
             tabSettings: "Impostazioni",
 
+            homeCiviciTitle: "Civici",
+            homeTagline: "DoVe vai oggi?",
             tagline: "Trova ogni civico di Venezia",
             selectSestiere: "SELEZIONA UN SESTIERE",
             otherAreas: "ALTRE ZONE",
@@ -210,12 +216,6 @@ enum L10n {
             servicesTitle: "Servizi",
             servicesSubtitle: "Informazioni utili per chi vive e visita Venezia",
             servicesAvailable: "DISPONIBILI",
-            servicesComingSoon: "PROSSIMAMENTE",
-            comingSoonBadge: "PRESTO",
-            serviceAcquaAlta: "Acqua alta",
-            serviceVaporetti: "Vaporetti",
-            serviceEventi: "Eventi",
-
             waterBusTitle: "Vaporetti",
             waterBusSearchPlaceholder: "Cerca fermata o linea...",
             waterBusNoResults: "Nessuna fermata trovata",
@@ -228,6 +228,9 @@ enum L10n {
             waterBusDirection: "Direzione",
             waterBusNoDepartures: "Nessuna partenza programmata",
             waterBusStopsCount: { n in "\(n) \(n == 1 ? "fermata" : "fermate")" },
+            waterBusStops: "Fermate",
+            waterBusNoLines: "Nessuna linea trovata",
+            waterBusRouteStops: "FERMATE DEL PERCORSO",
 
             pharmaciesTitle: "Farmacie",
             pharmaciesOpenCount: { open, total in "\(open) aperte su \(total)" },
@@ -246,11 +249,14 @@ enum L10n {
         // MARK: - English
 
         static let en = Strings(
-            tabSearch: "Search",
+            tabHome: "Home",
+            tabSearch: "Civics",
             tabServices: "Services",
             tabInfo: "Info",
             tabSettings: "Settings",
 
+            homeCiviciTitle: "Civic Numbers",
+            homeTagline: "Where are you going today?",
             tagline: "Find every civic number in Venice",
             selectSestiere: "SELECT A SESTIERE",
             otherAreas: "OTHER AREAS",
@@ -317,12 +323,6 @@ enum L10n {
             servicesTitle: "Services",
             servicesSubtitle: "Useful information for those who live in and visit Venice",
             servicesAvailable: "AVAILABLE",
-            servicesComingSoon: "COMING SOON",
-            comingSoonBadge: "SOON",
-            serviceAcquaAlta: "High water",
-            serviceVaporetti: "Water buses",
-            serviceEventi: "Events",
-
             waterBusTitle: "Water Buses",
             waterBusSearchPlaceholder: "Search stop or line...",
             waterBusNoResults: "No stops found",
@@ -335,6 +335,9 @@ enum L10n {
             waterBusDirection: "Direction",
             waterBusNoDepartures: "No departures scheduled",
             waterBusStopsCount: { n in "\(n) \(n == 1 ? "stop" : "stops")" },
+            waterBusStops: "Stops",
+            waterBusNoLines: "No lines found",
+            waterBusRouteStops: "ROUTE STOPS",
 
             pharmaciesTitle: "Pharmacies",
             pharmaciesOpenCount: { open, total in "\(open) open out of \(total)" },

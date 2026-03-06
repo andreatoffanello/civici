@@ -11,6 +11,7 @@
 		0CAA6A6DFAE37DE8DC8C3071 /* ServicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717EFE55464140DB827E572 /* ServicesView.swift */; };
 		0DCC5DABB354F8968E43F92B /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5731BE7E9A1EEEC1C58F98FD /* SplashScreenView.swift */; };
 		11ED38C0B8AE6A909EBEC21F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731ECE7841A0667C983C294B /* ContentView.swift */; };
+		7FA2B3C4D5E6F7A8B9C0D1E2 /* HomeHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EA1B2C3D4E5F6A7B8C9D0E1 /* HomeHubView.swift */; };
 		1383E096BEF93F0515382F5A /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A306022D33E0A90FD3BD76 /* InfoView.swift */; };
 		1AE3A20E60E423AF0716D8C3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8CA4D09667862999C25BA6D8 /* PrivacyInfo.xcprivacy */; };
 		1C30EBC6CEAA87AF55EE82FF /* NiziolettoShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69366B41EE568BF33524730 /* NiziolettoShape.swift */; };
@@ -52,6 +53,7 @@
 		E5F6A7B8C9D0E1F2A1B2C3D4 /* WaterBusViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A7B8C9D0E1F2A1B2C3D4E5 /* WaterBusViewModel.swift */; };
 		A7B8C9D0E1F2A1B2C3D4E5F6 /* WaterBusListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C9D0E1F2A1B2C3D4E5F6A7 /* WaterBusListView.swift */; };
 		C9D0E1F2A1B2C3D4E5F6A7B8 /* WaterBusStopDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E1F2A1B2C3D4E5F6A7B8C9 /* WaterBusStopDetailView.swift */; };
+		3AB4C5D6E7F8A9B0C1D2E3F4 /* WaterBusLineDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC5D6E7F8A9B0C1D2E3F4A5 /* WaterBusLineDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +75,7 @@
 		5A11298FBE0618A8CCE0E141 /* GlassCompat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCompat.swift; sourceTree = "<group>"; };
 		6B95319AD2B43AB0008E86C6 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		731ECE7841A0667C983C294B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		2EA1B2C3D4E5F6A7B8C9D0E1 /* HomeHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHubView.swift; sourceTree = "<group>"; };
 		7744282CEFA87CBC29FF3DC2 /* DataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataLoader.swift; sourceTree = "<group>"; };
 		78A306022D33E0A90FD3BD76 /* InfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
 		7C6166B14D41AD5EC394CCDC /* Sotoportego.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sotoportego.otf; sourceTree = "<group>"; };
@@ -102,6 +105,7 @@
 		F6A7B8C9D0E1F2A1B2C3D4E5 /* WaterBusViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterBusViewModel.swift; sourceTree = "<group>"; };
 		B8C9D0E1F2A1B2C3D4E5F6A7 /* WaterBusListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterBusListView.swift; sourceTree = "<group>"; };
 		D0E1F2A1B2C3D4E5F6A7B8C9 /* WaterBusStopDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterBusStopDetailView.swift; sourceTree = "<group>"; };
+		4BC5D6E7F8A9B0C1D2E3F4A5 /* WaterBusLineDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterBusLineDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -228,6 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				731ECE7841A0667C983C294B /* ContentView.swift */,
+				2EA1B2C3D4E5F6A7B8C9D0E1 /* HomeHubView.swift */,
 				78A306022D33E0A90FD3BD76 /* InfoView.swift */,
 				D391A7EB32108FCF0AC47795 /* PharmacyDetailView.swift */,
 				DCF9890002549E5560FFF547 /* PharmacyListView.swift */,
@@ -242,6 +247,7 @@
 				A9E9F0BA9B1D26FB36F7D171 /* StreetNumbersView.swift */,
 				B8C9D0E1F2A1B2C3D4E5F6A7 /* WaterBusListView.swift */,
 				D0E1F2A1B2C3D4E5F6A7B8C9 /* WaterBusStopDetailView.swift */,
+				4BC5D6E7F8A9B0C1D2E3F4A5 /* WaterBusLineDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -329,6 +335,7 @@
 				8A250774F24C23E55C6E0EDA /* CivicoRow.swift in Sources */,
 				9147263B5A040DB4251D7304 /* ColorExtension.swift in Sources */,
 				11ED38C0B8AE6A909EBEC21F /* ContentView.swift in Sources */,
+				7FA2B3C4D5E6F7A8B9C0D1E2 /* HomeHubView.swift in Sources */,
 				584D74C0ACEB0E3D481B162E /* DataLoader.swift in Sources */,
 				5EA465FD481AB16029B2C75F /* DoVeApp.swift in Sources */,
 				E833A9ACC6BB8DF694047C81 /* GlassCompat.swift in Sources */,
@@ -360,6 +367,7 @@
 				E5F6A7B8C9D0E1F2A1B2C3D4 /* WaterBusViewModel.swift in Sources */,
 				A7B8C9D0E1F2A1B2C3D4E5F6 /* WaterBusListView.swift in Sources */,
 				C9D0E1F2A1B2C3D4E5F6A7B8 /* WaterBusStopDetailView.swift in Sources */,
+				3AB4C5D6E7F8A9B0C1D2E3F4 /* WaterBusLineDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

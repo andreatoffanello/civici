@@ -37,6 +37,7 @@ IOS_PATH = REPO_ROOT / "ios" / "DoVe" / "Resources" / "Data" / "vaporetti.json"
 EXCLUDE_PATTERNS = ["Deposito", "A RICHIESTA", "A RICHIEST", "Capannone"]
 
 
+
 def download_gtfs(url: str) -> dict[str, list[dict]]:
     """Scarica e parsa un file GTFS zip in memoria."""
     print(f"  Scaricando {url}...")
@@ -362,20 +363,149 @@ def merge_departures(actv_deps: dict, ali_deps: dict) -> dict:
     return merged
 
 
-def build_routes_list(actv_routes: list[dict], ali_routes: list[dict]) -> list[dict]:
-    """Costruisce la lista di tutte le linee."""
+def parse_shapes(shapes_raw: list[dict]) -> dict[str, list[list[float]]]:
+    """
+    Parsa shapes.txt GTFS in un dizionario shape_id → [[lat, lng], ...].
+    Coordinate ordinate per shape_pt_sequence.
+    """
+    shape_points = defaultdict(list)
+    for row in shapes_raw:
+        sid = row["shape_id"].strip()
+        seq = int(row["shape_pt_sequence"])
+        lat = float(row["shape_pt_lat"])
+        lon = float(row["shape_pt_lon"])
+        shape_points[sid].append((seq, [round(lat, 6), round(lon, 6)]))
+
+    result = {}
+    for sid, points in shape_points.items():
+        points.sort(key=lambda x: x[0])
+        result[sid] = [p[1] for p in points]
+    return result
+
+
+def build_route_directions(
+    routes_raw: list[dict],
+    trips_raw: list[dict],
+    stop_times_raw: list[dict],
+    shapes: dict[str, list[list[float]]],
+    stop_to_station: dict[str, str],
+    stations: dict[str, dict],
+    source: str,
+) -> dict[str, list[dict]]:
+    """
+    Per ogni route, costruisce le directions (andata/ritorno) con:
+    - headsign
+    - stopIds (ordinati, mappati a station ID)
+    - shape (coordinate polyline)
+    """
+    # Index trips by route_id and direction
+    route_trips = defaultdict(lambda: defaultdict(list))
+    for t in trips_raw:
+        rid = t["route_id"].strip()
+        direction = int(t.get("direction_id", 0))
+        route_trips[rid][direction].append(t)
+
+    # Index stop_times by trip_id
+    trip_stop_times = defaultdict(list)
+    for st in stop_times_raw:
+        tid = st["trip_id"].strip()
+        trip_stop_times[tid].append(st)
+
+    result = {}
+    for r in routes_raw:
+        route_id = r["route_id"].strip()
+        directions = []
+
+        for direction_id in sorted(route_trips.get(route_id, {}).keys()):
+            trips = route_trips[route_id][direction_id]
+            if not trips:
+                continue
+
+            # Pick trip with most stops as representative
+            best_trip = None
+            best_count = 0
+            for t in trips[:20]:  # Check first 20 trips
+                tid = t["trip_id"]
+                count = len(trip_stop_times.get(tid, []))
+                if count > best_count:
+                    best_count = count
+                    best_trip = t
+
+            if not best_trip:
+                continue
+
+            trip_id = best_trip["trip_id"]
+            headsign = best_trip.get("trip_headsign", "").strip().strip('"')
+            shape_id = best_trip.get("shape_id", "").strip()
+
+            # Get ordered stops for this trip
+            stops_for_trip = trip_stop_times.get(trip_id, [])
+            stops_for_trip.sort(key=lambda x: int(x.get("stop_sequence", 0)))
+
+            # Map pontile stop_ids to station IDs, dedup keeping order
+            ordered_station_ids = []
+            seen = set()
+            for st in stops_for_trip:
+                stop_id = st["stop_id"].strip()
+                station_id = stop_to_station.get(stop_id)
+                if station_id and station_id not in seen:
+                    seen.add(station_id)
+                    ordered_station_ids.append(station_id)
+
+            # Get shape coordinates
+            shape_coords = shapes.get(shape_id, [])
+
+            # If no shape (e.g. Alilaguna), generate from station coordinates
+            if not shape_coords and ordered_station_ids:
+                shape_coords = []
+                for sid in ordered_station_ids:
+                    st = stations.get(sid)
+                    if st:
+                        shape_coords.append([round(st["lat"], 6), round(st["lng"], 6)])
+
+            if ordered_station_ids:
+                directions.append({
+                    "id": direction_id,
+                    "headsign": headsign,
+                    "stopIds": ordered_station_ids,
+                    "shape": shape_coords,
+                })
+
+        if directions:
+            result[route_id] = directions
+
+    return result
+
+
+def build_routes_list(
+    actv_routes: list[dict], ali_routes: list[dict],
+    actv_directions: dict = None, ali_directions: dict = None,
+) -> list[dict]:
+    """Costruisce la lista di tutte le linee con directions."""
+    if actv_directions is None:
+        actv_directions = {}
+    if ali_directions is None:
+        ali_directions = {}
+
     routes = []
     for r in actv_routes + ali_routes:
+        route_id = r["route_id"].strip()
+        name = r.get("route_short_name", route_id).strip()
         color = r.get("route_color", "000000").strip()
         text_color = r.get("route_text_color", "FFFFFF").strip()
         source = "alilaguna" if r.get("agency_id") == "ALILAGUNA" else "actv"
+
+        all_dirs = actv_directions if source == "actv" else ali_directions
+        directions = all_dirs.get(route_id, [])
+
         routes.append({
-            "id": r["route_id"].strip(),
-            "name": r.get("route_short_name", r["route_id"]).strip(),
+            "id": route_id,
+            "name": name,
             "longName": r.get("route_long_name", "").strip().strip('"'),
             "color": f"#{color}" if not color.startswith("#") else color,
             "textColor": f"#{text_color}" if not text_color.startswith("#") else text_color,
             "source": source,
+            "directions": directions,
         })
     return routes
 
@@ -551,7 +681,37 @@ def main():
     # 5. Unisci stazioni e partenze
     stations, merged_s2s = merge_stations(actv_stations, ali_stations, actv_s2s, ali_s2s)
     all_departures = merge_departures(actv_departures, ali_departures)
-    routes = build_routes_list(actv.get("routes", []), ali.get("routes", []))
+
+    # 5b. Parsa shapes e costruisci directions per route
+    actv_shapes = parse_shapes(actv.get("shapes", []))
+    ali_shapes = parse_shapes(ali.get("shapes", []))
+
+    # Merged station dict for lookups
+    stations_dict = {s["id"]: s for s in stations}
+
+    actv_directions = build_route_directions(
+        actv.get("routes", []),
+        actv.get("trips", []),
+        actv.get("stop_times", []),
+        actv_shapes,
+        merged_s2s,
+        stations_dict,
+        "actv",
+    )
+    ali_directions = build_route_directions(
+        ali.get("routes", []),
+        ali.get("trips", []),
+        ali.get("stop_times", []),
+        ali_shapes,
+        merged_s2s,
+        stations_dict,
+        "alilaguna",
+    )
+
+    routes = build_routes_list(
+        actv.get("routes", []), ali.get("routes", []),
+        actv_directions, ali_directions,
+    )
 
     print(f"  Fermate: {len(stations)}")
     print(f"  Linee: {len(routes)}")

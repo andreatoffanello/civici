@@ -13,11 +13,11 @@ struct ServicesView: View {
                 VStack(spacing: 8) {
                     Image(systemName: "building.2.crop.circle")
                         .font(.system(size: 48, weight: .light))
-                        .foregroundStyle(Color.doVeAccent)
+                        .foregroundStyle(Color.doVeServices)
                         .symbolRenderingMode(.hierarchical)
 
                     Text(strings.servicesTitle)
-                        .font(.custom("Sotoportego-Medium", size: 28))
+                        .font(.system(size: 28, weight: .bold))
 
                     Text(strings.servicesSubtitle)
                         .font(.system(size: 14, weight: .regular, design: .serif))
@@ -49,7 +49,7 @@ struct ServicesView: View {
                 } label: {
                     ServiceCard(
                         icon: "cross.case.fill",
-                        iconColor: Color(hex: "38A169"),
+                        iconColor: Color.doVeServices,
                         title: strings.pharmaciesTitle,
                         subtitle: pharmacySummary,
                         badge: pharmacyBadge
@@ -61,21 +61,6 @@ struct ServicesView: View {
                 .offset(y: appeared ? 0 : 12)
                 .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.35), value: appeared)
 
-                // Coming soon
-                VStack(spacing: 12) {
-                    Text(strings.servicesComingSoon)
-                        .font(.system(size: 11, weight: .medium))
-                        .tracking(2)
-                        .foregroundStyle(.tertiary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 24)
-
-                    comingSoonCard(icon: "drop.fill", color: Color(hex: "4A90B8"), title: strings.serviceAcquaAlta)
-                    comingSoonCard(icon: "calendar", color: Color(hex: "8B7BB8"), title: strings.serviceEventi)
-                }
-                .padding(.top, 28)
-                .opacity(appeared ? 1 : 0)
-                .animation(.easeOut(duration: 0.8).delay(0.55), value: appeared)
             }
             .padding(.bottom, 40)
         }
@@ -108,35 +93,6 @@ struct ServicesView: View {
         return count > 0 ? "\(count)" : nil
     }
 
-    @ViewBuilder
-    private func comingSoonCard(icon: String, color: Color, title: String) -> some View {
-        HStack(spacing: 14) {
-            Image(systemName: icon)
-                .font(.system(size: 18, weight: .medium))
-                .foregroundStyle(color.opacity(0.4))
-                .frame(width: 40, height: 40)
-                .background(color.opacity(0.06))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-
-            Text(title)
-                .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(.tertiary)
-
-            Spacer()
-
-            Text(strings.comingSoonBadge)
-                .font(.system(size: 10, weight: .semibold))
-                .tracking(0.5)
-                .foregroundStyle(.quaternary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(.quaternary.opacity(0.08))
-                .clipShape(Capsule())
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .padding(.horizontal, 8)
-    }
 }
 
 // MARK: - ServiceCard
@@ -161,7 +117,7 @@ struct ServiceCard: View {
             // Text
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .font(.custom("Sotoportego-Medium", size: 20))
+                    .font(.system(size: 20, weight: .semibold))
                     .foregroundStyle(.primary)
 
                 if !subtitle.isEmpty {
@@ -181,7 +137,7 @@ struct ServiceCard: View {
                         .foregroundStyle(.white)
                         .frame(minWidth: 24, minHeight: 24)
                         .padding(.horizontal, 4)
-                        .background(Color(hex: "38A169"))
+                        .background(Color.doVeServices)
                         .clipShape(Circle())
                 }
 

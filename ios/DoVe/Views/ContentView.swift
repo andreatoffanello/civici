@@ -1,41 +1,42 @@
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(SearchViewModel.self) private var viewModel
     @Environment(\.strings) private var strings
+    @State private var selectedTab: AppTab = .home
 
     var body: some View {
-        TabView {
-            Tab(strings.tabSearch, systemImage: "magnifyingglass") {
+        TabView(selection: $selectedTab) {
+            Tab(strings.tabHome, systemImage: "house.fill", value: .home) {
+                NavigationStack {
+                    HomeHubView(selectedTab: $selectedTab)
+                }
+            }
+
+            Tab(strings.tabSearch, systemImage: "magnifyingglass", value: .search) {
                 NavigationStack {
                     SearchFlowView()
                 }
             }
 
-            Tab(strings.waterBusTitle, systemImage: "ferry") {
+            Tab(strings.waterBusTitle, systemImage: "ferry.fill", value: .waterBus) {
                 NavigationStack {
                     WaterBusListView()
                 }
             }
 
-            Tab(strings.tabServices, systemImage: "building.2.crop.circle") {
+            Tab(strings.tabServices, systemImage: "cross.case.fill", value: .services) {
                 NavigationStack {
                     ServicesView()
-                }
-            }
-
-            Tab(strings.tabInfo, systemImage: "info.circle") {
-                NavigationStack {
-                    InfoView()
-                }
-            }
-
-            Tab(strings.tabSettings, systemImage: "gearshape") {
-                NavigationStack {
-                    SettingsView()
                 }
             }
         }
         .tint(Color.doVeAccent)
     }
+}
+
+enum AppTab: Hashable {
+    case home
+    case search
+    case waterBus
+    case services
 }

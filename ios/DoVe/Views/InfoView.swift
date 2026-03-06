@@ -138,33 +138,14 @@ struct InfoView: View {
                     )
                 }
 
-                // Credits
-                VStack(alignment: .center, spacing: 12) {
-                    Link(destination: URL(string: "https://andreatoffanello.com")!) {
-                        HStack(spacing: 6) {
-                            Text("Crafted in Venice by")
-                                .font(.footnote)
-                            Image("at-logo")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 16)
-                        }
-                        .foregroundStyle(.tertiary)
-                    }
-                    .buttonStyle(.plain)
-
-                    Text("v\(appVersion)")
-                        .font(.caption2)
-                        .foregroundStyle(.quaternary)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.top, 16)
-                .padding(.bottom, 32)
+                Spacer()
+                    .frame(height: 32)
             }
             .padding(.horizontal, 20)
         }
         .navigationTitle(strings.tabInfo)
         .navigationBarTitleDisplayMode(.large)
+        .toolbar(.hidden, for: .tabBar)
     }
 }
 

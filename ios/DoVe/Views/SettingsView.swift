@@ -192,6 +192,7 @@ struct SettingsView: View {
         }
         .navigationTitle(strings.settingsNavTitle)
         .navigationBarTitleDisplayMode(.large)
+        .toolbar(.hidden, for: .tabBar)
         .task {
             await notificationManager.refreshStatus()
         }

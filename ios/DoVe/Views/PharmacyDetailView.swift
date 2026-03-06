@@ -50,6 +50,7 @@ struct PharmacyDetailView: View {
                 .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.2), value: appeared)
         }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .toolbarBackground(.hidden, for: .navigationBar)
         .confirmationDialog(
             strings.openNavigationWith,
@@ -112,7 +113,7 @@ struct PharmacyDetailView: View {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(pharmacy.name)
-                        .font(.custom("Sotoportego-Medium", size: 22))
+                        .font(.system(size: 22, weight: .bold))
 
                     Text(pharmacy.address)
                         .font(.system(size: 14, weight: .regular))

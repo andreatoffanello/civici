@@ -127,7 +127,24 @@ struct WaterBusRoute: Identifiable, Hashable {
     let color: Color
     let textColor: Color
     let source: String  // "actv" or "alilaguna"
+    let directions: [RouteDirection]
 
     static func == (lhs: WaterBusRoute, rhs: WaterBusRoute) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
+}
+
+// MARK: - Route Direction
+
+struct RouteDirection: Identifiable, Hashable {
+    let id: Int       // 0 = andata, 1 = ritorno
+    let headsign: String
+    let stopIds: [String]
+    let shape: [[Double]]  // [[lat, lng], ...]
+
+    var coordinates: [CLLocationCoordinate2D] {
+        shape.compactMap { point in
+            guard point.count >= 2 else { return nil }
+            return CLLocationCoordinate2D(latitude: point[0], longitude: point[1])
+        }
+    }
 }

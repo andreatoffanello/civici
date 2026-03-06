@@ -9,6 +9,20 @@ extension Color {
             : UIColor(red: 0.761, green: 0.271, blue: 0.176, alpha: 1) // #C2452D
     })
 
+    /// Blu navigazione — morbido, non saturo
+    static let doVeNavigation = Color(UIColor { trait in
+        trait.userInterfaceStyle == .dark
+            ? UIColor(red: 0.431, green: 0.616, blue: 0.792, alpha: 1) // #6E9DCA
+            : UIColor(red: 0.255, green: 0.431, blue: 0.620, alpha: 1) // #416E9E
+    })
+
+    /// Verde servizi
+    static let doVeServices = Color(UIColor { trait in
+        trait.userInterfaceStyle == .dark
+            ? UIColor(red: 0.314, green: 0.741, blue: 0.533, alpha: 1) // #50BD88
+            : UIColor(red: 0.220, green: 0.631, blue: 0.412, alpha: 1) // #38A169
+    })
+
     /// Sfondo delle card nizioleto — crema caldo in light, scuro caldo in dark
     static let niziolettoBackground = Color(UIColor { trait in
         trait.userInterfaceStyle == .dark

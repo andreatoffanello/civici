@@ -2,6 +2,8 @@ import SwiftUI
 
 struct SearchFlowView: View {
     @Environment(SearchViewModel.self) private var viewModel
+    @Environment(\.strings) private var strings
+    @State private var showInfo = false
 
     var body: some View {
         Group {
@@ -32,5 +34,18 @@ struct SearchFlowView: View {
         .animation(.smooth(duration: 0.28), value: viewModel.selectedZona?.id)
         .animation(.smooth(duration: 0.28), value: viewModel.selectedStreet)
         .animation(.smooth(duration: 0.28), value: viewModel.selectedCivico?.id)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showInfo = true
+                } label: {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .navigationDestination(isPresented: $showInfo) {
+            InfoView()
+        }
     }
 }

@@ -9,10 +9,15 @@ struct WaterBusListView: View {
     @Environment(LocationManager.self) private var locationManager
     @Environment(\.strings) private var strings
     @State private var viewMode: ViewMode = .map
+    @State private var contentMode: ContentMode = .stops
     @State private var appeared = false
 
     enum ViewMode: String {
         case map, list
+    }
+
+    enum ContentMode: String {
+        case stops, lines
     }
 
     var body: some View {
@@ -20,26 +25,45 @@ struct WaterBusListView: View {
         let sorted = vm.stopsSortedByDistance(from: locationManager.userLocation)
 
         ZStack(alignment: .top) {
-            switch viewMode {
-            case .map:
-                WaterBusMapView(
-                    stops: vm.filteredStops,
-                    vm: vm,
-                    userLocation: locationManager.userLocation,
-                    locationManager: locationManager
-                )
-                .ignoresSafeArea(edges: .bottom)
-            case .list:
-                WaterBusListContent(
-                    stops: sorted,
+            switch contentMode {
+            case .stops:
+                switch viewMode {
+                case .map:
+                    WaterBusMapView(
+                        stops: vm.filteredStops,
+                        vm: vm,
+                        userLocation: locationManager.userLocation,
+                        locationManager: locationManager
+                    )
+                    .ignoresSafeArea(edges: .bottom)
+                case .list:
+                    WaterBusListContent(
+                        stops: sorted,
+                        vm: vm,
+                        appeared: appeared,
+                        locationManager: locationManager
+                    )
+                }
+            case .lines:
+                WaterBusLinesContent(
+                    routes: vm.filteredRoutes,
                     vm: vm,
                     appeared: appeared,
-                    locationManager: locationManager
+                    strings: strings
                 )
             }
 
-            // Top overlay: search + toggle
-            VStack(spacing: 0) {
+            // Top overlay: segmented + search + toggle
+            VStack(spacing: 8) {
+                // Segmented control: Fermate / Linee
+                Picker("", selection: $contentMode) {
+                    Text(strings.waterBusStops).tag(ContentMode.stops)
+                    Text(strings.waterBusLines).tag(ContentMode.lines)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+
                 HStack(spacing: 10) {
                     // Search field
                     HStack(spacing: 6) {
@@ -64,24 +88,29 @@ struct WaterBusListView: View {
                     .background(.ultraThinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
 
-                    // Toggle map/list
-                    HStack(spacing: 0) {
-                        toggleButton(icon: "map.fill", mode: .map)
-                        toggleButton(icon: "list.bullet", mode: .list)
+                    // Toggle map/list (only for stops mode)
+                    if contentMode == .stops {
+                        HStack(spacing: 0) {
+                            toggleButton(icon: "map.fill", mode: .map)
+                            toggleButton(icon: "list.bullet", mode: .list)
+                        }
+                        .background(.ultraThinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
                     }
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background(.regularMaterial)
+                .padding(.bottom, 10)
             }
+            .background(.regularMaterial)
         }
         .navigationTitle(strings.waterBusTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: WaterBusStop.self) { stop in
             WaterBusStopDetailView(stop: stop)
+        }
+        .navigationDestination(for: WaterBusRoute.self) { route in
+            WaterBusLineDetailView(route: route)
         }
         .onAppear {
             vm.loadData()
@@ -99,7 +128,7 @@ struct WaterBusListView: View {
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(viewMode == mode ? .white : .secondary)
                 .frame(width: 32, height: 28)
-                .background(viewMode == mode ? Color.doVeAccent : .clear)
+                .background(viewMode == mode ? Color.doVeNavigation : .clear)
                 .clipShape(RoundedRectangle(cornerRadius: 6))
         }
         .padding(2)
@@ -113,10 +142,13 @@ private struct WaterBusMapView: View {
     let vm: WaterBusViewModel
     let userLocation: CLLocation?
     let locationManager: LocationManager
-    @State private var mapPosition: MapCameraPosition = .automatic
-    @State private var selectedStop: WaterBusStop?
-
     private static let veniceCenter = CLLocationCoordinate2D(latitude: 45.4375, longitude: 12.3358)
+
+    @State private var mapPosition: MapCameraPosition = .region(MKCoordinateRegion(
+        center: veniceCenter,
+        span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04)
+    ))
+    @State private var selectedStop: WaterBusStop?
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -147,7 +179,8 @@ private struct WaterBusMapView: View {
             }
             .mapStyle(.standard(pointsOfInterest: .excludingAll))
             .onAppear {
-                if let userLocation {
+                let veniceLocation = CLLocation(latitude: Self.veniceCenter.latitude, longitude: Self.veniceCenter.longitude)
+                if let userLocation, userLocation.distance(from: veniceLocation) < 20_000 {
                     mapPosition = .region(MKCoordinateRegion(
                         center: userLocation.coordinate,
                         span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
@@ -165,7 +198,7 @@ private struct WaterBusMapView: View {
                 WaterBusMapCard(stop: stop, vm: vm, locationManager: locationManager)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
+                    .padding(.bottom, 90)
             }
 
             // Center on user button
@@ -192,7 +225,7 @@ private struct WaterBusMapView: View {
                             .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
                     }
                     .padding(.trailing, 16)
-                    .padding(.bottom, selectedStop != nil ? 130 : 16)
+                    .padding(.bottom, selectedStop != nil ? 200 : 16)
                 }
             }
         }
@@ -225,12 +258,7 @@ private struct WaterBusMapPin: View {
     }
 
     private var pinColor: Color {
-        // Use the color of the main line serving this stop
-        if let firstLine = stop.lines.first,
-           let route = vm.route(for: firstLine) {
-            return route.color == Color(hex: "FFFFFF") ? .blue : route.color
-        }
-        return .blue
+        Color.doVeNavigation
     }
 }
 
@@ -268,7 +296,7 @@ private struct WaterBusMapCard: View {
                 HStack {
                     Image(systemName: "ferry.fill")
                         .font(.system(size: 16))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Color.doVeNavigation)
 
                     Text(stop.name)
                         .font(.system(size: 16, weight: .semibold))
@@ -372,11 +400,11 @@ private struct WaterBusStopRow: View {
             // Icon
             ZStack {
                 Circle()
-                    .fill(.blue.opacity(0.12))
+                    .fill(Color.doVeNavigation.opacity(0.12))
                     .frame(width: 36, height: 36)
                 Image(systemName: "ferry.fill")
                     .font(.system(size: 14))
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(Color.doVeNavigation)
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -469,16 +497,108 @@ struct LineBadge: View {
         }
     }
 
+    private var isWhiteRoute: Bool {
+        guard let route = vm.route(for: line) else { return false }
+        return route.color == Color(hex: "FFFFFF")
+    }
+
     var body: some View {
         let route = vm.route(for: line)
-        let bgColor = route.map { $0.color == Color(hex: "FFFFFF") ? .blue : $0.color } ?? .blue
+        let bgColor = route?.color ?? .gray
         let fgColor = route?.textColor ?? .white
 
         Text(line)
             .font(.system(size: size.fontSize, weight: .bold, design: .rounded))
-            .foregroundStyle(fgColor)
+            .foregroundStyle(isWhiteRoute ? .primary : fgColor)
             .padding(size.padding)
-            .background(bgColor)
+            .background(isWhiteRoute ? Color(.systemBackground) : bgColor)
             .clipShape(RoundedRectangle(cornerRadius: size.cornerRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: size.cornerRadius)
+                    .strokeBorder(isWhiteRoute ? Color.primary.opacity(0.6) : .clear, lineWidth: 1)
+            )
+    }
+}
+
+// MARK: - Lines Content
+
+private struct WaterBusLinesContent: View {
+    let routes: [WaterBusRoute]
+    let vm: WaterBusViewModel
+    let appeared: Bool
+    let strings: L10n.Strings
+
+    var body: some View {
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                // Spacer for top bar (segmented + search)
+                Color.clear.frame(height: 100)
+
+                if routes.isEmpty {
+                    Text(strings.waterBusNoLines)
+                        .font(.system(size: 15))
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 40)
+                } else {
+                    ForEach(Array(routes.enumerated()), id: \.element.id) { index, route in
+                        NavigationLink(value: route) {
+                            WaterBusRouteRow(route: route, vm: vm)
+                        }
+                        .buttonStyle(.plain)
+                        .opacity(appeared ? 1 : 0)
+                        .offset(y: appeared ? 0 : 10)
+                        .animation(.spring(duration: 0.35).delay(Double(index) * 0.02), value: appeared)
+
+                        if index < routes.count - 1 {
+                            Divider().padding(.leading, 60)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Route Row
+
+private struct WaterBusRouteRow: View {
+    let route: WaterBusRoute
+    let vm: WaterBusViewModel
+
+    var body: some View {
+        HStack(spacing: 12) {
+            // Line badge
+            LineBadge(line: route.name, vm: vm, size: .medium)
+                .frame(width: 40)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(route.longName)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+
+                HStack(spacing: 6) {
+                    if let dir = route.directions.first {
+                        Text(dir.headsign)
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+
+                Text(route.source.uppercased())
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.tertiary)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12))
+                .foregroundStyle(.quaternary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .contentShape(Rectangle())
     }
 }

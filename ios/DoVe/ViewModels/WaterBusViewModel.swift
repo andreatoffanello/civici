@@ -85,7 +85,10 @@ final class WaterBusViewModel {
             guard let httpResponse = response as? HTTPURLResponse,
                   httpResponse.statusCode == 200 else { return nil }
             let result = parseData(data)
-            return result.stops.isEmpty ? nil : result
+            // Require stops and routes with directions to be valid
+            guard !result.stops.isEmpty,
+                  result.routes.contains(where: { !$0.directions.isEmpty }) else { return nil }
+            return result
         } catch {
             return nil
         }
@@ -112,6 +115,27 @@ final class WaterBusViewModel {
         return (stops, routes)
     }
 
+    var filteredRoutes: [WaterBusRoute] {
+        guard !searchText.isEmpty else { return routes }
+        let query = searchText.lowercased()
+        return routes.filter { route in
+            route.name.lowercased().contains(query) ||
+            route.longName.lowercased().contains(query) ||
+            route.directions.contains { $0.headsign.lowercased().contains(query) }
+        }
+    }
+
+    func stopsForRoute(_ route: WaterBusRoute, direction: Int) -> [WaterBusStop] {
+        guard let dir = route.directions.first(where: { $0.id == direction }) else {
+            return []
+        }
+        return dir.stopIds.compactMap { stopId in
+            stops.first { $0.id == stopId }
+        }
+    }
+
+    // MARK: - Parse Route
+
     private static func parseRoute(_ dict: [String: Any]) -> WaterBusRoute? {
         guard let id = dict["id"] as? String,
               let name = dict["name"] as? String else { return nil }
@@ -121,13 +145,30 @@ final class WaterBusViewModel {
         let textColorHex = dict["textColor"] as? String ?? "#FFFFFF"
         let source = dict["source"] as? String ?? "actv"
 
+        var directions: [RouteDirection] = []
+        if let dirsArray = dict["directions"] as? [[String: Any]] {
+            for dirDict in dirsArray {
+                guard let dirId = dirDict["id"] as? Int,
+                      let headsign = dirDict["headsign"] as? String else { continue }
+                let stopIds = dirDict["stopIds"] as? [String] ?? []
+                let shape = dirDict["shape"] as? [[Double]] ?? []
+                directions.append(RouteDirection(
+                    id: dirId,
+                    headsign: headsign,
+                    stopIds: stopIds,
+                    shape: shape
+                ))
+            }
+        }
+
         return WaterBusRoute(
             id: id,
             name: name,
             longName: longName,
             color: .init(hex: colorHex),
             textColor: .init(hex: textColorHex),
-            source: source
+            source: source,
+            directions: directions
         )
     }
 
