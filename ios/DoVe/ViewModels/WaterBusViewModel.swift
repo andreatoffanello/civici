@@ -14,6 +14,7 @@ private extension String {
 final class WaterBusViewModel {
     private(set) var stops: [WaterBusStop] = []
     private(set) var routes: [WaterBusRoute] = []
+    private(set) var trips: [String: [(stationId: String, time: String, dock: String?)]] = [:]
     private(set) var isLoaded = false
     var selectedStop: WaterBusStop?
     var searchText: String = ""
@@ -70,6 +71,7 @@ final class WaterBusViewModel {
             let result = await Self.fetchData()
             self.stops = result.stops
             self.routes = result.routes
+            self.trips = result.trips
             self.isLoaded = true
             startDepartureTicker()
         }
@@ -181,6 +183,110 @@ final class WaterBusViewModel {
         return (actv.sorted(by: sort), alilaguna.sorted(by: sort))
     }
 
+    /// Ricostruisce una corsa: se il tripId è disponibile, usa i dati pre-calcolati dalla pipeline;
+    /// altrimenti prova una ricostruzione client-side come fallback.
+    func reconstructTrip(
+        departure: Departure,
+        fromStop: WaterBusStop,
+        date: Date = Date()
+    ) -> (route: WaterBusRoute, direction: RouteDirection, stops: [TripStop])? {
+        guard let route = route(for: departure.line) else { return nil }
+
+        // Find the best direction
+        let direction: RouteDirection? =
+            route.directions.first { $0.stopIds.contains(fromStop.id) && $0.headsign == departure.headsign }
+            ?? route.directions.first { $0.stopIds.contains(fromStop.id) }
+            ?? route.directions.first { $0.headsign == departure.headsign }
+            ?? route.directions.first
+
+        guard let direction else { return nil }
+
+        // Try server-side trip data first
+        if let tripId = departure.tripId, let tripStopTimes = trips[tripId] {
+            let tripStops: [TripStop] = tripStopTimes.compactMap { entry in
+                guard let stop = stops.first(where: { $0.id == entry.stationId }) else { return nil }
+                return TripStop(stop: stop, time: entry.time, dock: entry.dock)
+            }
+            guard !tripStops.isEmpty else { return nil }
+            return (route, direction, tripStops)
+        }
+
+        // Fallback: client-side reconstruction
+        let dayGroup: DayGroup? = fromStop.departures.keys.first { $0.contains(date: date) }
+            ?? fromStop.departures.keys.sorted().first
+        guard let dayGroup else { return nil }
+
+        let depMinutes = timeToMinutes(departure.time)
+        var tripStops: [TripStop] = []
+
+        // Use direction stopIds to walk the route
+        let startIdx = direction.stopIds.firstIndex(of: fromStop.id) ?? 0
+        let originParsed = parseDock(from: departure.headsign)
+        var prevMinutes = depMinutes
+
+        // Backward
+        var backStops: [TripStop] = []
+        var nextMinutes = depMinutes
+        for i in stride(from: startIdx - 1, through: 0, by: -1) {
+            let sid = direction.stopIds[i]
+            guard let stop = stops.first(where: { $0.id == sid }) else { continue }
+            let matching = (stop.departures[dayGroup] ?? [])
+                .filter { $0.line == departure.line && $0.headsign == departure.headsign }
+                .sorted { timeToMinutes($0.time) < timeToMinutes($1.time) }
+            if let found = matching.last(where: { timeToMinutes($0.time) <= nextMinutes }) {
+                let p = parseDock(from: found.headsign)
+                backStops.insert(TripStop(stop: stop, time: found.time, dock: p.dock), at: 0)
+                nextMinutes = timeToMinutes(found.time)
+            }
+        }
+        tripStops.append(contentsOf: backStops)
+        tripStops.append(TripStop(stop: fromStop, time: departure.time, dock: originParsed.dock))
+
+        // Forward
+        for i in (startIdx + 1)..<direction.stopIds.count {
+            let sid = direction.stopIds[i]
+            guard let stop = stops.first(where: { $0.id == sid }) else { continue }
+            let matching = (stop.departures[dayGroup] ?? [])
+                .filter { $0.line == departure.line && $0.headsign == departure.headsign }
+                .sorted { timeToMinutes($0.time) < timeToMinutes($1.time) }
+            if let found = matching.first(where: { timeToMinutes($0.time) >= prevMinutes }) {
+                let p = parseDock(from: found.headsign)
+                tripStops.append(TripStop(stop: stop, time: found.time, dock: p.dock))
+                prevMinutes = timeToMinutes(found.time)
+            }
+        }
+
+        guard !tripStops.isEmpty else { return nil }
+        return (route, direction, tripStops)
+    }
+
+    private func timeToMinutes(_ time: String) -> Int {
+        let parts = time.split(separator: ":").compactMap { Int($0) }
+        guard parts.count == 2 else { return 0 }
+        return parts[0] * 60 + parts[1]
+    }
+
+    /// Coincidenze: per ogni altra linea che serve la fermata, la prima partenza
+    /// dopo l'orario di arrivo + 2 min di trasbordo, entro 30 min
+    func connections(at stop: WaterBusStop, arrivalTime: String, excludingLine: String, date: Date = Date()) -> [(line: String, departure: Departure)] {
+        let arrivalMinutes = timeToMinutes(arrivalTime) + 2 // min trasbordo
+        let maxMinutes = arrivalMinutes + 30
+        let today = todayDepartures(for: stop, date: date)
+
+        var firstByLine: [String: Departure] = [:]
+        for dep in today where dep.line != excludingLine
+            && dep.minutesFromMidnight >= arrivalMinutes
+            && dep.minutesFromMidnight <= maxMinutes {
+            if firstByLine[dep.line] == nil {
+                firstByLine[dep.line] = dep
+            }
+        }
+
+        return firstByLine
+            .map { (line: $0.key, departure: $0.value) }
+            .sorted { $0.departure.minutesFromMidnight < $1.departure.minutesFromMidnight }
+    }
+
     func reset() {
         selectedStop = nil
         searchText = ""
@@ -188,12 +294,19 @@ final class WaterBusViewModel {
 
     // MARK: - Data Loading
 
-    private static func fetchData() async -> (stops: [WaterBusStop], routes: [WaterBusRoute]) {
-        if let remote = await fetchRemote() { return remote }
+    private static func fetchData() async -> (stops: [WaterBusStop], routes: [WaterBusRoute], trips: [String: [(stationId: String, time: String, dock: String?)]]) {
+        if let remote = await fetchRemote() {
+            // Se il remote non ha trips (JSON non ancora aggiornato), usa quelli dal bundle
+            if remote.trips.isEmpty {
+                let bundled = loadBundled()
+                return (remote.stops, remote.routes, bundled.trips)
+            }
+            return remote
+        }
         return loadBundled()
     }
 
-    private static func fetchRemote() async -> (stops: [WaterBusStop], routes: [WaterBusRoute])? {
+    private static func fetchRemote() async -> (stops: [WaterBusStop], routes: [WaterBusRoute], trips: [String: [(stationId: String, time: String, dock: String?)]])? {
         do {
             var request = URLRequest(url: remoteURL)
             request.timeoutInterval = 10
@@ -210,26 +323,38 @@ final class WaterBusViewModel {
         }
     }
 
-    private static func loadBundled() -> (stops: [WaterBusStop], routes: [WaterBusRoute]) {
+    private static func loadBundled() -> (stops: [WaterBusStop], routes: [WaterBusRoute], trips: [String: [(stationId: String, time: String, dock: String?)]]) {
         guard let url = Bundle.main.url(forResource: "vaporetti", withExtension: "json"),
               let data = try? Data(contentsOf: url) else {
-            return ([], [])
+            return ([], [], [:])
         }
         return parseData(data)
     }
 
     // MARK: - Parse
 
-    private static func parseData(_ data: Data) -> (stops: [WaterBusStop], routes: [WaterBusRoute]) {
+    private static func parseData(_ data: Data) -> (stops: [WaterBusStop], routes: [WaterBusRoute], trips: [String: [(stationId: String, time: String, dock: String?)]]) {
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            return ([], [])
+            return ([], [], [:])
         }
 
         let routes = (json["routes"] as? [[String: Any]] ?? []).compactMap { parseRoute($0) }
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
         let stops = (json["stops"] as? [[String: Any]] ?? []).compactMap { parseStop($0) }
 
-        return (stops, routes)
+        // Parse trips: {"tripId": [["stationId", "HH:MM", "dock"], ...], ...}
+        var trips: [String: [(stationId: String, time: String, dock: String?)]] = [:]
+        if let tripsDict = json["trips"] as? [String: [[String]]] {
+            for (tripId, stopTimes) in tripsDict {
+                trips[tripId] = stopTimes.compactMap { arr in
+                    guard arr.count >= 2 else { return nil }
+                    let dock = arr.count >= 3 && !arr[2].isEmpty ? arr[2] : nil
+                    return (stationId: arr[0], time: arr[1], dock: dock)
+                }
+            }
+        }
+
+        return (stops, routes, trips)
     }
 
     var filteredRoutes: [WaterBusRoute] {
@@ -308,7 +433,8 @@ final class WaterBusViewModel {
                           let time = arr[0] as? String,
                           let line = arr[1] as? String,
                           let headsign = arr[2] as? String else { return nil }
-                    return Departure(time: time, line: line, headsign: headsign)
+                    let tripId = arr.count >= 4 ? arr[3] as? String : nil
+                    return Departure(time: time, line: line, headsign: headsign, tripId: tripId)
                 }
                 departures[group] = deps
             }

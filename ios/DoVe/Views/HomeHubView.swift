@@ -1,4 +1,5 @@
 import SwiftUI
+import PhosphorSwift
 
 struct HomeHubView: View {
     @Environment(\.strings) private var strings
@@ -41,8 +42,8 @@ struct HomeHubView: View {
                     HStack(spacing: 14) {
                         Button { selectedTab = .search } label: {
                             CompactSectionCard(
-                                icon: "magnifyingglass",
-                                bgIcon: "map.fill",
+                                icon: .magnifyingGlass,
+                                bgIcon: .mapTrifold,
                                 bgColor: Color.doVeAccent,
                                 title: strings.homeCiviciTitle
                             )
@@ -52,8 +53,8 @@ struct HomeHubView: View {
 
                         Button { selectedTab = .waterBus } label: {
                             CompactSectionCard(
-                                icon: "ferry.fill",
-                                bgIcon: "water.waves",
+                                icon: .boat,
+                                bgIcon: .waves,
                                 bgColor: Color.doVeNavigation,
                                 title: strings.waterBusTitle
                             )
@@ -65,8 +66,8 @@ struct HomeHubView: View {
                     // Servizi full-width
                     Button { selectedTab = .services } label: {
                         WideSectionCard(
-                            icon: "cross.case.fill",
-                            bgIcon: "heart.text.square.fill",
+                            icon: .firstAidKit,
+                            bgIcon: .heartbeat,
                             bgColor: Color.doVeServices,
                             title: strings.tabServices,
                             subtitle: pharmacySummary,
@@ -82,8 +83,8 @@ struct HomeHubView: View {
                 if !waterBusVM.favoriteStops.isEmpty {
                     VStack(alignment: .leading, spacing: 10) {
                         HStack(spacing: 6) {
-                            Image(systemName: "star.fill")
-                                .font(.system(size: 13))
+                            Ph.star.fill
+                                .frame(width: 13, height: 13)
                                 .foregroundStyle(.yellow)
                             Text(strings.waterBusFavorites)
                                 .font(.system(size: 13, weight: .semibold))
@@ -109,8 +110,9 @@ struct HomeHubView: View {
                     showSettings = true
                 } label: {
                     HStack(spacing: 12) {
-                        Image(systemName: "gearshape")
-                            .font(.system(size: 15, weight: .medium))
+                        Ph.gear.duotone
+                            .renderingMode(.template)
+                            .frame(width: 18, height: 18)
                             .foregroundStyle(.tertiary)
 
                         Text(strings.tabSettings)
@@ -203,8 +205,8 @@ private struct CardPressStyle: ButtonStyle {
 // MARK: - Wide Section Card (full-width, horizontal layout)
 
 private struct WideSectionCard: View {
-    let icon: String
-    let bgIcon: String
+    let icon: Ph
+    let bgIcon: Ph
     let bgColor: Color
     let title: String
     var subtitle: String = ""
@@ -221,15 +223,15 @@ private struct WideSectionCard: View {
                     )
                 )
 
-            Image(systemName: bgIcon)
-                .font(.system(size: 60, weight: .ultraLight))
+            bgIcon.duotone
+                .frame(width: 60, height: 60)
                 .foregroundStyle(.white.opacity(0.1))
                 .rotationEffect(.degrees(-10))
                 .offset(x: 220, y: 0)
 
             HStack(spacing: 14) {
-                Image(systemName: icon)
-                    .font(.system(size: 20, weight: .semibold))
+                icon.duotone
+                    .frame(width: 22, height: 22)
                     .foregroundStyle(.white)
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -268,8 +270,8 @@ private struct WideSectionCard: View {
 // MARK: - Compact Section Card (half-width, fully colored)
 
 private struct CompactSectionCard: View {
-    let icon: String
-    let bgIcon: String
+    let icon: Ph
+    let bgIcon: Ph
     let bgColor: Color
     let title: String
     var badge: String? = nil
@@ -287,8 +289,8 @@ private struct CompactSectionCard: View {
                 )
 
             // Decorative oversized icon
-            Image(systemName: bgIcon)
-                .font(.system(size: 72, weight: .ultraLight))
+            bgIcon.duotone
+                .frame(width: 72, height: 72)
                 .foregroundStyle(.white.opacity(0.1))
                 .rotationEffect(.degrees(15))
                 .offset(x: 50, y: 30)
@@ -296,8 +298,8 @@ private struct CompactSectionCard: View {
             // Content
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    Image(systemName: icon)
-                        .font(.system(size: 20, weight: .semibold))
+                    icon.duotone
+                        .frame(width: 22, height: 22)
                         .foregroundStyle(.white)
 
                     Spacer()
@@ -335,9 +337,10 @@ private struct FavoriteStopCard: View {
         let next = vm.nextDepartures(for: stop, count: 3)
 
         VStack(alignment: .leading, spacing: 8) {
+            // Header
             HStack(spacing: 8) {
-                Image(systemName: "ferry.fill")
-                    .font(.system(size: 14))
+                Ph.boat.fill
+                    .frame(width: 14, height: 14)
                     .foregroundStyle(Color.doVeNavigation)
 
                 Text(stop.name)
@@ -352,32 +355,34 @@ private struct FavoriteStopCard: View {
                     .foregroundStyle(.quaternary)
             }
 
+            // Departures
             if next.isEmpty {
                 Text("Nessuna partenza prevista")
                     .font(.system(size: 12))
                     .foregroundStyle(.tertiary)
             } else {
-                HStack(spacing: 10) {
-                    ForEach(next) { dep in
-                        HStack(spacing: 4) {
-                            LineBadge(line: dep.line, vm: vm, size: .tiny)
+                VStack(spacing: 0) {
+                    ForEach(Array(next.enumerated()), id: \.element.id) { index, dep in
+                        HStack(spacing: 6) {
+                            LineBadge(line: dep.line, vm: vm, size: .small)
                             Text(dep.time)
-                                .font(.system(size: 13, weight: .medium, design: .monospaced))
+                                .font(.system(size: 14, weight: .medium, design: .monospaced))
                                 .foregroundStyle(.primary)
-                        }
-                    }
-                    Spacer()
-                    if let first = next.first {
-                        HStack(spacing: 4) {
-                            if first.isImminent {
+                            Spacer()
+                            if dep.isImminent {
                                 Circle()
                                     .fill(Color(hex: "38A169"))
                                     .frame(width: 5, height: 5)
                                     .modifier(PulseModifier())
                             }
-                            Text(first.countdownLabel)
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundStyle(first.isSoon ? Color(hex: "38A169") : .secondary)
+                            Text(dep.countdownLabel)
+                                .font(.system(size: 12, weight: dep.isSoon ? .bold : .medium))
+                                .foregroundStyle(dep.isSoon ? Color(hex: "38A169") : .secondary)
+                        }
+                        .padding(.vertical, 5)
+
+                        if index < next.count - 1 {
+                            Divider()
                         }
                     }
                 }

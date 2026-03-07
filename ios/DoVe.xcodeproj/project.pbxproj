@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		PH0SP40RBUILDFILE /* PhosphorSwift in Frameworks */ = {isa = PBXBuildFile; productRef = PH0SP40R1C0N5DEP1 /* PhosphorSwift */; };
 		012E4AB9A8923F437A25754F /* SearchFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023D65D215B94B3FBFAE1B64 /* SearchFlowView.swift */; };
 		0CAA6A6DFAE37DE8DC8C3071 /* ServicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A717EFE55464140DB827E572 /* ServicesView.swift */; };
 		0DCC5DABB354F8968E43F92B /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5731BE7E9A1EEEC1C58F98FD /* SplashScreenView.swift */; };
@@ -53,6 +54,7 @@
 		E5F6A7B8C9D0E1F2A1B2C3D4 /* WaterBusViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A7B8C9D0E1F2A1B2C3D4E5 /* WaterBusViewModel.swift */; };
 		A7B8C9D0E1F2A1B2C3D4E5F6 /* WaterBusListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C9D0E1F2A1B2C3D4E5F6A7 /* WaterBusListView.swift */; };
 		C9D0E1F2A1B2C3D4E5F6A7B8 /* WaterBusStopDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E1F2A1B2C3D4E5F6A7B8C9 /* WaterBusStopDetailView.swift */; };
+		6712158BDE1C49798A9A4CB1 /* TripDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC82737D0E1492AA981B8F0 /* TripDetailView.swift */; };
 		3AB4C5D6E7F8A9B0C1D2E3F4 /* WaterBusLineDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC5D6E7F8A9B0C1D2E3F4A5 /* WaterBusLineDetailView.swift */; };
 /* End PBXBuildFile section */
 
@@ -105,8 +107,20 @@
 		F6A7B8C9D0E1F2A1B2C3D4E5 /* WaterBusViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterBusViewModel.swift; sourceTree = "<group>"; };
 		B8C9D0E1F2A1B2C3D4E5F6A7 /* WaterBusListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterBusListView.swift; sourceTree = "<group>"; };
 		D0E1F2A1B2C3D4E5F6A7B8C9 /* WaterBusStopDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterBusStopDetailView.swift; sourceTree = "<group>"; };
+		2EC82737D0E1492AA981B8F0 /* TripDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailView.swift; sourceTree = "<group>"; };
 		4BC5D6E7F8A9B0C1D2E3F4A5 /* WaterBusLineDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterBusLineDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		PH0SP40RFRAMEW0RK /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				PH0SP40RBUILDFILE /* PhosphorSwift in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		001D674F0C33235CF145D170 /* Components */ = {
@@ -247,6 +261,7 @@
 				A9E9F0BA9B1D26FB36F7D171 /* StreetNumbersView.swift */,
 				B8C9D0E1F2A1B2C3D4E5F6A7 /* WaterBusListView.swift */,
 				D0E1F2A1B2C3D4E5F6A7B8C9 /* WaterBusStopDetailView.swift */,
+				2EC82737D0E1492AA981B8F0 /* TripDetailView.swift */,
 				4BC5D6E7F8A9B0C1D2E3F4A5 /* WaterBusLineDetailView.swift */,
 			);
 			path = Views;
@@ -260,6 +275,7 @@
 			buildConfigurationList = 4CE0093F93137A86B7DEB0A0 /* Build configuration list for PBXNativeTarget "DoVe" */;
 			buildPhases = (
 				89A061771BF124AE1D23412A /* Sources */,
+				PH0SP40RFRAMEW0RK /* Frameworks */,
 				84F564AFF2B24D339B0C1A34 /* Resources */,
 			);
 			buildRules = (
@@ -268,6 +284,7 @@
 			);
 			name = DoVe;
 			packageProductDependencies = (
+				PH0SP40R1C0N5DEP1 /* PhosphorSwift */,
 			);
 			productName = DoVe;
 			productReference = 52CCE6950C0DC119822DE03C /* DoVe.app */;
@@ -300,6 +317,9 @@
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
+			packageReferences = (
+				PH0SP40R1C0N5PKG1 /* XCRemoteSwiftPackageReference "swift" */,
+			);
 			targets = (
 				262CF2F9F2AB87E31D5BAC29 /* DoVe */,
 			);
@@ -367,6 +387,7 @@
 				E5F6A7B8C9D0E1F2A1B2C3D4 /* WaterBusViewModel.swift in Sources */,
 				A7B8C9D0E1F2A1B2C3D4E5F6 /* WaterBusListView.swift in Sources */,
 				C9D0E1F2A1B2C3D4E5F6A7B8 /* WaterBusStopDetailView.swift in Sources */,
+				6712158BDE1C49798A9A4CB1 /* TripDetailView.swift in Sources */,
 				3AB4C5D6E7F8A9B0C1D2E3F4 /* WaterBusLineDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -571,6 +592,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		PH0SP40R1C0N5PKG1 /* XCRemoteSwiftPackageReference "swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/phosphor-icons/swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		PH0SP40R1C0N5DEP1 /* PhosphorSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PH0SP40R1C0N5PKG1 /* XCRemoteSwiftPackageReference "swift" */;
+			productName = PhosphorSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B82DA63EAD7AB255525FD16B /* Project object */;
 }

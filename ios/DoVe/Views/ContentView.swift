@@ -1,4 +1,5 @@
 import SwiftUI
+import PhosphorSwift
 
 struct ContentView: View {
     @Environment(\.strings) private var strings
@@ -16,30 +17,43 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            Tab(strings.tabHome, systemImage: "house.fill", value: .home) {
-                NavigationStack {
-                    HomeHubView(selectedTab: $selectedTab)
-                }
+            NavigationStack {
+                HomeHubView(selectedTab: $selectedTab)
             }
+            .tabItem {
+                PhIcon(.house)
+                Text(strings.tabHome)
+            }
+            .tag(AppTab.home)
 
-            Tab(strings.tabSearch, systemImage: "magnifyingglass", value: .search) {
-                NavigationStack {
-                    SearchFlowView()
-                }
+            NavigationStack {
+                SearchFlowView()
             }
+            .tabItem {
+                PhIcon(.magnifyingGlass)
+                Text(strings.tabSearch)
+            }
+            .tag(AppTab.search)
 
-            Tab(strings.waterBusTitle, systemImage: "ferry.fill", value: .waterBus) {
-                NavigationStack(path: $waterBusPath) {
-                    WaterBusListView()
-                }
+            NavigationStack(path: $waterBusPath) {
+                WaterBusListView()
             }
+            .tabItem {
+                PhIcon(.boat)
+                Text(strings.waterBusTitle)
+            }
+            .tag(AppTab.waterBus)
 
-            Tab(strings.tabServices, systemImage: "cross.case.fill", value: .services) {
-                NavigationStack {
-                    ServicesView()
-                }
+            NavigationStack {
+                ServicesView()
             }
+            .tabItem {
+                PhIcon(.firstAidKit)
+                Text(strings.tabServices)
+            }
+            .tag(AppTab.services)
         }
+        .tabViewStyle(.tabBarOnly)
         .tint(tabTintColor)
         .onOpenURL { url in
             handleDeepLink(url)
@@ -114,4 +128,25 @@ enum AppTab: Hashable {
     case search
     case waterBus
     case services
+}
+
+/// Renders a Phosphor duotone icon as a fixed-size template UIImage suitable for tab bars
+struct PhIcon: View {
+    let uiImage: UIImage?
+
+    init(_ icon: Ph) {
+        let renderer = ImageRenderer(content:
+            icon.duotone
+                .frame(width: 25, height: 25)
+        )
+        renderer.scale = 3
+        self.uiImage = renderer.uiImage
+    }
+
+    var body: some View {
+        if let uiImage {
+            Image(uiImage: uiImage)
+                .renderingMode(.template)
+        }
+    }
 }

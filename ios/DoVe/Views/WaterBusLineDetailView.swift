@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import PhosphorSwift
 
 struct WaterBusLineDetailView: View {
     let route: WaterBusRoute
@@ -44,6 +45,8 @@ struct WaterBusLineDetailView: View {
 
     // MARK: - Sheet Content
 
+    @State private var navigateToStop: WaterBusStop?
+
     private func sheetContent(direction: RouteDirection?, stops: [WaterBusStop]) -> some View {
         NavigationStack {
             ScrollView {
@@ -62,8 +65,9 @@ struct WaterBusLineDetailView: View {
                     if route.directions.count <= 1, let direction {
                         let parsed = parseDock(from: direction.headsign)
                         HStack(spacing: 5) {
-                            Image(systemName: "arrow.right")
-                                .font(.system(size: 11, weight: .semibold))
+                            Ph.arrowRight.bold
+                                .renderingMode(.template)
+                                .frame(width: 11, height: 11)
                                 .foregroundColor(Color(.secondaryLabel))
                             Text(parsed.name)
                                 .font(.system(size: 15, weight: .semibold))
@@ -84,7 +88,8 @@ struct WaterBusLineDetailView: View {
                     Color.clear.frame(height: 40)
                 }
             }
-            .navigationDestination(for: WaterBusStop.self) { stop in
+            .scrollDismissesKeyboard(.interactively)
+            .navigationDestination(item: $navigateToStop) { stop in
                 WaterBusStopDetailView(stop: stop)
             }
         }
@@ -193,7 +198,9 @@ struct WaterBusLineDetailView: View {
                 let isTerminal = index == 0 || index == stops.count - 1
                 let dotSize: CGFloat = isTerminal ? 12 : 8
 
-                NavigationLink(value: stop) {
+                Button {
+                    navigateToStop = stop
+                } label: {
                     HStack(spacing: 0) {
                         // Timeline column
                         ZStack {

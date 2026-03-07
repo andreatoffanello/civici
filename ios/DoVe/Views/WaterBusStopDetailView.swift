@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import PhosphorSwift
 
 struct WaterBusStopDetailView: View {
     let stop: WaterBusStop
@@ -19,8 +20,8 @@ struct WaterBusStopDetailView: View {
                     Circle()
                         .fill(Color.doVeNavigation)
                         .frame(width: 28, height: 28)
-                    Image(systemName: "ferry.fill")
-                        .font(.system(size: 12))
+                    Ph.boat.fill
+                        .frame(width: 14, height: 14)
                         .foregroundStyle(.white)
                 }
             }
@@ -77,47 +78,54 @@ struct WaterBusStopDetailView: View {
     private var sheetContent: some View {
         let next = vm.nextDepartures(for: stop, count: 5)
 
-        return ScrollView {
-            VStack(spacing: 0) {
-                peekHeader
-                linesSection
+        return NavigationStack {
+            ScrollView {
+                VStack(spacing: 0) {
+                    peekHeader
+                    linesSection
 
-                if !next.isEmpty {
-                    nextDeparturesSection(next)
-                } else {
-                    VStack(spacing: 8) {
-                        Image(systemName: "ferry")
-                            .font(.system(size: 28))
-                            .foregroundColor(Color(.tertiaryLabel))
-                        Text(strings.waterBusNoDepartures)
-                            .font(.system(size: 14))
-                            .foregroundColor(Color(.secondaryLabel))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 32)
-                }
-
-                // Full schedule button
-                if !stop.departures.isEmpty {
-                    Button {
-                        showFullSchedule = true
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "calendar.badge.clock")
+                    if !next.isEmpty {
+                        nextDeparturesSection(next)
+                    } else {
+                        VStack(spacing: 8) {
+                            Ph.boat.duotone
+                                .renderingMode(.template)
+                                .frame(width: 28, height: 28)
+                                .foregroundColor(Color(.tertiaryLabel))
+                            Text(strings.waterBusNoDepartures)
                                 .font(.system(size: 14))
-                            Text(strings.waterBusFullSchedule)
-                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(Color(.secondaryLabel))
                         }
-                        .foregroundStyle(Color.doVeNavigation)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color.doVeNavigation.opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.vertical, 32)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 4)
-                    .padding(.bottom, 20)
+
+                    // Full schedule button
+                    if !stop.departures.isEmpty {
+                        Button {
+                            showFullSchedule = true
+                        } label: {
+                            HStack(spacing: 6) {
+                                Ph.calendarDots.duotone
+                                    .renderingMode(.template)
+                                    .frame(width: 16, height: 16)
+                                Text(strings.waterBusFullSchedule)
+                                    .font(.system(size: 14, weight: .semibold))
+                            }
+                            .foregroundStyle(Color.doVeNavigation)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.doVeNavigation.opacity(0.08))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 4)
+                        .padding(.bottom, 20)
+                    }
                 }
+            }
+            .navigationDestination(for: TripNavigation.self) { nav in
+                TripDetailView(departure: nav.departure, fromStop: nav.stop)
             }
         }
         .fullScreenCover(isPresented: $showFullSchedule) {
@@ -143,9 +151,13 @@ struct WaterBusStopDetailView: View {
             Spacer()
 
             Button { openInMaps() } label: {
-                Image(systemName: "arrow.triangle.turn.up.right.circle.fill")
-                    .font(.system(size: 32))
+                Ph.navigationArrow.duotone
+                    .renderingMode(.template)
+                    .frame(width: 28, height: 28)
                     .foregroundStyle(Color.doVeNavigation)
+                    .frame(width: 44, height: 44)
+                    .background(Color.doVeNavigation.opacity(0.1))
+                    .clipShape(Circle())
             }
         }
         .padding(.horizontal, 20)
@@ -198,43 +210,52 @@ struct WaterBusStopDetailView: View {
             ForEach(Array(departures.enumerated()), id: \.element.id) { index, dep in
                 let isFirst = index == 0
 
-                HStack(spacing: 0) {
-                    // Countdown
-                    HStack(spacing: 4) {
-                        if dep.isImminent {
-                            Circle()
-                                .fill(Color(hex: "38A169"))
-                                .frame(width: 6, height: 6)
-                                .modifier(PulseModifier())
+                NavigationLink(value: TripNavigation(departure: dep, stop: stop)) {
+                    HStack(spacing: 0) {
+                        // Countdown
+                        HStack(spacing: 4) {
+                            if dep.isImminent {
+                                Circle()
+                                    .fill(Color(hex: "38A169"))
+                                    .frame(width: 6, height: 6)
+                                    .modifier(PulseModifier())
+                            }
+                            Text(dep.countdownLabel)
+                                .font(.system(size: isFirst ? 16 : 14, weight: isFirst ? .bold : .semibold))
+                                .foregroundStyle(dep.isSoon ? Color(hex: "38A169") : .primary)
                         }
-                        Text(dep.countdownLabel)
-                            .font(.system(size: isFirst ? 16 : 14, weight: isFirst ? .bold : .semibold))
-                            .foregroundStyle(dep.isSoon ? Color(hex: "38A169") : .primary)
-                    }
-                    .frame(width: 110, alignment: .leading)
+                        .frame(width: 110, alignment: .leading)
 
-                    LineBadge(line: dep.line, vm: vm, size: .small)
-                        .padding(.trailing, 10)
+                        LineBadge(line: dep.line, vm: vm, size: .small)
+                            .padding(.trailing, 10)
 
-                    let parsed = parseDock(from: dep.headsign)
-                    Text(parsed.name)
-                        .font(.system(size: isFirst ? 14 : 13))
-                        .foregroundStyle(isFirst ? .primary : .secondary)
-                        .lineLimit(1)
+                        let parsed = parseDock(from: dep.headsign)
+                        Text(parsed.name)
+                            .font(.system(size: isFirst ? 14 : 13))
+                            .foregroundStyle(isFirst ? .primary : .secondary)
+                            .lineLimit(1)
 
-                    Spacer(minLength: 8)
+                        Spacer(minLength: 8)
 
-                    Text(dep.time)
-                        .font(.system(size: 12, design: .monospaced))
-                        .foregroundColor(Color(.secondaryLabel))
+                        Text(dep.time)
+                            .font(.system(size: 12, design: .monospaced))
+                            .foregroundColor(Color(.secondaryLabel))
 
-                    if let dock = parsed.dock {
-                        DockBadge(letter: dock, size: .small)
+                        if let dock = parsed.dock {
+                            DockBadge(letter: dock, size: .small)
+                                .padding(.leading, 6)
+                        }
+
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(Color(.tertiaryLabel))
                             .padding(.leading, 6)
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, isFirst ? 14 : 10)
+                    .contentShape(Rectangle())
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, isFirst ? 14 : 10)
+                .buttonStyle(.plain)
 
                 if index < departures.count - 1 {
                     Divider()
@@ -300,6 +321,9 @@ struct FullScheduleView: View {
             }
             .navigationTitle(stop.name)
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: TripNavigation.self) { nav in
+                TripDetailView(departure: nav.departure, fromStop: nav.stop)
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -393,8 +417,9 @@ struct FullScheduleView: View {
         return VStack(spacing: 0) {
             if departures.isEmpty {
                 VStack(spacing: 8) {
-                    Image(systemName: "ferry")
-                        .font(.system(size: 28))
+                    Ph.boat.duotone
+                        .renderingMode(.template)
+                        .frame(width: 28, height: 28)
                         .foregroundColor(Color(.tertiaryLabel))
                     Text(strings.waterBusNoDepartures)
                         .font(.system(size: 14))
@@ -424,28 +449,36 @@ struct FullScheduleView: View {
                         .padding(.bottom, 2)
 
                         ForEach(hourDeps) { dep in
-                            HStack(spacing: 10) {
-                                Text(dep.time)
-                                    .font(.system(size: 15, weight: .medium, design: .monospaced))
-                                    .foregroundStyle(.primary)
-                                    .frame(width: 52, alignment: .leading)
+                            NavigationLink(value: TripNavigation(departure: dep, stop: stop)) {
+                                HStack(spacing: 10) {
+                                    Text(dep.time)
+                                        .font(.system(size: 15, weight: .medium, design: .monospaced))
+                                        .foregroundStyle(.primary)
+                                        .frame(width: 52, alignment: .leading)
 
-                                LineBadge(line: dep.line, vm: vm, size: .small)
+                                    LineBadge(line: dep.line, vm: vm, size: .small)
 
-                                let depParsed = parseDock(from: dep.headsign)
-                                Text(depParsed.name)
-                                    .font(.system(size: 14))
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(1)
+                                    let depParsed = parseDock(from: dep.headsign)
+                                    Text(depParsed.name)
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
 
-                                Spacer()
+                                    Spacer()
 
-                                if let depDock = depParsed.dock {
-                                    DockBadge(letter: depDock, size: .small)
+                                    if let depDock = depParsed.dock {
+                                        DockBadge(letter: depDock, size: .small)
+                                    }
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 10, weight: .medium))
+                                        .foregroundColor(Color(.quaternaryLabel))
                                 }
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 6)
+                                .contentShape(Rectangle())
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 6)
+                            .buttonStyle(.plain)
                         }
                     }
                 }

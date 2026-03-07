@@ -10,6 +10,8 @@ Fonti:
 Output: vaporetti.json con fermate, linee e orari per giorno della settimana.
 """
 
+from __future__ import annotations
+
 import csv
 import io
 import json
@@ -44,8 +46,24 @@ def download_gtfs(url: str) -> dict[str, list[dict]]:
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
-    req = Request(url, headers={"User-Agent": "DoVe-App/1.0"})
-    resp = urlopen(req, timeout=30, context=ctx)
+
+    # Follow redirects (urllib doesn't handle 308 automatically)
+    max_redirects = 5
+    current_url = url
+    for _ in range(max_redirects):
+        req = Request(current_url, headers={"User-Agent": "DoVe-App/1.0"})
+        try:
+            resp = urlopen(req, timeout=30, context=ctx)
+            break
+        except __import__('urllib').error.HTTPError as e:
+            if e.code in (301, 302, 307, 308) and e.headers.get("Location"):
+                current_url = e.headers["Location"]
+                print(f"  Redirect → {current_url}")
+            else:
+                raise
+    else:
+        raise RuntimeError(f"Too many redirects for {url}")
+
     data = resp.read()
     print(f"  Scaricato: {len(data) / 1024:.0f} KB")
 
@@ -121,6 +139,18 @@ def _extract_base_name(name: str) -> str:
     if m:
         return m.group(1).strip()
     return name
+
+
+def _extract_dock_letter(name: str) -> str:
+    """
+    Estrae la lettera del pontile dal nome fermata.
+    'Rialto "A' → 'A'
+    'F.te Nove "D' → 'D'
+    'S. Giorgio' → '' (nessun pontile)
+    """
+    import re
+    m = re.match(r'^.+?\s*"([A-Z])"?\s*$', name)
+    return m.group(1) if m else ""
 
 
 def parse_stops(stops_raw: list[dict], source: str) -> tuple[dict, dict]:
@@ -266,6 +296,7 @@ def build_departures(
             "color": f"#{color}" if not color.startswith("#") else color,
             "textColor": f"#{text_color}" if not text_color.startswith("#") else text_color,
             "source": source,
+            "tripId": trip_id,
         }
 
         for day in days:
@@ -544,8 +575,8 @@ def build_stop_departures(
                 seen.add(key)
                 unique.append(d)
         unique.sort(key=lambda d: d["minutes"])
-        # Formato compatto: ["HH:MM", "linea", "direzione"]
-        compact = [[d["time"], d["line"], d["headsign"]] for d in unique]
+        # Formato compatto: ["HH:MM", "linea", "direzione", "tripId"]
+        compact = [[d["time"], d["line"], d["headsign"], d["tripId"]] for d in unique]
         if compact:
             per_day[day_idx] = compact
 
@@ -568,10 +599,59 @@ def build_stop_departures(
     return result
 
 
+def build_trips(
+    actv_feed: dict, ali_feed: dict,
+    stop_to_station: dict[str, str],
+) -> dict[str, list[list]]:
+    """
+    Costruisce i trip: per ogni trip_id, la lista ordinata di [stationId, "HH:MM", "dock"].
+    Deduplica stazioni consecutive (pontili diversi della stessa stazione).
+    """
+    trips = {}
+
+    for feed in [actv_feed, ali_feed]:
+        # Build stop_id → dock letter mapping from stops.txt
+        stop_dock = {}
+        for s in feed.get("stops", []):
+            sid = s["stop_id"].strip()
+            name = clean_stop_name(s["stop_name"])
+            dock = _extract_dock_letter(name)
+            if dock:
+                stop_dock[sid] = dock
+
+        # Index stop_times by trip_id
+        trip_stops = defaultdict(list)
+        for st in feed.get("stop_times", []):
+            tid = st["trip_id"].strip()
+            seq = int(st.get("stop_sequence", 0))
+            dep_time = parse_time(st.get("departure_time", ""))
+            stop_id = st["stop_id"].strip()
+            station_id = stop_to_station.get(stop_id)
+            if dep_time and station_id:
+                h, m = dep_time
+                dock = stop_dock.get(stop_id, "")
+                trip_stops[tid].append((seq, station_id, format_time(h, m), dock))
+
+        for tid, stops in trip_stops.items():
+            stops.sort(key=lambda x: x[0])
+            # Dedup consecutive same station (keep first dock)
+            compact = []
+            prev_sid = None
+            for _, sid, time_str, dock in stops:
+                if sid != prev_sid:
+                    compact.append([sid, time_str, dock])
+                    prev_sid = sid
+            if compact:
+                trips[tid] = compact
+
+    return trips
+
+
 def build_output(
     stations: list[dict],
     all_departures: dict,
     routes: list[dict],
+    trips: dict[str, list[list]],
     actv_feed: dict,
     ali_feed: dict,
 ) -> dict:
@@ -616,8 +696,18 @@ def build_output(
     actv_end = actv_feed_info[0].get("feed_end_date", "") if actv_feed_info else ""
     ali_end = ali_feed_info[0].get("feed_end_date", "") if ali_feed_info else ""
 
+    # Filtra solo i trip referenziati dalle partenze
+    referenced_trips = set()
+    for s in stops_output:
+        for day_deps in s["departures"].values():
+            for d in day_deps:
+                if len(d) >= 4:
+                    referenced_trips.add(d[3])
+    filtered_trips = {tid: stops for tid, stops in trips.items() if tid in referenced_trips}
+
     return {
         "lastUpdated": datetime.now(tz=__import__('datetime').timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "trips": filtered_trips,
         "sources": {
             "actv": {
                 "name": "ACTV S.p.A. — Navigazione",
@@ -716,9 +806,13 @@ def main():
     print(f"  Fermate: {len(stations)}")
     print(f"  Linee: {len(routes)}")
 
+    # 5c. Costruisci trips
+    all_trips = build_trips(actv, ali, merged_s2s)
+    print(f"  Trips: {len(all_trips)}")
+
     # 6. Costruisci output
     print("[4/5] Costruendo JSON...")
-    output = build_output(stations, all_departures, routes, actv, ali)
+    output = build_output(stations, all_departures, routes, all_trips, actv, ali)
 
     print(f"  Fermate con partenze: {len(output['stops'])}")
     total_deps = sum(

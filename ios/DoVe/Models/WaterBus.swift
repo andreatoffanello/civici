@@ -98,6 +98,7 @@ struct Departure: Identifiable, Hashable {
     let time: String      // "HH:MM"
     let line: String      // "1", "2", "A", "B", "N"
     let headsign: String  // "Lido S.M.E."
+    let tripId: String?   // GTFS trip_id per lookup corsa
 
     var id: String { "\(time)_\(line)_\(headsign)" }
 
@@ -139,6 +140,26 @@ struct Departure: Identifiable, Hashable {
     var isSoon: Bool {
         minutesUntil() <= 5
     }
+}
+
+// MARK: - Trip Navigation
+
+struct TripNavigation: Hashable {
+    let departure: Departure
+    let stop: WaterBusStop
+}
+
+// MARK: - Trip (corsa ricostruita)
+
+struct TripStop: Identifiable, Hashable {
+    let stop: WaterBusStop
+    let time: String
+    let dock: String?
+
+    var id: String { "\(stop.id)_\(time)" }
+
+    static func == (lhs: TripStop, rhs: TripStop) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 
 // MARK: - Route (linea)

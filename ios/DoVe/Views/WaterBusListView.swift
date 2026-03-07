@@ -491,12 +491,6 @@ private struct WaterBusMapCard: View {
                     HStack(spacing: 12) {
                         ForEach(next) { dep in
                             HStack(spacing: 4) {
-                                if dep.isImminent {
-                                    Circle()
-                                        .fill(Color(hex: "38A169"))
-                                        .frame(width: 5, height: 5)
-                                        .modifier(PulseModifier())
-                                }
                                 LineBadge(line: dep.line, vm: vm, size: .small)
                                 VStack(alignment: .leading, spacing: 0) {
                                     Text(dep.time)
@@ -504,6 +498,12 @@ private struct WaterBusMapCard: View {
                                         .foregroundStyle(.primary)
                                     let parsed = parseDock(from: dep.headsign)
                                     HStack(spacing: 2) {
+                                        if dep.isImminent {
+                                            Circle()
+                                                .fill(Color(hex: "38A169"))
+                                                .frame(width: 4, height: 4)
+                                                .modifier(PulseModifier())
+                                        }
                                         Text(dep.countdownLabel)
                                             .font(.system(size: 11))
                                             .foregroundStyle(dep.isSoon ? Color(hex: "38A169") : Color(.secondaryLabel))
@@ -591,7 +591,7 @@ private struct WaterBusSearchListView: View {
                         )
 
                         if index < results.count - 1 {
-                            Divider().padding(.leading, 56)
+                            Divider().padding(.leading, 16)
                         }
                     }
                 }
@@ -612,64 +612,89 @@ private struct WaterBusStopRow: View {
     var highlightQuery: String? = nil
 
     var body: some View {
-        HStack(spacing: 12) {
-            // Icon
-            ZStack {
-                Circle()
-                    .fill(Color.doVeNavigation.opacity(0.12))
-                    .frame(width: 40, height: 40)
-                Ph.boat.fill
-                    .frame(width: 17, height: 17)
-                    .foregroundStyle(Color.doVeNavigation)
-            }
-
-            VStack(alignment: .leading, spacing: 5) {
+        HStack(alignment: .top, spacing: 10) {
+            // Left: name + line badges by company
+            VStack(alignment: .leading, spacing: 6) {
                 highlightedName
                     .font(.system(size: 16, weight: .semibold))
                     .lineLimit(1)
 
-                // Line badges
-                GroupedLineBadges(stop: stop, vm: vm, size: .small, maxLines: 6)
-
-                // Next departure
-                let next = vm.nextDepartures(for: stop, count: 1)
-                if let dep = next.first {
-                    HStack(spacing: 5) {
-                        if dep.isImminent {
-                            Circle()
-                                .fill(Color(hex: "38A169"))
-                                .frame(width: 6, height: 6)
-                                .modifier(PulseModifier())
-                        } else {
-                            Ph.clock.duotone
-                                .renderingMode(.template)
-                                .frame(width: 11, height: 11)
+                // Line badges organized by company, wrapping
+                let groups = vm.linesBySource(for: stop)
+                VStack(alignment: .leading, spacing: 5) {
+                    if !groups.actv.isEmpty {
+                        companyDivider(name: "ACTV")
+                        FlowLayout(spacing: 4) {
+                            ForEach(groups.actv, id: \.self) { line in
+                                LineBadge(line: line, vm: vm, size: .small)
+                            }
                         }
-                        LineBadge(line: dep.line, vm: vm, size: .small)
-                        Text(dep.time)
-                            .foregroundColor(dep.isSoon ? Color(hex: "38A169") : Color(.secondaryLabel))
-                        Text(dep.countdownLabel)
-                            .foregroundStyle(dep.isSoon ? AnyShapeStyle(Color(hex: "38A169")) : AnyShapeStyle(Color(.secondaryLabel)))
                     }
-                    .font(.system(size: 12, weight: dep.isSoon ? .semibold : .regular))
+                    if !groups.alilaguna.isEmpty {
+                        companyDivider(name: "Alilaguna")
+                            .padding(.top, groups.actv.isEmpty ? 0 : 2)
+                        FlowLayout(spacing: 4) {
+                            ForEach(groups.alilaguna, id: \.self) { line in
+                                LineBadge(line: line, vm: vm, size: .small)
+                            }
+                        }
+                    }
                 }
             }
 
-            Spacer()
+            Spacer(minLength: 8)
 
-            // Distance
-            if let dist = locationManager.formattedDistance(to: stop.coordinate) {
-                Text(dist)
-                    .font(.system(size: 12))
-                    .foregroundColor(Color(.secondaryLabel))
+            // Right: next departure block + distance
+            VStack(alignment: .trailing, spacing: 6) {
+                let next = vm.nextDepartures(for: stop, count: 1)
+                if let dep = next.first {
+                    VStack(alignment: .trailing, spacing: 2) {
+                        HStack(spacing: 4) {
+                            LineBadge(line: dep.line, vm: vm, size: .small)
+                            Text(dep.time)
+                                .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                                .foregroundStyle(.primary)
+                        }
+                        HStack(spacing: 4) {
+                            if dep.isImminent {
+                                Circle()
+                                    .fill(Color(hex: "38A169"))
+                                    .frame(width: 5, height: 5)
+                                    .modifier(PulseModifier())
+                            }
+                            Text(dep.countdownLabel)
+                                .font(.system(size: 12, weight: dep.isSoon ? .bold : .medium))
+                                .foregroundStyle(dep.isSoon ? Color(hex: "38A169") : Color(.secondaryLabel))
+                        }
+                    }
+                }
+
+                if let dist = locationManager.formattedDistance(to: stop.coordinate) {
+                    Text(dist)
+                        .font(.system(size: 11))
+                        .foregroundColor(Color(.tertiaryLabel))
+                }
             }
 
             Image(systemName: "chevron.right")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundColor(Color(.tertiaryLabel))
+                .padding(.top, 4)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+    }
+
+    private func companyDivider(name: String) -> some View {
+        HStack(spacing: 6) {
+            Text(name.uppercased())
+                .font(.system(size: 9, weight: .bold, design: .rounded))
+                .tracking(0.5)
+                .foregroundColor(Color(.tertiaryLabel))
+            Rectangle()
+                .fill(Color(.separator).opacity(0.3))
+                .frame(height: 0.5)
+        }
     }
 
     /// Nome fermata con highlight della query di ricerca
@@ -699,10 +724,11 @@ struct LineBadge: View {
     let size: BadgeSize
 
     enum BadgeSize {
-        case tiny, small, medium
+        case mini, tiny, small, medium
 
         var fontSize: CGFloat {
             switch self {
+            case .mini: 7
             case .tiny: 9
             case .small: 11
             case .medium: 13
@@ -711,6 +737,7 @@ struct LineBadge: View {
 
         var padding: EdgeInsets {
             switch self {
+            case .mini: EdgeInsets(top: 1, leading: 3, bottom: 1, trailing: 3)
             case .tiny: EdgeInsets(top: 2, leading: 4, bottom: 2, trailing: 4)
             case .small: EdgeInsets(top: 3, leading: 6, bottom: 3, trailing: 6)
             case .medium: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)
@@ -719,6 +746,7 @@ struct LineBadge: View {
 
         var cornerRadius: CGFloat {
             switch self {
+            case .mini: 2
             case .tiny: 3
             case .small: 4
             case .medium: 6
