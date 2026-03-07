@@ -269,7 +269,7 @@ private struct WaterBusMapView: View {
                 }
 
                 ForEach(stops) { stop in
-                    Annotation("", coordinate: stop.coordinate, anchor: zoomLevel == .far && selectedStop?.id != stop.id ? .center : .bottom) {
+                    Annotation("", coordinate: stop.coordinate, anchor: .center) {
                         WaterBusStopPin(
                             stop: stop,
                             isSelected: selectedStop?.id == stop.id,
@@ -375,48 +375,49 @@ private struct WaterBusStopPin: View {
     }
 
     var body: some View {
-        VStack(spacing: 2) {
-            // Pin icon
-            ZStack {
-                Circle()
-                    .fill(.white)
-                    .frame(width: iconSize, height: iconSize)
+        // Pin icon centered on coordinate, labels below as overlay
+        ZStack {
+            Circle()
+                .fill(.white)
+                .frame(width: iconSize, height: iconSize)
 
-                Circle()
-                    .fill(Color.doVeNavigation)
-                    .frame(width: iconSize - 3, height: iconSize - 3)
+            Circle()
+                .fill(Color.doVeNavigation)
+                .frame(width: iconSize - 3, height: iconSize - 3)
 
-                Image(systemName: "ferry.fill")
-                    .font(.system(size: ferrySize))
-                    .foregroundStyle(.white)
-            }
-            .shadow(color: .black.opacity(0.2), radius: isSelected ? 5 : 2.5, y: isSelected ? 2 : 1)
-
-            // Name label (medium + close zoom)
+            Image(systemName: "ferry.fill")
+                .font(.system(size: ferrySize))
+                .foregroundStyle(.white)
+        }
+        .shadow(color: .black.opacity(0.2), radius: isSelected ? 5 : 2.5, y: isSelected ? 2 : 1)
+        .overlay(alignment: .top) {
             if zoomLevel != .far || isSelected {
-                Text(stop.name)
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 2)
-                    .background(.white.opacity(0.9))
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
-                    .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
-            }
+                VStack(spacing: 2) {
+                    Text(stop.name)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 2)
+                        .background(.white.opacity(0.9))
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                        .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
 
-            // Line badges (close zoom only)
-            if zoomLevel == .close || isSelected {
-                FlowLayout(spacing: 2) {
-                    ForEach(stop.lines, id: \.self) { line in
-                        LineBadge(line: line, vm: vm, size: .small)
+                    if zoomLevel == .close || isSelected {
+                        FlowLayout(spacing: 2) {
+                            ForEach(stop.lines, id: \.self) { line in
+                                LineBadge(line: line, vm: vm, size: .small)
+                            }
+                        }
+                        .frame(maxWidth: 160)
                     }
                 }
-                .frame(maxWidth: 160)
+                .fixedSize()
+                .offset(y: iconSize + 4)
             }
         }
         .frame(minWidth: 44, minHeight: 44)
-        .contentShape(Rectangle())
+        .contentShape(Circle().size(width: 44, height: 44))
         .animation(.easeInOut(duration: 0.2), value: zoomLevel)
         .animation(.spring(duration: 0.2), value: isSelected)
     }
