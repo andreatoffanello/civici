@@ -669,15 +669,15 @@ struct DockBadge: View {
 
         var fontSize: CGFloat {
             switch self {
-            case .small: 10
-            case .medium: 12
+            case .small: 12
+            case .medium: 14
             }
         }
 
         var minWidth: CGFloat {
             switch self {
-            case .small: 16
-            case .medium: 20
+            case .small: 20
+            case .medium: 24
             }
         }
     }
@@ -687,10 +687,10 @@ struct DockBadge: View {
             .font(.system(size: size.fontSize, weight: .heavy, design: .rounded))
             .foregroundStyle(.black)
             .frame(minWidth: size.minWidth)
-            .padding(.horizontal, 3)
-            .padding(.vertical, 2)
+            .padding(.horizontal, 4)
+            .padding(.vertical, 3)
             .background(Color(red: 1.0, green: 0.82, blue: 0.0))
-            .clipShape(RoundedRectangle(cornerRadius: 3))
+            .clipShape(RoundedRectangle(cornerRadius: 4))
     }
 }
 

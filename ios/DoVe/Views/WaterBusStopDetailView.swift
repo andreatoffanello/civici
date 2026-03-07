@@ -221,16 +221,17 @@ struct WaterBusStopDetailView: View {
                         .font(.system(size: isFirst ? 14 : 13))
                         .foregroundStyle(isFirst ? .primary : .secondary)
                         .lineLimit(1)
-                    if let dock = parsed.dock {
-                        DockBadge(letter: dock, size: .small)
-                            .padding(.leading, 4)
-                    }
 
                     Spacer(minLength: 8)
 
                     Text(dep.time)
                         .font(.system(size: 12, design: .monospaced))
                         .foregroundColor(Color(.secondaryLabel))
+
+                    if let dock = parsed.dock {
+                        DockBadge(letter: dock, size: .small)
+                            .padding(.leading, 6)
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, isFirst ? 14 : 10)
@@ -436,11 +437,12 @@ struct FullScheduleView: View {
                                     .font(.system(size: 14))
                                     .foregroundStyle(.secondary)
                                     .lineLimit(1)
+
+                                Spacer()
+
                                 if let depDock = depParsed.dock {
                                     DockBadge(letter: depDock, size: .small)
                                 }
-
-                                Spacer()
                             }
                             .padding(.horizontal, 20)
                             .padding(.vertical, 6)
