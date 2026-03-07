@@ -83,9 +83,9 @@ struct HomeHubView: View {
                 if !waterBusVM.favoriteStops.isEmpty {
                     VStack(alignment: .leading, spacing: 10) {
                         HStack(spacing: 6) {
-                            Ph.star.fill
+                            Ph.bookmarkSimple.fill
                                 .frame(width: 13, height: 13)
-                                .foregroundStyle(.yellow)
+                                .foregroundStyle(Color.doVeNavigation)
                             Text(strings.waterBusFavorites)
                                 .font(.system(size: 13, weight: .semibold))
                                 .foregroundStyle(.secondary)
@@ -371,13 +371,13 @@ private struct FavoriteStopCard: View {
                             Spacer()
                             if dep.isImminent {
                                 Circle()
-                                    .fill(Color(hex: "38A169"))
+                                    .fill(Color.doVeSoon)
                                     .frame(width: 5, height: 5)
                                     .modifier(PulseModifier())
                             }
                             Text(dep.countdownLabel)
                                 .font(.system(size: 12, weight: dep.isSoon ? .bold : .medium))
-                                .foregroundStyle(dep.isSoon ? Color(hex: "38A169") : .secondary)
+                                .foregroundStyle(dep.isSoon ? Color.doVeSoon : .secondary)
                         }
                         .padding(.vertical, 5)
 

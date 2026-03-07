@@ -37,7 +37,14 @@ extension Color {
     static let doVeServices = Color(UIColor { trait in
         trait.userInterfaceStyle == .dark
             ? UIColor(red: 0.314, green: 0.741, blue: 0.533, alpha: 1) // #50BD88
-            : UIColor(red: 0.220, green: 0.631, blue: 0.412, alpha: 1) // #38A169
+            : UIColor(red: 0.082, green: 0.502, blue: 0.239, alpha: 1) // #15803D
+    })
+
+    /// Verde "imminente" — scuro su light (5.5:1), chiaro su dark (5.2:1)
+    static let doVeSoon = Color(UIColor { trait in
+        trait.userInterfaceStyle == .dark
+            ? UIColor(red: 0.314, green: 0.741, blue: 0.533, alpha: 1) // #50BD88
+            : UIColor(red: 0.082, green: 0.502, blue: 0.239, alpha: 1) // #15803D
     })
 
     /// Sfondo delle card nizioleto — crema caldo in light, scuro caldo in dark

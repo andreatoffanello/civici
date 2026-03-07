@@ -12,10 +12,19 @@ struct WaterBusStopDetailView: View {
     @State private var sheetDetent: PresentationDetent = .medium
     @State private var showSheet = false
     @State private var showFullSchedule = false
-    @State private var selectedTrip: TripNavigation?
+
+    // Trip state — quando non-nil, mappa e sheet mostrano la corsa
+    @State private var activeTrip: TripNavigation?
+    @State private var expandedStops: Set<String> = []
+
+    private var tripData: (route: WaterBusRoute, direction: RouteDirection, stops: [TripStop])? {
+        guard let nav = activeTrip else { return nil }
+        return vm.reconstructTrip(departure: nav.departure, fromStop: nav.stop)
+    }
 
     var body: some View {
         Map(position: $mapPosition) {
+            // Stop pins (sempre visibili, sfumati durante trip)
             if stop.docks.isEmpty {
                 Annotation(stop.name, coordinate: stop.coordinate) {
                     ZStack {
@@ -26,11 +35,32 @@ struct WaterBusStopDetailView: View {
                             .frame(width: 14, height: 14)
                             .foregroundStyle(.white)
                     }
+                    .opacity(activeTrip == nil ? 1 : 0.3)
                 }
             } else {
                 ForEach(stop.docks) { dock in
                     Annotation("", coordinate: dock.coordinate) {
-                        StopDetailDockPin(dock: dock, vm: vm)
+                        StopDetailDockPin(stop: stop, dock: dock, vm: vm)
+                            .opacity(activeTrip == nil ? 1 : 0.3)
+                    }
+                }
+            }
+
+            // Trip overlay — polyline + stop pins
+            if let trip = tripData {
+                let lineColor = resolveColor(trip.route.color)
+                let origin = tripOriginIndex(in: trip.stops)
+
+                if !trip.direction.coordinates.isEmpty {
+                    MapPolyline(coordinates: trip.direction.coordinates)
+                        .stroke(lineColor, lineWidth: 4)
+                }
+
+                ForEach(Array(trip.stops.enumerated()), id: \.element.id) { index, tripStop in
+                    let isOrigin = index == origin
+                    let isPast = index < origin
+                    Annotation("", coordinate: tripStop.stop.coordinate) {
+                        tripStopPin(color: lineColor, isOrigin: isOrigin, isPast: isPast)
                     }
                 }
             }
@@ -49,31 +79,40 @@ struct WaterBusStopDetailView: View {
             Color.clear.frame(height: sheetDetent == .large ? 0 : sheetDetent == .medium ? UIScreen.main.bounds.height * 0.5 : 140)
         }
         .ignoresSafeArea(edges: .bottom)
-        .navigationTitle(stop.name)
+        .navigationTitle(activeTrip == nil ? stop.name : "Linea \(activeTrip!.departure.line)")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarRole(.editor)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    withAnimation(.spring(duration: 0.3)) {
-                        vm.toggleFavorite(stop)
+                if activeTrip == nil {
+                    Button {
+                        withAnimation(.spring(duration: 0.3)) {
+                            vm.toggleFavorite(stop)
+                        }
+                    } label: {
+                        Image(systemName: vm.isFavorite(stop) ? "bookmark.fill" : "bookmark")
+                            .foregroundStyle(vm.isFavorite(stop) ? Color.doVeNavigation : .secondary)
+                            .symbolEffect(.bounce, value: vm.isFavorite(stop))
                     }
-                } label: {
-                    Image(systemName: vm.isFavorite(stop) ? "star.fill" : "star")
-                        .foregroundStyle(vm.isFavorite(stop) ? .yellow : .secondary)
-                        .symbolEffect(.bounce, value: vm.isFavorite(stop))
                 }
             }
         }
         .onAppear {
-            mapPosition = .region(MKCoordinateRegion(
-                center: stop.coordinate,
-                span: MKCoordinateSpan(latitudeDelta: 0.006, longitudeDelta: 0.006)
-            ))
+            centerOnStop()
             showSheet = true
         }
-        .navigationDestination(item: $selectedTrip) { nav in
-            TripDetailView(departure: nav.departure, fromStop: nav.stop)
+        .onChange(of: activeTrip) { _, newTrip in
+            if newTrip != nil {
+                // Centra mappa sulla corsa
+                if let trip = tripData {
+                    centerOnTrip(trip)
+                }
+            } else {
+                // Torna alla fermata
+                expandedStops.removeAll()
+                centerOnStop()
+            }
         }
         .sheet(isPresented: $showSheet) {
             sheetContent
@@ -85,9 +124,26 @@ struct WaterBusStopDetailView: View {
         }
     }
 
-    // MARK: - Sheet Content
+    // MARK: - Sheet Content (switch stop / trip)
 
+    @ViewBuilder
     private var sheetContent: some View {
+        if let nav = activeTrip, let trip = tripData {
+            tripSheetContent(nav: nav, trip: trip)
+                .fullScreenCover(isPresented: $showFullSchedule) {
+                    FullScheduleView(stop: stop)
+                }
+        } else {
+            stopSheetContent
+                .fullScreenCover(isPresented: $showFullSchedule) {
+                    FullScheduleView(stop: stop)
+                }
+        }
+    }
+
+    // MARK: - Stop Sheet Content
+
+    private var stopSheetContent: some View {
         let next = vm.nextDepartures(for: stop, count: 5)
 
         return ScrollView {
@@ -135,9 +191,307 @@ struct WaterBusStopDetailView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $showFullSchedule) {
-            FullScheduleView(stop: stop)
+    }
+
+    // MARK: - Trip Sheet Content (no map — usa quella di sfondo)
+
+    private func tripSheetContent(nav: TripNavigation, trip: (route: WaterBusRoute, direction: RouteDirection, stops: [TripStop])) -> some View {
+        VStack(spacing: 0) {
+            // Fixed header
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            activeTrip = nil
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 14, weight: .semibold))
+                            Text(stop.name)
+                                .font(.system(size: 15, weight: .medium))
+                        }
+                        .foregroundStyle(Color.doVeNavigation)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+                .padding(.bottom, 4)
+
+                tripInfoHeader(trip: trip, departure: nav.departure)
+            }
+
+            // Scrollable timeline
+            if !trip.stops.isEmpty {
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        stopsTimeline(trip: trip, departure: nav.departure)
+                        Color.clear.frame(height: 40)
+                    }
+                    .onAppear {
+                        let origin = tripOriginIndex(in: trip.stops)
+                        if origin < trip.stops.count {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    proxy.scrollTo(trip.stops[origin].id, anchor: .center)
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                VStack(spacing: 8) {
+                    Ph.boat.duotone
+                        .renderingMode(.template)
+                        .frame(width: 28, height: 28)
+                        .foregroundColor(Color(.tertiaryLabel))
+                    Text("Impossibile ricostruire la corsa")
+                        .font(.system(size: 14))
+                        .foregroundColor(Color(.secondaryLabel))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 32)
+                Spacer()
+            }
         }
+    }
+
+    // MARK: - Trip Info Header
+
+    private func tripInfoHeader(trip: (route: WaterBusRoute, direction: RouteDirection, stops: [TripStop]), departure: Departure) -> some View {
+        HStack(spacing: 12) {
+            LineBadge(line: departure.line, vm: vm, size: .medium)
+
+            VStack(alignment: .leading, spacing: 3) {
+                let headsignParsed = parseDock(from: trip.direction.headsign)
+                HStack(spacing: 5) {
+                    Ph.arrowRight.bold
+                        .renderingMode(.template)
+                        .frame(width: 11, height: 11)
+                        .foregroundColor(Color(.secondaryLabel))
+                    Text(headsignParsed.name)
+                        .font(.system(size: 16, weight: .semibold))
+                        .lineLimit(1)
+                    if let dock = headsignParsed.dock {
+                        DockBadge(letter: dock, size: .medium)
+                    }
+                }
+
+                HStack(spacing: 6) {
+                    Text("\(trip.stops.count) fermate")
+                        .font(.system(size: 12))
+                        .foregroundColor(Color(.secondaryLabel))
+
+                    if let first = trip.stops.first, let last = trip.stops.last {
+                        Text("·")
+                            .foregroundColor(Color(.secondaryLabel))
+                            .font(.system(size: 12))
+                        Text("\(first.time) – \(last.time)")
+                            .font(.system(size: 12, design: .monospaced))
+                            .foregroundColor(Color(.secondaryLabel))
+                    }
+
+                    Text("·")
+                        .foregroundColor(Color(.secondaryLabel))
+                        .font(.system(size: 12))
+
+                    OperatorLogo(trip.route.source == "alilaguna" ? "logo-alilaguna" : "logo-actv", height: 12)
+                }
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+        .padding(.bottom, 12)
+    }
+
+    // MARK: - Stops Timeline
+
+    private func stopsTimeline(trip: (route: WaterBusRoute, direction: RouteDirection, stops: [TripStop]), departure: Departure) -> some View {
+        let lineColor = resolveColor(trip.route.color)
+        let origin = tripOriginIndex(in: trip.stops)
+
+        return VStack(alignment: .leading, spacing: 0) {
+            Divider()
+                .padding(.horizontal, 20)
+                .padding(.bottom, 4)
+
+            ForEach(Array(trip.stops.enumerated()), id: \.element.id) { index, tripStop in
+                let isTerminal = index == 0 || index == trip.stops.count - 1
+                let isOrigin = index == origin
+                let isPast = index < origin
+                let dotSize: CGFloat = isTerminal || isOrigin ? 12 : 8
+                let otherLines = tripStop.stop.lines.filter { $0 != departure.line }
+                let isExpanded = expandedStops.contains(tripStop.id)
+
+                VStack(spacing: 0) {
+                    HStack(spacing: 0) {
+                        Text(tripStop.time)
+                            .font(.system(size: 14, weight: isTerminal || isOrigin ? .bold : .regular, design: .monospaced))
+                            .foregroundStyle(isPast ? Color(.tertiaryLabel) : isOrigin ? lineColor : .primary)
+                            .frame(width: 52, alignment: .trailing)
+
+                        ZStack {
+                            VStack(spacing: 0) {
+                                Rectangle()
+                                    .fill(index > 0 ? (isPast ? lineColor.opacity(0.25) : lineColor) : .clear)
+                                    .frame(width: 3)
+                                Rectangle()
+                                    .fill(index < trip.stops.count - 1 ? (index < origin ? lineColor.opacity(0.25) : lineColor) : .clear)
+                                    .frame(width: 3)
+                            }
+
+                            Circle()
+                                .fill(isPast ? lineColor.opacity(0.35) : lineColor)
+                                .frame(width: dotSize, height: dotSize)
+                                .overlay(
+                                    Circle()
+                                        .fill(.white)
+                                        .frame(width: isTerminal || isOrigin ? 5 : 0)
+                                )
+                        }
+                        .frame(width: 20)
+                        .frame(minHeight: 40)
+                        .padding(.horizontal, 8)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(tripStop.stop.name)
+                                .font(.system(size: 15, weight: isTerminal || isOrigin ? .semibold : .regular))
+                                .foregroundStyle(isPast ? Color(.tertiaryLabel) : isOrigin ? lineColor : .primary)
+                                .lineLimit(1)
+
+                            if let dist = locationManager.formattedDistance(to: tripStop.stop.coordinate) {
+                                Text(dist)
+                                    .font(.system(size: 11))
+                                    .foregroundColor(Color(.tertiaryLabel))
+                            }
+
+                            if !otherLines.isEmpty && !isPast {
+                                HStack(spacing: 3) {
+                                    Ph.arrowsLeftRight.bold
+                                        .renderingMode(.template)
+                                        .frame(width: 8, height: 8)
+                                        .foregroundColor(Color(.tertiaryLabel))
+                                    ForEach(otherLines.prefix(5), id: \.self) { line in
+                                        LineBadge(line: line, vm: vm, size: .tiny)
+                                    }
+                                    if otherLines.count > 5 {
+                                        Text("+\(otherLines.count - 5)")
+                                            .font(.system(size: 9, weight: .bold))
+                                            .foregroundColor(Color(.secondaryLabel))
+                                    }
+                                }
+                                .padding(.top, 1)
+                            }
+                        }
+
+                        Spacer(minLength: 6)
+
+                        VStack(spacing: 4) {
+                            if let dock = tripStop.dock {
+                                DockBadge(letter: dock, size: .small)
+                                    .opacity(isPast ? 0.4 : 1)
+                            }
+                            if !otherLines.isEmpty && !isPast {
+                                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundColor(Color(.tertiaryLabel))
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, !otherLines.isEmpty && !isPast ? 6 : 2)
+                    .background(isOrigin ? lineColor.opacity(0.05) : .clear)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        guard !otherLines.isEmpty, !isPast else { return }
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            if expandedStops.contains(tripStop.id) {
+                                expandedStops.remove(tripStop.id)
+                            } else {
+                                expandedStops.insert(tripStop.id)
+                            }
+                        }
+                    }
+
+                    if isExpanded {
+                        connectionsView(stop: tripStop.stop, arrivalTime: tripStop.time, lineColor: lineColor, index: index, totalStops: trip.stops.count, origin: origin, departure: departure)
+                    }
+                }
+                .id(tripStop.id)
+            }
+        }
+    }
+
+    // MARK: - Connections
+
+    private func connectionsView(stop: WaterBusStop, arrivalTime: String, lineColor: Color, index: Int, totalStops: Int, origin: Int, departure: Departure) -> some View {
+        let conns = vm.connections(at: stop, arrivalTime: arrivalTime, excludingLine: departure.line)
+
+        return HStack(spacing: 0) {
+            Color.clear.frame(width: 52)
+
+            ZStack {
+                Rectangle()
+                    .fill(index < totalStops - 1 ? (index < origin ? lineColor.opacity(0.25) : lineColor) : .clear)
+                    .frame(width: 3)
+            }
+            .frame(width: 20)
+            .padding(.horizontal, 8)
+
+            VStack(alignment: .leading, spacing: 0) {
+                if conns.isEmpty {
+                    Text("Nessuna coincidenza entro 30 min")
+                        .font(.system(size: 11))
+                        .foregroundColor(Color(.tertiaryLabel))
+                        .padding(.vertical, 6)
+                } else {
+                    Text("COINCIDENZE")
+                        .font(.system(size: 9, weight: .bold, design: .rounded))
+                        .tracking(0.5)
+                        .foregroundColor(Color(.tertiaryLabel))
+                        .padding(.top, 6)
+                        .padding(.bottom, 4)
+
+                    ForEach(Array(conns.enumerated()), id: \.element.departure.id) { i, conn in
+                        let parsed = parseDock(from: conn.departure.headsign)
+                        HStack(spacing: 0) {
+                            LineBadge(line: conn.line, vm: vm, size: .small)
+                                .frame(width: 38, alignment: .leading)
+
+                            Text(conn.departure.time)
+                                .font(.system(size: 13, weight: .medium, design: .monospaced))
+                                .foregroundStyle(.primary)
+                                .frame(width: 48, alignment: .leading)
+
+                            Text(parsed.name)
+                                .font(.system(size: 13))
+                                .foregroundColor(Color(.secondaryLabel))
+                                .lineLimit(1)
+
+                            Spacer(minLength: 4)
+
+                            if let dock = parsed.dock {
+                                DockBadge(letter: dock, size: .small)
+                            }
+                        }
+                        .padding(.vertical, 5)
+                        if i < conns.count - 1 {
+                            Divider()
+                        }
+                    }
+                }
+            }
+            .padding(.vertical, 2)
+            .padding(.horizontal, 12)
+            .background(Color(.systemGray6).opacity(0.5))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .padding(.trailing, 20)
+            .padding(.bottom, 4)
+        }
+        .padding(.leading, 20)
     }
 
     // MARK: - Peek Header
@@ -181,10 +535,7 @@ struct WaterBusStopDetailView: View {
         return VStack(alignment: .leading, spacing: 10) {
             if !groups.actv.isEmpty {
                 HStack(spacing: 8) {
-                    Image("logo-actv")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 18)
+                    OperatorLogo("logo-actv")
                     FlowLayout(spacing: 6) {
                         ForEach(groups.actv, id: \.self) { line in
                             LineBadge(line: line, vm: vm, size: .small)
@@ -194,10 +545,7 @@ struct WaterBusStopDetailView: View {
             }
             if hasAlilaguna {
                 HStack(spacing: 8) {
-                    Image("logo-alilaguna")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 18)
+                    OperatorLogo("logo-alilaguna")
                     FlowLayout(spacing: 6) {
                         ForEach(groups.alilaguna, id: \.self) { line in
                             LineBadge(line: line, vm: vm, size: .small)
@@ -218,25 +566,29 @@ struct WaterBusStopDetailView: View {
                 let isFirst = index == 0
 
                 Button {
-                    selectedTrip = TripNavigation(departure: dep, stop: stop)
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        activeTrip = TripNavigation(departure: dep, stop: stop)
+                        sheetDetent = .medium
+                    }
                 } label: {
                     HStack(spacing: 0) {
-                        // Countdown
                         HStack(spacing: 4) {
                             if dep.isImminent {
                                 Circle()
-                                    .fill(Color(hex: "38A169"))
+                                    .fill(Color.doVeSoon)
                                     .frame(width: 6, height: 6)
                                     .modifier(PulseModifier())
                             }
                             Text(dep.countdownLabel)
-                                .font(.system(size: isFirst ? 16 : 14, weight: isFirst ? .bold : .semibold))
-                                .foregroundStyle(dep.isSoon ? Color(hex: "38A169") : .primary)
+                                .font(.system(size: isFirst ? 14 : 13, weight: isFirst ? .bold : .semibold))
+                                .foregroundStyle(dep.isSoon ? Color.doVeSoon : .primary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.85)
                         }
-                        .frame(width: 110, alignment: .leading)
+                        .frame(width: 90, alignment: .leading)
 
                         LineBadge(line: dep.line, vm: vm, size: .small)
-                            .padding(.trailing, 10)
+                            .padding(.trailing, 8)
 
                         let parsed = parseDock(from: dep.headsign)
                         Text(parsed.name)
@@ -244,21 +596,22 @@ struct WaterBusStopDetailView: View {
                             .foregroundStyle(isFirst ? .primary : .secondary)
                             .lineLimit(1)
 
-                        Spacer(minLength: 8)
+                        Spacer(minLength: 4)
 
                         Text(dep.time)
                             .font(.system(size: 12, design: .monospaced))
-                            .foregroundColor(Color(.secondaryLabel))
+                            .foregroundColor(Color(.tertiaryLabel))
 
-                        if let dock = parsed.dock {
+                        // Dock di PARTENZA (non destinazione)
+                        if let dock = vm.departureDock(for: dep, at: stop) {
                             DockBadge(letter: dock, size: .small)
-                                .padding(.leading, 6)
+                                .padding(.leading, 4)
                         }
 
                         Image(systemName: "chevron.right")
                             .font(.system(size: 10, weight: .medium))
                             .foregroundColor(Color(.tertiaryLabel))
-                            .padding(.leading, 6)
+                            .padding(.leading, 4)
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, isFirst ? 14 : 10)
@@ -278,7 +631,58 @@ struct WaterBusStopDetailView: View {
         .padding(.bottom, 12)
     }
 
+    // MARK: - Trip Map Pin
+
+    private func tripStopPin(color: Color, isOrigin: Bool, isPast: Bool) -> some View {
+        ZStack {
+            Circle()
+                .fill(.white)
+                .frame(width: isOrigin ? 18 : 14, height: isOrigin ? 18 : 14)
+                .shadow(color: .black.opacity(0.15), radius: 2, y: 1)
+            Circle()
+                .fill(isPast ? color.opacity(0.35) : color)
+                .frame(width: isOrigin ? 10 : 8, height: isOrigin ? 10 : 8)
+        }
+    }
+
     // MARK: - Helpers
+
+    private func resolveColor(_ color: Color) -> Color {
+        color == Color(hex: "FFFFFF") ? .blue : color
+    }
+
+    private func tripOriginIndex(in stops: [TripStop]) -> Int {
+        stops.firstIndex(where: { $0.stop.id == stop.id }) ?? 0
+    }
+
+    private func centerOnStop() {
+        withAnimation(.easeInOut(duration: 0.4)) {
+            mapPosition = .region(MKCoordinateRegion(
+                center: stop.coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.006, longitudeDelta: 0.006)
+            ))
+        }
+    }
+
+    private func centerOnTrip(_ trip: (route: WaterBusRoute, direction: RouteDirection, stops: [TripStop])) {
+        guard !trip.direction.coordinates.isEmpty else { return }
+        let lats = trip.direction.coordinates.map(\.latitude)
+        let lngs = trip.direction.coordinates.map(\.longitude)
+        guard let minLat = lats.min(), let maxLat = lats.max(),
+              let minLng = lngs.min(), let maxLng = lngs.max() else { return }
+
+        let center = CLLocationCoordinate2D(
+            latitude: (minLat + maxLat) / 2,
+            longitude: (minLng + maxLng) / 2
+        )
+        let span = MKCoordinateSpan(
+            latitudeDelta: (maxLat - minLat) * 1.3 + 0.005,
+            longitudeDelta: (maxLng - minLng) * 1.3 + 0.005
+        )
+        withAnimation(.easeInOut(duration: 0.4)) {
+            mapPosition = .region(MKCoordinateRegion(center: center, span: span))
+        }
+    }
 
     private func openInMaps() {
         let coord = stop.coordinate
@@ -475,7 +879,8 @@ struct FullScheduleView: View {
 
                                     Spacer()
 
-                                    if let depDock = depParsed.dock {
+                                    // Dock di PARTENZA
+                                    if let depDock = vm.departureDock(for: dep, at: stop) {
                                         DockBadge(letter: depDock, size: .small)
                                     }
 
@@ -501,12 +906,14 @@ struct FullScheduleView: View {
 // MARK: - Stop Detail Dock Pin
 
 private struct StopDetailDockPin: View {
+    let stop: WaterBusStop
     let dock: Dock
     let vm: WaterBusViewModel
 
     var body: some View {
+        let activeLines = vm.activeLinesForDock(stop: stop, dockLetter: dock.letter)
+
         VStack(spacing: 3) {
-            // Dock letter badge (yellow)
             ZStack {
                 Circle()
                     .fill(.white)
@@ -520,14 +927,15 @@ private struct StopDetailDockPin: View {
             }
             .shadow(color: .black.opacity(0.2), radius: 3, y: 1)
 
-            // Line badges below
-            FlowLayout(spacing: 2) {
-                ForEach(dock.lines, id: \.self) { line in
-                    LineBadge(line: line, vm: vm, size: .tiny)
+            if !activeLines.isEmpty {
+                HStack(spacing: 2) {
+                    ForEach(activeLines, id: \.self) { line in
+                        LineBadge(line: line, vm: vm, size: .tiny)
+                    }
                 }
             }
-            .frame(maxWidth: 120)
         }
+        .fixedSize()
     }
 }
 

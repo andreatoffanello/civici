@@ -43,6 +43,7 @@ struct TripDetailView: View {
         }
         .navigationTitle("Linea \(departure.line)")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarRole(.editor)
         .toolbar(.hidden, for: .tabBar)
         .onAppear { centerMap(trip: trip) }
     }
@@ -147,10 +148,7 @@ struct TripDetailView: View {
                         .foregroundColor(Color(.secondaryLabel))
                         .font(.system(size: 12))
 
-                    Image(trip?.route.source == "alilaguna" ? "logo-alilaguna" : "logo-actv")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 12)
+                    OperatorLogo(trip?.route.source == "alilaguna" ? "logo-alilaguna" : "logo-actv", height: 12)
                 }
             }
 

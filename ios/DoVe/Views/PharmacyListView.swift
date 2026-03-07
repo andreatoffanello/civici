@@ -48,7 +48,7 @@ struct PharmacyListView: View {
                 HStack {
                     HStack(spacing: 6) {
                         Circle()
-                            .fill(sorted.open.count > 0 ? Color(hex: "38A169") : Color(hex: "E53E3E"))
+                            .fill(sorted.open.count > 0 ? Color.doVeServices : Color(hex: "E53E3E"))
                             .frame(width: 8, height: 8)
                         Text(sorted.open.count > 0
                              ? strings.pharmaciesOpenCount(sorted.open.count, pharmacyVM.pharmacies.count)
@@ -231,7 +231,7 @@ struct PharmacyMapPin: View {
 
     var body: some View {
         let isOpen = pharmacy.isOpen()
-        let color = isOpen ? Color(hex: "38A169") : Color(hex: "E53E3E")
+        let color = isOpen ? Color.doVeServices : Color(hex: "E53E3E")
 
         VStack(spacing: 0) {
             ZStack {
@@ -280,9 +280,9 @@ struct PharmacyMapCard: View {
                         Ph.firstAidKit.duotone
                             .renderingMode(.template)
                             .frame(width: 20, height: 20)
-                            .foregroundStyle(isOpen ? Color(hex: "38A169") : Color.gray.opacity(0.5))
+                            .foregroundStyle(isOpen ? Color.doVeServices : Color.gray.opacity(0.5))
                             .frame(width: 44, height: 44)
-                            .background(isOpen ? Color(hex: "38A169").opacity(0.1) : Color.secondary.opacity(0.06))
+                            .background(isOpen ? Color.doVeServices.opacity(0.1) : Color.secondary.opacity(0.06))
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
 
@@ -301,7 +301,7 @@ struct PharmacyMapCard: View {
                         HStack(spacing: 8) {
                             Text(isOpen ? strings.pharmacyOpen : strings.pharmacyClosed)
                                 .font(.system(size: 11, weight: .semibold))
-                                .foregroundStyle(isOpen ? Color(hex: "38A169") : Color(hex: "E53E3E"))
+                                .foregroundStyle(isOpen ? Color.doVeServices : Color(hex: "E53E3E"))
 
                             if let hours = pharmacy.todayHoursFormatted() {
                                 Text(hours)
@@ -444,9 +444,9 @@ struct PharmacyRow: View {
                 Ph.firstAidKit.duotone
                     .renderingMode(.template)
                     .frame(width: 20, height: 20)
-                    .foregroundStyle(isOpen ? Color(hex: "38A169") : Color.gray.opacity(0.5))
+                    .foregroundStyle(isOpen ? Color.doVeServices : Color.gray.opacity(0.5))
                     .frame(width: 44, height: 44)
-                    .background(isOpen ? Color(hex: "38A169").opacity(0.1) : Color.secondary.opacity(0.06))
+                    .background(isOpen ? Color.doVeServices.opacity(0.1) : Color.secondary.opacity(0.06))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             .padding(.leading, 16)
@@ -465,7 +465,7 @@ struct PharmacyRow: View {
                 HStack(spacing: 8) {
                     Text(isOpen ? strings.pharmacyOpen : strings.pharmacyClosed)
                         .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(isOpen ? Color(hex: "38A169") : Color(hex: "E53E3E"))
+                        .foregroundStyle(isOpen ? Color.doVeServices : Color(hex: "E53E3E"))
 
                     if let hours = pharmacy.todayHoursFormatted() {
                         Text(hours)

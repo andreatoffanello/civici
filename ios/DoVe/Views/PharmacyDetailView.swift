@@ -76,7 +76,7 @@ struct PharmacyDetailView: View {
                 Ph.firstAidKit.duotone
                     .renderingMode(.template)
                     .frame(width: 18, height: 18)
-                    .foregroundStyle(pharmacy.isOpen() ? Color(hex: "38A169") : Color(hex: "E53E3E"))
+                    .foregroundStyle(pharmacy.isOpen() ? Color.doVeServices : Color(hex: "E53E3E"))
 
                 if let distance = locationManager.formattedDistance(to: pharmacy.coordinate) {
                     Text(distance)
@@ -211,15 +211,15 @@ struct PharmacyDetailView: View {
         let isOpen = pharmacy.isOpen()
         return HStack(spacing: 5) {
             Circle()
-                .fill(isOpen ? Color(hex: "38A169") : Color(hex: "E53E3E"))
+                .fill(isOpen ? Color.doVeServices : Color(hex: "E53E3E"))
                 .frame(width: 7, height: 7)
             Text(isOpen ? strings.pharmacyOpen : strings.pharmacyClosed)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(isOpen ? Color(hex: "38A169") : Color(hex: "E53E3E"))
+                .foregroundStyle(isOpen ? Color.doVeServices : Color(hex: "E53E3E"))
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .background((isOpen ? Color(hex: "38A169") : Color(hex: "E53E3E")).opacity(0.1))
+        .background((isOpen ? Color.doVeServices : Color(hex: "E53E3E")).opacity(0.1))
         .clipShape(Capsule())
     }
 

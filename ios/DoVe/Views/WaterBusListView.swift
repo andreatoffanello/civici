@@ -29,8 +29,7 @@ struct WaterBusListView: View {
                     WaterBusMapView(
                         stops: vm.stops,
                         vm: vm,
-                        userLocation: locationManager.userLocation,
-                        locationManager: locationManager
+                        userLocation: locationManager.userLocation
                     )
                     .ignoresSafeArea(edges: .bottom)
                 case .list:
@@ -53,11 +52,13 @@ struct WaterBusListView: View {
             // MARK: Top bar overlay
             VStack(spacing: 8) {
                 // Segmented picker
-                Picker("", selection: $contentMode) {
-                    Text(strings.waterBusStops).tag(ContentMode.stops)
-                    Text(strings.waterBusLines).tag(ContentMode.lines)
-                }
-                .pickerStyle(.segmented)
+                CapsuleSegmentedControl(
+                    selection: $contentMode,
+                    items: [
+                        (.stops, strings.waterBusStops, Ph.mapPin),
+                        (.lines, strings.waterBusLines, Ph.path)
+                    ]
+                )
                 .padding(.horizontal, 16)
                 .padding(.top, 10)
 
@@ -234,15 +235,14 @@ private struct WaterBusMapView: View {
     let stops: [WaterBusStop]
     let vm: WaterBusViewModel
     let userLocation: CLLocation?
-    let locationManager: LocationManager
     private static let veniceCenter = CLLocationCoordinate2D(latitude: 45.4375, longitude: 12.3358)
 
     @State private var mapPosition: MapCameraPosition = .region(MKCoordinateRegion(
         center: veniceCenter,
         span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04)
     ))
-    @State private var selectedStop: WaterBusStop?
     @State private var zoomLevel: ZoomLevel = .far
+    @State private var navigateToStop: WaterBusStop?
 
     enum ZoomLevel: Hashable {
         case far    // tutta Venezia — solo pin
@@ -271,40 +271,32 @@ private struct WaterBusMapView: View {
                 }
 
                 ForEach(stops) { stop in
-                    let isSelected = selectedStop?.id == stop.id
-                    let showDocks = (zoomLevel == .close || isSelected) && !stop.docks.isEmpty
+                    let showDocks = zoomLevel == .close && !stop.docks.isEmpty
 
                     if showDocks {
-                        // Show individual dock pins with their lines
-                        ForEach(stop.docks) { dock in
+                        ForEach(Array(stop.docks.enumerated()), id: \.element.id) { index, dock in
                             Annotation("", coordinate: dock.coordinate, anchor: .center) {
-                                WaterBusDockPin(
-                                    stop: stop,
-                                    dock: dock,
-                                    isSelected: isSelected,
-                                    vm: vm
-                                )
-                                .onTapGesture {
-                                    withAnimation(.spring(duration: 0.25)) {
-                                        selectedStop = isSelected ? nil : stop
-                                    }
+                                Button { navigateToStop = stop } label: {
+                                    WaterBusDockPin(
+                                        stop: stop,
+                                        dock: dock,
+                                        showName: index == 0,
+                                        vm: vm
+                                    )
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                     } else {
-                        // Show single station pin
-                        Annotation("", coordinate: stop.coordinate, anchor: .center) {
-                            WaterBusStopPin(
-                                stop: stop,
-                                isSelected: isSelected,
-                                zoomLevel: zoomLevel,
-                                vm: vm
-                            )
-                            .onTapGesture {
-                                withAnimation(.spring(duration: 0.25)) {
-                                    selectedStop = isSelected ? nil : stop
-                                }
+                        Annotation("", coordinate: stop.coordinate, anchor: .top) {
+                            Button { navigateToStop = stop } label: {
+                                WaterBusStopPin(
+                                    stop: stop,
+                                    zoomLevel: zoomLevel,
+                                    vm: vm
+                                )
                             }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
@@ -329,14 +321,6 @@ private struct WaterBusMapView: View {
                         span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04)
                     ))
                 }
-            }
-
-            // Bottom card for selected stop
-            if let stop = selectedStop {
-                WaterBusMapCard(stop: stop, vm: vm, locationManager: locationManager)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
             }
 
             // Center on user button
@@ -364,24 +348,24 @@ private struct WaterBusMapView: View {
                             .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
                     }
                     .padding(.trailing, 16)
-                    .padding(.bottom, selectedStop != nil ? 200 : 16)
+                    .padding(.bottom, 16)
                 }
             }
         }
+        .navigationDestination(item: $navigateToStop) { stop in
+            WaterBusStopDetailView(stop: stop)
+        }
     }
-
 }
 
 // MARK: - Stop Map Pin
 
 private struct WaterBusStopPin: View {
     let stop: WaterBusStop
-    let isSelected: Bool
     let zoomLevel: WaterBusMapView.ZoomLevel
     let vm: WaterBusViewModel
 
     private var iconSize: CGFloat {
-        if isSelected { return 32 }
         let count = stop.lines.count
         switch count {
         case 0...2: return 22
@@ -391,7 +375,6 @@ private struct WaterBusStopPin: View {
     }
 
     private var ferrySize: CGFloat {
-        if isSelected { return 16 }
         let count = stop.lines.count
         switch count {
         case 0...2: return 10
@@ -401,52 +384,45 @@ private struct WaterBusStopPin: View {
     }
 
     var body: some View {
-        // Pin icon centered on coordinate, labels below as overlay
-        ZStack {
-            Circle()
-                .fill(.white)
-                .frame(width: iconSize, height: iconSize)
+        VStack(spacing: 3) {
+            ZStack {
+                Circle()
+                    .fill(.white)
+                    .frame(width: iconSize, height: iconSize)
+                Circle()
+                    .fill(Color.doVeNavigation)
+                    .frame(width: iconSize - 3, height: iconSize - 3)
+                Ph.boat.fill
+                    .frame(width: ferrySize, height: ferrySize)
+                    .foregroundStyle(.white)
+            }
+            .shadow(color: .black.opacity(0.2), radius: 2.5, y: 1)
 
-            Circle()
-                .fill(Color.doVeNavigation)
-                .frame(width: iconSize - 3, height: iconSize - 3)
+            if zoomLevel != .far {
+                Text(stop.name)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(.white.opacity(0.9))
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                    .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
 
-            Ph.boat.fill
-                .frame(width: ferrySize, height: ferrySize)
-                .foregroundStyle(.white)
-        }
-        .shadow(color: .black.opacity(0.2), radius: isSelected ? 5 : 2.5, y: isSelected ? 2 : 1)
-        .overlay(alignment: .top) {
-            if zoomLevel != .far || isSelected {
-                VStack(spacing: 2) {
-                    Text(stop.name)
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 2)
-                        .background(.white.opacity(0.9))
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                        .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
-
-                    // Show line badges only when no docks (docks handle their own badges)
-                    if (zoomLevel == .close || isSelected) && stop.docks.isEmpty {
-                        FlowLayout(spacing: 2) {
-                            ForEach(stop.lines, id: \.self) { line in
-                                LineBadge(line: line, vm: vm, size: .small)
-                            }
+                if zoomLevel == .close && stop.docks.isEmpty {
+                    FlowLayout(spacing: 2) {
+                        ForEach(stop.lines, id: \.self) { line in
+                            LineBadge(line: line, vm: vm, size: .small)
                         }
-                        .frame(maxWidth: 160)
                     }
+                    .frame(maxWidth: 160)
                 }
-                .fixedSize()
-                .offset(y: iconSize + 4)
             }
         }
+        .fixedSize()
         .frame(minWidth: 44, minHeight: 44)
-        .contentShape(Circle().size(width: 44, height: 44))
+        .contentShape(Rectangle())
         .animation(.easeInOut(duration: 0.2), value: zoomLevel)
-        .animation(.spring(duration: 0.2), value: isSelected)
     }
 }
 
@@ -455,12 +431,25 @@ private struct WaterBusStopPin: View {
 private struct WaterBusDockPin: View {
     let stop: WaterBusStop
     let dock: Dock
-    let isSelected: Bool
+    let showName: Bool
     let vm: WaterBusViewModel
 
     var body: some View {
+        let activeLines = vm.activeLinesForDock(stop: stop, dockLetter: dock.letter)
+
         VStack(spacing: 2) {
-            // Dock badge (yellow, like DockBadge)
+            if showName {
+                Text(stop.name)
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(.white.opacity(0.9))
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                    .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
+            }
+
             ZStack {
                 Circle()
                     .fill(.white)
@@ -472,136 +461,19 @@ private struct WaterBusDockPin: View {
                     .font(.system(size: 11, weight: .heavy, design: .rounded))
                     .foregroundStyle(.black)
             }
-            .shadow(color: .black.opacity(0.2), radius: isSelected ? 4 : 2, y: 1)
-        }
-        .overlay(alignment: .top) {
-            VStack(spacing: 2) {
-                // Stop name label
-                Text(stop.name)
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 1)
-                    .background(.white.opacity(0.9))
-                    .clipShape(RoundedRectangle(cornerRadius: 3))
-                    .shadow(color: .black.opacity(0.1), radius: 1, y: 1)
+            .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
 
-                // Line badges for this dock
-                FlowLayout(spacing: 2) {
-                    ForEach(dock.lines, id: \.self) { line in
+            if !activeLines.isEmpty {
+                HStack(spacing: 2) {
+                    ForEach(activeLines, id: \.self) { line in
                         LineBadge(line: line, vm: vm, size: .tiny)
                     }
                 }
-                .frame(maxWidth: 120)
             }
-            .fixedSize()
-            .offset(y: 26)
         }
+        .fixedSize()
         .frame(minWidth: 36, minHeight: 36)
-        .contentShape(Circle().size(width: 36, height: 36))
-        .animation(.spring(duration: 0.2), value: isSelected)
-    }
-}
-
-// MARK: - Map Card
-
-private struct WaterBusMapCard: View {
-    let stop: WaterBusStop
-    let vm: WaterBusViewModel
-    let locationManager: LocationManager
-    @Environment(\.strings) private var strings
-
-    var body: some View {
-        NavigationLink(value: stop) {
-            VStack(alignment: .leading, spacing: 10) {
-                // Header: name + distance + chevron
-                HStack(spacing: 8) {
-                    Text(stop.name)
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-
-                    Spacer()
-
-                    if let dist = locationManager.formattedDistance(to: stop.coordinate) {
-                        Label(dist, systemImage: "location.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(Color(.secondaryLabel))
-                    }
-
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(Color(.tertiaryLabel))
-                }
-
-                // Lines by company
-                let groups = vm.linesBySource(for: stop)
-                VStack(alignment: .leading, spacing: 5) {
-                    if !groups.actv.isEmpty {
-                        HStack(spacing: 6) {
-                            Image("logo-actv")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 14)
-                            ForEach(groups.actv, id: \.self) { line in
-                                LineBadge(line: line, vm: vm, size: .small)
-                            }
-                        }
-                    }
-                    if !groups.alilaguna.isEmpty {
-                        HStack(spacing: 6) {
-                            Image("logo-alilaguna")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 14)
-                            ForEach(groups.alilaguna, id: \.self) { line in
-                                LineBadge(line: line, vm: vm, size: .small)
-                            }
-                        }
-                    }
-                }
-
-                // Next departures
-                let next = vm.nextDepartures(for: stop, count: 3)
-                if !next.isEmpty {
-                    Divider()
-                    HStack(spacing: 12) {
-                        ForEach(next) { dep in
-                            HStack(spacing: 4) {
-                                LineBadge(line: dep.line, vm: vm, size: .small)
-                                VStack(alignment: .leading, spacing: 0) {
-                                    Text(dep.time)
-                                        .font(.system(size: 13, weight: .medium, design: .monospaced))
-                                        .foregroundStyle(.primary)
-                                    let parsed = parseDock(from: dep.headsign)
-                                    HStack(spacing: 2) {
-                                        if dep.isImminent {
-                                            Circle()
-                                                .fill(Color(hex: "38A169"))
-                                                .frame(width: 4, height: 4)
-                                                .modifier(PulseModifier())
-                                        }
-                                        Text(dep.countdownLabel)
-                                            .font(.system(size: 11))
-                                            .foregroundStyle(dep.isSoon ? Color(hex: "38A169") : Color(.secondaryLabel))
-                                        if let dock = parsed.dock {
-                                            DockBadge(letter: dock, size: .small)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        Spacer()
-                    }
-                }
-            }
-            .padding(16)
-            .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.15), radius: 10, y: 4)
-        }
-        .buttonStyle(.plain)
+        .contentShape(Rectangle())
     }
 }
 
@@ -651,7 +523,7 @@ private struct WaterBusSearchListView: View {
                         .padding(.bottom, 6)
                     }
 
-                    ForEach(Array(results.enumerated()), id: \.element.id) { index, stop in
+                    ForEach(results) { stop in
                         NavigationLink(value: stop) {
                             WaterBusStopRow(
                                 stop: stop,
@@ -661,16 +533,8 @@ private struct WaterBusSearchListView: View {
                             )
                         }
                         .buttonStyle(.plain)
-                        .opacity(appeared ? 1 : 0)
-                        .offset(y: appeared ? 0 : 10)
-                        .animation(
-                            .spring(duration: 0.35).delay(Double(min(index, 15)) * 0.02),
-                            value: appeared
-                        )
 
-                        if index < results.count - 1 {
-                            Divider().padding(.leading, 16)
-                        }
+                        Divider().padding(.leading, 16)
                     }
                 }
 
@@ -736,13 +600,13 @@ private struct WaterBusStopRow: View {
                         HStack(spacing: 4) {
                             if dep.isImminent {
                                 Circle()
-                                    .fill(Color(hex: "38A169"))
+                                    .fill(Color.doVeSoon)
                                     .frame(width: 5, height: 5)
                                     .modifier(PulseModifier())
                             }
                             Text(dep.countdownLabel)
                                 .font(.system(size: 12, weight: dep.isSoon ? .bold : .medium))
-                                .foregroundStyle(dep.isSoon ? Color(hex: "38A169") : Color(.secondaryLabel))
+                                .foregroundStyle(dep.isSoon ? Color.doVeSoon : Color(.secondaryLabel))
                         }
                     }
                 }
@@ -844,14 +708,37 @@ struct LineBadge: View {
 
         Text(line)
             .font(.system(size: size.fontSize, weight: .bold, design: .rounded))
-            .foregroundStyle(isWhiteRoute ? .primary : fgColor)
+            .foregroundStyle(isWhiteRoute ? Color.black : fgColor)
             .padding(size.padding)
-            .background(isWhiteRoute ? Color(.systemBackground) : bgColor)
+            .background(isWhiteRoute ? Color.white : bgColor)
             .clipShape(RoundedRectangle(cornerRadius: size.cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: size.cornerRadius)
-                    .strokeBorder(isWhiteRoute ? Color.primary.opacity(0.6) : .clear, lineWidth: 1)
+                    .strokeBorder(isWhiteRoute ? Color.black.opacity(0.15) : .clear, lineWidth: 1)
             )
+    }
+}
+
+// MARK: - Operator Logo (ACTV / Alilaguna con sfondo bianco per dark mode)
+
+struct OperatorLogo: View {
+    let name: String
+    let height: CGFloat
+
+    init(_ name: String, height: CGFloat = 18) {
+        self.name = name
+        self.height = height
+    }
+
+    var body: some View {
+        Image(name)
+            .resizable()
+            .scaledToFit()
+            .frame(height: height)
+            .padding(.horizontal, 4)
+            .padding(.vertical, 3)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 4))
     }
 }
 
@@ -981,10 +868,7 @@ private struct WaterBusLinesContent: View {
                     ForEach(groupedRoutes, id: \.source) { group in
                         // Section header
                         HStack(spacing: 8) {
-                            Image(group.source == "actv" ? "logo-actv" : "logo-alilaguna")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 16)
+                            OperatorLogo(group.source == "actv" ? "logo-actv" : "logo-alilaguna", height: 16)
                             Text(group.source.uppercased())
                                 .font(.system(size: 11, weight: .bold, design: .rounded))
                                 .tracking(1)
@@ -1050,9 +934,63 @@ private struct WaterBusRouteRow: View {
 
     /// Rimuove le virgolette dock dal longName per una visualizzazione pulita
     private var cleanLongName: String {
-        route.longName
+        let parts = route.longName
             .components(separatedBy: " - ")
             .map { parseDock(from: $0).name }
-            .joined(separator: " – ")
+        if parts.count == 2, parts[0] == parts[1] {
+            return "\(parts[0]) (circolare)"
+        }
+        return parts.joined(separator: " – ")
+    }
+}
+
+// MARK: - Capsule Segmented Control
+
+struct CapsuleSegmentedControl<T: Hashable>: View {
+    @Binding var selection: T
+    let items: [(value: T, label: String, icon: Ph)]
+    @Namespace private var ns
+
+    var body: some View {
+        HStack(spacing: 4) {
+            ForEach(Array(items.enumerated()), id: \.offset) { index, item in
+                let isSelected = selection == item.value
+                Button {
+                    guard !isSelected else { return }
+                    let generator = UIImpactFeedbackGenerator(style: .light)
+                    generator.impactOccurred()
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                        selection = item.value
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        item.icon.duotone
+                            .renderingMode(.template)
+                            .frame(width: 15, height: 15)
+
+                        Text(item.label)
+                            .font(.system(size: 14, weight: isSelected ? .semibold : .medium))
+                    }
+                    .foregroundStyle(isSelected ? .primary : .secondary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 36)
+                    .background {
+                        if isSelected {
+                            Capsule()
+                                .fill(.background)
+                                .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 1)
+                                .shadow(color: .black.opacity(0.04), radius: 1, x: 0, y: 0.5)
+                                .matchedGeometryEffect(id: "seg", in: ns)
+                        }
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(4)
+        .background {
+            Capsule()
+                .fill(Color(.systemGray6))
+        }
     }
 }

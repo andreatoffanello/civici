@@ -24,6 +24,7 @@ struct WaterBusLineDetailView: View {
             .ignoresSafeArea(edges: .bottom)
             .navigationTitle(route.name)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarRole(.editor)
             .toolbar(.hidden, for: .tabBar)
             .onAppear {
                 centerMapOnRoute(direction: direction)
@@ -114,10 +115,7 @@ struct WaterBusLineDetailView: View {
                         .foregroundColor(Color(.secondaryLabel))
                         .font(.system(size: 12))
 
-                    Image(route.source == "actv" ? "logo-actv" : "logo-alilaguna")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 12)
+                    OperatorLogo(route.source == "actv" ? "logo-actv" : "logo-alilaguna", height: 12)
                 }
             }
 
@@ -175,7 +173,7 @@ struct WaterBusLineDetailView: View {
     private var directionPicker: some View {
         Picker("", selection: $selectedDirection) {
             ForEach(route.directions) { dir in
-                Text(dir.headsign)
+                Text(parseDock(from: dir.headsign).name)
                     .lineLimit(1)
                     .tag(dir.id)
             }
@@ -224,10 +222,11 @@ struct WaterBusLineDetailView: View {
                                         .frame(width: isTerminal ? 5 : 0)
                                 )
                         }
-                        .frame(width: 20, height: 40)
+                        .frame(width: 20)
+                        .frame(minHeight: 40)
 
                         // Stop info
-                        VStack(alignment: .leading, spacing: 1) {
+                        VStack(alignment: .leading, spacing: 2) {
                             Text(stop.name)
                                 .font(.system(size: 15, weight: isTerminal ? .semibold : .regular))
                                 .foregroundStyle(.primary)
@@ -237,6 +236,25 @@ struct WaterBusLineDetailView: View {
                                 Text(dist)
                                     .font(.system(size: 11))
                                     .foregroundColor(Color(.secondaryLabel))
+                            }
+
+                            // Linee in coincidenza
+                            let otherLines = stop.lines.filter { $0 != route.name }
+                            if !otherLines.isEmpty {
+                                HStack(spacing: 4) {
+                                    Ph.arrowsLeftRight.bold
+                                        .renderingMode(.template)
+                                        .frame(width: 10, height: 10)
+                                        .foregroundColor(Color(.tertiaryLabel))
+                                    ForEach(otherLines.prefix(6), id: \.self) { line in
+                                        LineBadge(line: line, vm: vm, size: .small)
+                                    }
+                                    if otherLines.count > 6 {
+                                        Text("+\(otherLines.count - 6)")
+                                            .font(.system(size: 10, weight: .bold))
+                                            .foregroundColor(Color(.secondaryLabel))
+                                    }
+                                }
                             }
                         }
                         .padding(.leading, 12)
@@ -264,14 +282,23 @@ struct WaterBusLineDetailView: View {
         if parts.count == 2 {
             let p1 = parseDock(from: parts[0])
             let p2 = parseDock(from: parts[1])
-            VStack(alignment: .leading, spacing: 2) {
+            if p1.name == p2.name {
+                // Linea circolare (es. P.le Roma – P.le Roma)
                 HStack(spacing: 4) {
                     Text(p1.name).lineLimit(1)
-                    if let d = p1.dock { DockBadge(letter: d, size: .medium) }
+                    Text("(circolare)")
+                        .foregroundStyle(.secondary)
                 }
-                HStack(spacing: 4) {
-                    Text(p2.name).lineLimit(1)
-                    if let d = p2.dock { DockBadge(letter: d, size: .medium) }
+            } else {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 4) {
+                        Text(p1.name).lineLimit(1)
+                        if let d = p1.dock { DockBadge(letter: d, size: .medium) }
+                    }
+                    HStack(spacing: 4) {
+                        Text(p2.name).lineLimit(1)
+                        if let d = p2.dock { DockBadge(letter: d, size: .medium) }
+                    }
                 }
             }
         } else {

@@ -16,6 +16,9 @@ final class WaterBusViewModel {
     private(set) var routes: [WaterBusRoute] = []
     private(set) var trips: [String: [(stationId: String, time: String, dock: String?)]] = [:]
     private(set) var isLoaded = false
+
+    /// Lookup O(1) per nome linea → route (evita linear scan ripetuti)
+    private var routeIndex: [String: WaterBusRoute] = [:]
     var selectedStop: WaterBusStop?
     var searchText: String = ""
 
@@ -72,6 +75,7 @@ final class WaterBusViewModel {
             self.stops = result.stops
             self.routes = result.routes
             self.trips = result.trips
+            self.routeIndex = Dictionary(uniqueKeysWithValues: result.routes.map { ($0.name, $0) })
             self.isLoaded = true
             startDepartureTicker()
         }
@@ -163,9 +167,9 @@ final class WaterBusViewModel {
         return Array(upcoming.prefix(count))
     }
 
-    /// Route object per nome linea
+    /// Route object per nome linea (O(1) via dizionario)
     func route(for lineName: String) -> WaterBusRoute? {
-        routes.first { $0.name == lineName }
+        routeIndex[lineName]
     }
 
     /// Separa le linee di una fermata in ACTV e Alilaguna
@@ -285,6 +289,37 @@ final class WaterBusViewModel {
         return firstByLine
             .map { (line: $0.key, departure: $0.value) }
             .sorted { $0.departure.minutesFromMidnight < $1.departure.minutesFromMidnight }
+    }
+
+    /// Linee attive per un dock nelle prossime ore (basato sui trip reali)
+    /// Dock di PARTENZA di una corsa a una fermata (dal trip data, non dall'headsign)
+    func departureDock(for departure: Departure, at stop: WaterBusStop) -> String? {
+        guard let tripId = departure.tripId, let tripStops = trips[tripId] else { return nil }
+        return tripStops.first(where: { $0.stationId == stop.id })?.dock
+    }
+
+    func activeLinesForDock(stop: WaterBusStop, dockLetter: String, date: Date = Date()) -> [String] {
+        _ = departureTick
+        let today = todayDepartures(for: stop, date: date)
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.hour, .minute], from: date)
+        let nowMinutes = (components.hour ?? 0) * 60 + (components.minute ?? 0)
+        let windowEnd = nowMinutes + 180 // prossime 3 ore
+
+        var lines = Set<String>()
+        for dep in today where dep.minutesFromMidnight >= nowMinutes && dep.minutesFromMidnight <= windowEnd {
+            // Usa il trip per trovare il dock di PARTENZA a questa fermata
+            if let tripId = dep.tripId, let tripStops = trips[tripId] {
+                if let entry = tripStops.first(where: { $0.stationId == stop.id }) {
+                    if entry.dock == dockLetter {
+                        lines.insert(dep.line)
+                    }
+                }
+            }
+        }
+
+        let sort: (String, String) -> Bool = { $0.localizedStandardCompare($1) == .orderedAscending }
+        return lines.sorted(by: sort)
     }
 
     func reset() {
