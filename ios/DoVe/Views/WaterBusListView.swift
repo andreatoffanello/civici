@@ -1,6 +1,7 @@
 import SwiftUI
 import MapKit
 import CoreLocation
+import PhosphorSwift
 
 // MARK: - Main View with Map/List Toggle
 
@@ -128,8 +129,8 @@ struct WaterBusListView: View {
 
                         // Map/list toggle
                         HStack(spacing: 2) {
-                            toggleButton(icon: "map.fill", mode: .map)
-                            toggleButton(icon: "list.bullet", mode: .list)
+                            toggleButton(icon: .mapTrifold, mode: .map)
+                            toggleButton(icon: .listBullets, mode: .list)
                         }
                         .padding(2)
                         .background(.ultraThinMaterial)
@@ -212,12 +213,13 @@ struct WaterBusListView: View {
         }
     }
 
-    private func toggleButton(icon: String, mode: ViewMode) -> some View {
+    private func toggleButton(icon: Ph, mode: ViewMode) -> some View {
         Button {
             withAnimation(.smooth(duration: 0.2)) { viewMode = mode }
         } label: {
-            Image(systemName: icon)
-                .font(.system(size: 14, weight: .semibold))
+            icon.duotone
+                .renderingMode(.template)
+                .frame(width: 16, height: 16)
                 .foregroundStyle(viewMode == mode ? .white : .secondary)
                 .frame(width: 36, height: 32)
                 .background(viewMode == mode ? Color.doVeNavigation : .clear)
@@ -329,8 +331,9 @@ private struct WaterBusMapView: View {
                             }
                         }
                     } label: {
-                        Image(systemName: "location.fill")
-                            .font(.system(size: 16))
+                        Ph.crosshairSimple.duotone
+                            .renderingMode(.template)
+                            .frame(width: 18, height: 18)
                             .foregroundStyle(.primary)
                             .frame(width: 44, height: 44)
                             .background(.regularMaterial)
@@ -385,8 +388,8 @@ private struct WaterBusStopPin: View {
                 .fill(Color.doVeNavigation)
                 .frame(width: iconSize - 3, height: iconSize - 3)
 
-            Image(systemName: "ferry.fill")
-                .font(.system(size: ferrySize))
+            Ph.boat.fill
+                .frame(width: ferrySize, height: ferrySize)
                 .foregroundStyle(.white)
         }
         .shadow(color: .black.opacity(0.2), radius: isSelected ? 5 : 2.5, y: isSelected ? 2 : 1)
@@ -549,8 +552,9 @@ private struct WaterBusSearchListView: View {
                 // Results
                 if isSearching && results.isEmpty {
                     VStack(spacing: 8) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 28))
+                        Ph.magnifyingGlass.duotone
+                            .renderingMode(.template)
+                            .frame(width: 28, height: 28)
                             .foregroundColor(Color(.tertiaryLabel))
                         Text(strings.waterBusNoResults)
                             .font(.system(size: 15))
@@ -614,8 +618,8 @@ private struct WaterBusStopRow: View {
                 Circle()
                     .fill(Color.doVeNavigation.opacity(0.12))
                     .frame(width: 40, height: 40)
-                Image(systemName: "ferry.fill")
-                    .font(.system(size: 15))
+                Ph.boat.fill
+                    .frame(width: 17, height: 17)
                     .foregroundStyle(Color.doVeNavigation)
             }
 
@@ -637,8 +641,9 @@ private struct WaterBusStopRow: View {
                                 .frame(width: 6, height: 6)
                                 .modifier(PulseModifier())
                         } else {
-                            Image(systemName: "clock")
-                                .font(.system(size: 11))
+                            Ph.clock.duotone
+                                .renderingMode(.template)
+                                .frame(width: 11, height: 11)
                         }
                         Text(dep.time)
                             .foregroundColor(dep.isSoon ? Color(hex: "38A169") : Color(.secondaryLabel))
@@ -920,33 +925,10 @@ private struct WaterBusRouteRow: View {
             LineBadge(line: route.name, vm: vm, size: .medium)
                 .frame(minWidth: 44)
 
-            VStack(alignment: .leading, spacing: 4) {
-                if route.directions.count == 2 {
-                    VStack(alignment: .leading, spacing: 2) {
-                        headsignRow(route.directions[0].headsign, color: .primary)
-                        HStack(spacing: 4) {
-                            Image(systemName: "arrow.up.arrow.down")
-                                .font(.system(size: 10, weight: .semibold))
-                                .foregroundColor(Color(.tertiaryLabel))
-                            headsignRow(route.directions[1].headsign, color: Color(.secondaryLabel))
-                        }
-                    }
-                    .font(.system(size: 14, weight: .medium))
-                } else if let dir = route.directions.first {
-                    HStack(spacing: 6) {
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundColor(Color(.secondaryLabel))
-                        headsignRow(dir.headsign, color: .primary)
-                    }
-                    .font(.system(size: 14, weight: .medium))
-                } else {
-                    Text(route.longName)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-                }
-            }
+            Text(cleanLongName)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(.primary)
+                .lineLimit(2)
 
             Spacer()
 
@@ -959,16 +941,11 @@ private struct WaterBusRouteRow: View {
         .contentShape(Rectangle())
     }
 
-    @ViewBuilder
-    private func headsignRow(_ headsign: String, color: Color) -> some View {
-        let parsed = parseDock(from: headsign)
-        HStack(spacing: 4) {
-            Text(parsed.name)
-                .lineLimit(1)
-                .foregroundColor(color)
-            if let dock = parsed.dock {
-                DockBadge(letter: dock, size: .small)
-            }
-        }
+    /// Rimuove le virgolette dock dal longName per una visualizzazione pulita
+    private var cleanLongName: String {
+        route.longName
+            .components(separatedBy: " - ")
+            .map { parseDock(from: $0).name }
+            .joined(separator: " – ")
     }
 }
