@@ -116,6 +116,29 @@ struct Departure: Identifiable, Hashable {
         let diff = minutesFromMidnight - nowMinutes
         return diff >= 0 ? diff : diff + 1440  // wrap around midnight
     }
+
+    /// Label leggibile per il countdown
+    var countdownLabel: String {
+        let mins = minutesUntil()
+        switch mins {
+        case 0:      return "in partenza"
+        case 1...59: return "tra \(mins) min"
+        default:
+            let h = mins / 60
+            let m = mins % 60
+            return m > 0 ? "tra \(h)h \(m)min" : "tra \(h)h"
+        }
+    }
+
+    /// true se la partenza è davvero imminente (≤ 1 min) — usato per il pallino pulsante
+    var isImminent: Bool {
+        minutesUntil() <= 1
+    }
+
+    /// true se la partenza è vicina (≤ 5 min) — usato per il colore verde
+    var isSoon: Bool {
+        minutesUntil() <= 5
+    }
 }
 
 // MARK: - Route (linea)

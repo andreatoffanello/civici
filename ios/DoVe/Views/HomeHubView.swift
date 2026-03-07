@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeHubView: View {
     @Environment(\.strings) private var strings
     @Environment(PharmacyViewModel.self) private var pharmacyVM
+    @Environment(WaterBusViewModel.self) private var waterBusVM
     @Binding var selectedTab: AppTab
     @State private var appeared = false
     @State private var showSettings = false
@@ -77,6 +78,32 @@ struct HomeHubView: View {
                 }
                 .padding(.horizontal, 16)
 
+                // MARK: - Favorite Stops
+                if !waterBusVM.favoriteStops.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "star.fill")
+                                .font(.system(size: 13))
+                                .foregroundStyle(.yellow)
+                            Text(strings.waterBusFavorites)
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.horizontal, 4)
+
+                        ForEach(waterBusVM.favoriteStops) { stop in
+                            NavigationLink(value: stop) {
+                                FavoriteStopCard(stop: stop, vm: waterBusVM)
+                            }
+                            .buttonStyle(CardPressStyle())
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 20)
+                    .opacity(appeared ? 1 : 0)
+                    .animation(.easeOut(duration: 0.5).delay(0.5), value: appeared)
+                }
+
                 // MARK: - Settings
                 Button {
                     showSettings = true
@@ -135,7 +162,11 @@ struct HomeHubView: View {
         .navigationDestination(isPresented: $showSettings) {
             SettingsView()
         }
+        .navigationDestination(for: WaterBusStop.self) { stop in
+            WaterBusStopDetailView(stop: stop)
+        }
         .onAppear {
+            waterBusVM.loadData()
             pharmacyVM.loadData()
             if !appeared {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
@@ -291,6 +322,70 @@ private struct CompactSectionCard: View {
         .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .shadow(color: bgColor.opacity(0.3), radius: 10, x: 0, y: 4)
+    }
+}
+
+// MARK: - Favorite Stop Card
+
+private struct FavoriteStopCard: View {
+    let stop: WaterBusStop
+    let vm: WaterBusViewModel
+
+    var body: some View {
+        let next = vm.nextDepartures(for: stop, count: 3)
+
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "ferry.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(Color.doVeNavigation)
+
+                Text(stop.name)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.quaternary)
+            }
+
+            if next.isEmpty {
+                Text("Nessuna partenza prevista")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.tertiary)
+            } else {
+                HStack(spacing: 10) {
+                    ForEach(next) { dep in
+                        HStack(spacing: 4) {
+                            LineBadge(line: dep.line, vm: vm, size: .tiny)
+                            Text(dep.time)
+                                .font(.system(size: 13, weight: .medium, design: .monospaced))
+                                .foregroundStyle(.primary)
+                        }
+                    }
+                    Spacer()
+                    if let first = next.first {
+                        HStack(spacing: 4) {
+                            if first.isImminent {
+                                Circle()
+                                    .fill(Color(hex: "38A169"))
+                                    .frame(width: 5, height: 5)
+                                    .modifier(PulseModifier())
+                            }
+                            Text(first.countdownLabel)
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(first.isSoon ? Color(hex: "38A169") : .secondary)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(12)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 

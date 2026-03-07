@@ -2,7 +2,9 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.strings) private var strings
+    @Environment(WaterBusViewModel.self) private var waterBusVM
     @State private var selectedTab: AppTab = .home
+    @State private var waterBusPath = NavigationPath()
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -19,7 +21,7 @@ struct ContentView: View {
             }
 
             Tab(strings.waterBusTitle, systemImage: "ferry.fill", value: .waterBus) {
-                NavigationStack {
+                NavigationStack(path: $waterBusPath) {
                     WaterBusListView()
                 }
             }
@@ -31,6 +33,71 @@ struct ContentView: View {
             }
         }
         .tint(Color.doVeAccent)
+        .onOpenURL { url in
+            handleDeepLink(url)
+        }
+    }
+
+    private func handleDeepLink(_ url: URL) {
+        guard url.scheme == "dove" else { return }
+        let host = url.host() ?? ""
+        let pathParts = url.pathComponents.filter { $0 != "/" }
+
+        switch host {
+        case "tab":
+            if let tabName = pathParts.first {
+                switch tabName {
+                case "home": selectedTab = .home
+                case "search": selectedTab = .search
+                case "waterBus", "vaporetti":
+                    selectedTab = .waterBus
+                    waterBusPath = NavigationPath()
+                case "services", "servizi": selectedTab = .services
+                default: break
+                }
+            }
+        case "stop":
+            if let stopId = pathParts.first {
+                waterBusVM.loadData()
+                if let stop = waterBusVM.stops.first(where: { $0.id == stopId }) {
+                    selectedTab = .waterBus
+                    waterBusPath = NavigationPath()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        waterBusPath.append(stop)
+                    }
+                }
+            }
+        case "line":
+            if let lineId = pathParts.first {
+                waterBusVM.loadData()
+                if let route = waterBusVM.routes.first(where: { $0.id == lineId || $0.name == lineId }) {
+                    selectedTab = .waterBus
+                    waterBusPath = NavigationPath()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        waterBusPath.append(route)
+                    }
+                }
+            }
+        case "back":
+            if !waterBusPath.isEmpty {
+                waterBusPath.removeLast()
+            }
+        case "view":
+            // dove://view/map, dove://view/list, dove://view/lines, dove://view/stops
+            selectedTab = .waterBus
+            if !waterBusPath.isEmpty { waterBusPath = NavigationPath() }
+            for part in pathParts {
+                switch part {
+                case "map", "list":
+                    waterBusVM.deepLinkViewMode = part
+                case "stops", "lines":
+                    waterBusVM.deepLinkContentMode = part
+                default: break
+                }
+            }
+        default:
+            break
+        }
     }
 }
 

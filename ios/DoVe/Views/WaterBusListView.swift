@@ -11,37 +11,33 @@ struct WaterBusListView: View {
     @State private var viewMode: ViewMode = .map
     @State private var contentMode: ContentMode = .stops
     @State private var appeared = false
+    @FocusState private var isSearchFocused: Bool
 
-    enum ViewMode: String {
-        case map, list
-    }
-
-    enum ContentMode: String {
-        case stops, lines
-    }
+    enum ViewMode: String { case map, list }
+    enum ContentMode: String { case stops, lines }
 
     var body: some View {
         @Bindable var vm = vm
-        let sorted = vm.stopsSortedByDistance(from: locationManager.userLocation)
 
         ZStack(alignment: .top) {
+            // MARK: Content layer
             switch contentMode {
             case .stops:
                 switch viewMode {
                 case .map:
                     WaterBusMapView(
-                        stops: vm.filteredStops,
+                        stops: vm.stops,
                         vm: vm,
                         userLocation: locationManager.userLocation,
                         locationManager: locationManager
                     )
                     .ignoresSafeArea(edges: .bottom)
                 case .list:
-                    WaterBusListContent(
-                        stops: sorted,
+                    WaterBusSearchListView(
                         vm: vm,
+                        locationManager: locationManager,
                         appeared: appeared,
-                        locationManager: locationManager
+                        strings: strings
                     )
                 }
             case .lines:
@@ -53,9 +49,9 @@ struct WaterBusListView: View {
                 )
             }
 
-            // Top overlay: segmented + search + toggle
+            // MARK: Top bar overlay
             VStack(spacing: 8) {
-                // Segmented control: Fermate / Linee
+                // Segmented picker
                 Picker("", selection: $contentMode) {
                     Text(strings.waterBusStops).tag(ContentMode.stops)
                     Text(strings.waterBusLines).tag(ContentMode.lines)
@@ -64,8 +60,86 @@ struct WaterBusListView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 10)
 
-                HStack(spacing: 10) {
-                    // Search field
+                if contentMode == .stops {
+                    HStack(spacing: 10) {
+                        if viewMode == .map {
+                            // Fake search pill — tap switches to list
+                            Button {
+                                withAnimation(.smooth(duration: 0.2)) {
+                                    viewMode = .list
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    isSearchFocused = true
+                                }
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "magnifyingglass")
+                                        .font(.system(size: 14))
+                                    Text(strings.waterBusSearchPlaceholder)
+                                        .font(.system(size: 15))
+                                        .lineLimit(1)
+                                }
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .frame(height: 36)
+                                .padding(.horizontal, 10)
+                                .background(.ultraThinMaterial)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            // Real search bar in list mode
+                            HStack(spacing: 8) {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundStyle(isSearchFocused ? Color.doVeNavigation : .secondary)
+
+                                TextField(strings.waterBusSearchPlaceholder, text: $vm.searchText)
+                                    .font(.system(size: 15))
+                                    .autocorrectionDisabled()
+                                    .textInputAutocapitalization(.never)
+                                    .focused($isSearchFocused)
+                                    .submitLabel(.search)
+
+                                if !vm.searchText.isEmpty {
+                                    Button {
+                                        withAnimation(.smooth(duration: 0.15)) { vm.searchText = "" }
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .font(.system(size: 16))
+                                            .foregroundStyle(.secondary)
+                                            .frame(width: 36, height: 36)
+                                            .contentShape(Rectangle())
+                                    }
+                                }
+                            }
+                            .frame(height: 36)
+                            .padding(.horizontal, 10)
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .strokeBorder(
+                                        isSearchFocused ? Color.doVeNavigation.opacity(0.4) : .clear,
+                                        lineWidth: 1.5
+                                    )
+                            )
+                        }
+
+                        // Map/list toggle
+                        HStack(spacing: 2) {
+                            toggleButton(icon: "map.fill", mode: .map)
+                            toggleButton(icon: "list.bullet", mode: .list)
+                        }
+                        .padding(2)
+                        .background(.ultraThinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 10)
+                } else {
+                    // Lines mode search
                     HStack(spacing: 6) {
                         Image(systemName: "magnifyingglass")
                             .font(.system(size: 14))
@@ -73,35 +147,26 @@ struct WaterBusListView: View {
                         TextField(strings.waterBusSearchPlaceholder, text: $vm.searchText)
                             .font(.system(size: 15))
                             .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
                         if !vm.searchText.isEmpty {
-                            Button {
-                                vm.searchText = ""
-                            } label: {
+                            Button { vm.searchText = "" } label: {
                                 Image(systemName: "xmark.circle.fill")
-                                    .font(.system(size: 14))
+                                    .font(.system(size: 16))
                                     .foregroundStyle(.secondary)
+                                    .frame(width: 36, height: 36)
+                                    .contentShape(Rectangle())
                             }
                         }
                     }
+                    .frame(height: 36)
                     .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
                     .background(.ultraThinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
-
-                    // Toggle map/list (only for stops mode)
-                    if contentMode == .stops {
-                        HStack(spacing: 0) {
-                            toggleButton(icon: "map.fill", mode: .map)
-                            toggleButton(icon: "list.bullet", mode: .list)
-                        }
-                        .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
-                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 10)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 10)
             }
+            .contentShape(Rectangle())
             .background(.regularMaterial)
         }
         .navigationTitle(strings.waterBusTitle)
@@ -117,6 +182,33 @@ struct WaterBusListView: View {
             locationManager.requestPermission()
             locationManager.startUpdating()
             withAnimation(.easeIn(duration: 0.3).delay(0.15)) { appeared = true }
+            if let mode = vm.deepLinkViewMode {
+                vm.deepLinkViewMode = nil
+                viewMode = mode == "list" ? .list : .map
+            }
+            if let mode = vm.deepLinkContentMode {
+                vm.deepLinkContentMode = nil
+                contentMode = mode == "lines" ? .lines : .stops
+            }
+        }
+        .onChange(of: viewMode) { _, newMode in
+            if newMode == .map { vm.searchText = "" }
+        }
+        .onChange(of: vm.deepLinkViewMode) { _, mode in
+            guard let mode else { return }
+            vm.deepLinkViewMode = nil
+            withAnimation(.smooth(duration: 0.2)) {
+                if mode == "map" { viewMode = .map }
+                else if mode == "list" { viewMode = .list }
+            }
+        }
+        .onChange(of: vm.deepLinkContentMode) { _, mode in
+            guard let mode else { return }
+            vm.deepLinkContentMode = nil
+            withAnimation(.smooth(duration: 0.2)) {
+                if mode == "stops" { contentMode = .stops }
+                else if mode == "lines" { contentMode = .lines }
+            }
         }
     }
 
@@ -125,13 +217,12 @@ struct WaterBusListView: View {
             withAnimation(.smooth(duration: 0.2)) { viewMode = mode }
         } label: {
             Image(systemName: icon)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(viewMode == mode ? .white : .secondary)
-                .frame(width: 32, height: 28)
+                .frame(width: 36, height: 32)
                 .background(viewMode == mode ? Color.doVeNavigation : .clear)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
         }
-        .padding(2)
     }
 }
 
@@ -163,11 +254,10 @@ private struct WaterBusMapView: View {
                 }
 
                 ForEach(stops) { stop in
-                    Annotation(stop.name, coordinate: stop.coordinate) {
-                        WaterBusMapPin(
+                    Annotation("", coordinate: stop.coordinate) {
+                        WaterBusStopPin(
                             stop: stop,
-                            isSelected: selectedStop?.id == stop.id,
-                            vm: vm
+                            isSelected: selectedStop?.id == stop.id
                         )
                         .onTapGesture {
                             withAnimation(.spring(duration: 0.25)) {
@@ -190,6 +280,13 @@ private struct WaterBusMapView: View {
                         center: Self.veniceCenter,
                         span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04)
                     ))
+                }
+            }
+            .onTapGesture {
+                if selectedStop != nil {
+                    withAnimation(.spring(duration: 0.25)) {
+                        selectedStop = nil
+                    }
                 }
             }
 
@@ -219,7 +316,7 @@ private struct WaterBusMapView: View {
                         Image(systemName: "location.fill")
                             .font(.system(size: 16))
                             .foregroundStyle(.primary)
-                            .frame(width: 40, height: 40)
+                            .frame(width: 44, height: 44)
                             .background(.regularMaterial)
                             .clipShape(Circle())
                             .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
@@ -232,46 +329,43 @@ private struct WaterBusMapView: View {
     }
 }
 
-// MARK: - Map Pin
+// MARK: - Stop Map Pin
 
-private struct WaterBusMapPin: View {
+private struct WaterBusStopPin: View {
     let stop: WaterBusStop
     let isSelected: Bool
-    let vm: WaterBusViewModel
+
+    /// Pin size scales with number of lines (importance of the hub)
+    private var dotSize: CGFloat {
+        if isSelected { return 30 }
+        let count = stop.lines.count
+        switch count {
+        case 0...2: return 14
+        case 3...5: return 17
+        default:    return 20
+        }
+    }
+
+    private var innerSize: CGFloat {
+        isSelected ? 12 : dotSize * 0.4
+    }
 
     var body: some View {
-        VStack(spacing: 0) {
-            ZStack {
-                Circle()
-                    .fill(pinColor)
-                    .frame(width: isSelected ? 32 : 24, height: isSelected ? 32 : 24)
-                Image(systemName: "ferry.fill")
-                    .font(.system(size: isSelected ? 14 : 10))
-                    .foregroundStyle(.white)
-            }
-            // Pin point
-            PinPointer()
-                .fill(pinColor)
-                .frame(width: 10, height: 6)
+        ZStack {
+            Circle()
+                .fill(.white)
+                .frame(width: dotSize, height: dotSize)
+
+            Circle()
+                .fill(Color.doVeNavigation)
+                .frame(width: dotSize - 3, height: dotSize - 3)
+
+            Circle()
+                .fill(.white)
+                .frame(width: innerSize, height: innerSize)
         }
+        .shadow(color: .black.opacity(0.2), radius: isSelected ? 5 : 2.5, y: isSelected ? 2 : 1)
         .animation(.spring(duration: 0.2), value: isSelected)
-    }
-
-    private var pinColor: Color {
-        Color.doVeNavigation
-    }
-}
-
-// MARK: - Pin Pointer Shape
-
-private struct PinPointer: Shape {
-    func path(in rect: CGRect) -> Path {
-        Path { p in
-            p.move(to: CGPoint(x: rect.midX, y: rect.maxY))
-            p.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
-            p.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-            p.closeSubpath()
-        }
     }
 }
 
@@ -285,106 +379,138 @@ private struct WaterBusMapCard: View {
 
     var body: some View {
         NavigationLink(value: stop) {
-            VStack(alignment: .leading, spacing: 8) {
-                // Drag indicator
-                Capsule()
-                    .fill(Color.secondary.opacity(0.3))
-                    .frame(width: 36, height: 4)
-                    .frame(maxWidth: .infinity)
-
+            VStack(alignment: .leading, spacing: 10) {
                 // Name + distance
-                HStack {
+                HStack(spacing: 10) {
                     Image(systemName: "ferry.fill")
                         .font(.system(size: 16))
                         .foregroundStyle(Color.doVeNavigation)
 
                     Text(stop.name)
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.primary)
+                        .lineLimit(1)
 
                     Spacer()
 
                     if let dist = locationManager.formattedDistance(to: stop.coordinate) {
                         Text(dist)
                             .font(.system(size: 13))
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(Color(.secondaryLabel))
                     }
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(Color(.tertiaryLabel))
                 }
 
                 // Lines badges
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 4) {
-                        ForEach(stop.lines, id: \.self) { line in
-                            LineBadge(line: line, vm: vm, size: .small)
-                        }
-                    }
+                    GroupedLineBadges(stop: stop, vm: vm, size: .small)
                 }
 
                 // Next departures
                 let next = vm.nextDepartures(for: stop, count: 3)
                 if !next.isEmpty {
-                    HStack(spacing: 12) {
+                    HStack(spacing: 14) {
                         ForEach(next) { dep in
-                            HStack(spacing: 4) {
-                                LineBadge(line: dep.line, vm: vm, size: .tiny)
-                                Text(dep.time)
-                                    .font(.system(size: 13, weight: .medium, design: .monospaced))
-                                    .foregroundStyle(.primary)
+                            HStack(spacing: 5) {
+                                LineBadge(line: dep.line, vm: vm, size: .small)
+                                VStack(alignment: .leading, spacing: 0) {
+                                    Text(dep.time)
+                                        .font(.system(size: 13, weight: .medium, design: .monospaced))
+                                        .foregroundStyle(.primary)
+                                    Text(dep.countdownLabel)
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(dep.isSoon ? AnyShapeStyle(Color(hex: "38A169")) : AnyShapeStyle(Color(.secondaryLabel)))
+                                }
                             }
                         }
                         Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 12))
-                            .foregroundStyle(.tertiary)
                     }
                 }
             }
-            .padding(14)
+            .padding(16)
             .background(.regularMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
             .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
         }
         .buttonStyle(.plain)
     }
 }
 
-// MARK: - List Content
+// MARK: - Search + List View (Google Maps style)
 
-private struct WaterBusListContent: View {
-    let stops: [WaterBusStop]
-    let vm: WaterBusViewModel
-    let appeared: Bool
+private struct WaterBusSearchListView: View {
+    @Bindable var vm: WaterBusViewModel
     let locationManager: LocationManager
-    @Environment(\.strings) private var strings
+    let appeared: Bool
+    let strings: L10n.Strings
+
+    private var results: [WaterBusStop] {
+        vm.stopsSortedByDistance(from: locationManager.userLocation)
+    }
+
+    private var isSearching: Bool {
+        !vm.searchText.isEmpty
+    }
 
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                // Spacer for top bar
-                Color.clear.frame(height: 56)
+                // Spacer for top bar overlay (segmented + search + toggle)
+                Color.clear.frame(height: 100)
 
-                if stops.isEmpty {
-                    Text(strings.waterBusNoResults)
-                        .font(.system(size: 15))
-                        .foregroundStyle(.secondary)
-                        .padding(.top, 40)
+                // Results
+                if isSearching && results.isEmpty {
+                    VStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 28))
+                            .foregroundColor(Color(.tertiaryLabel))
+                        Text(strings.waterBusNoResults)
+                            .font(.system(size: 15))
+                            .foregroundColor(Color(.secondaryLabel))
+                    }
+                    .padding(.top, 40)
                 } else {
-                    ForEach(Array(stops.enumerated()), id: \.element.id) { index, stop in
+                    if isSearching {
+                        HStack {
+                            Text("\(results.count) risultati")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(Color(.secondaryLabel))
+                            Spacer()
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 6)
+                    }
+
+                    ForEach(Array(results.enumerated()), id: \.element.id) { index, stop in
                         NavigationLink(value: stop) {
-                            WaterBusStopRow(stop: stop, vm: vm, locationManager: locationManager)
+                            WaterBusStopRow(
+                                stop: stop,
+                                vm: vm,
+                                locationManager: locationManager,
+                                highlightQuery: isSearching ? vm.searchText : nil
+                            )
                         }
                         .buttonStyle(.plain)
                         .opacity(appeared ? 1 : 0)
                         .offset(y: appeared ? 0 : 10)
-                        .animation(.spring(duration: 0.35).delay(Double(index) * 0.02), value: appeared)
+                        .animation(
+                            .spring(duration: 0.35).delay(Double(min(index, 15)) * 0.02),
+                            value: appeared
+                        )
 
-                        if index < stops.count - 1 {
-                            Divider().padding(.leading, 52)
+                        if index < results.count - 1 {
+                            Divider().padding(.leading, 56)
                         }
                     }
                 }
+
+                Color.clear.frame(height: 120)
             }
         }
+        .scrollDismissesKeyboard(.interactively)
     }
 }
 
@@ -394,6 +520,7 @@ private struct WaterBusStopRow: View {
     let stop: WaterBusStop
     let vm: WaterBusViewModel
     let locationManager: LocationManager
+    var highlightQuery: String? = nil
 
     var body: some View {
         HStack(spacing: 12) {
@@ -401,46 +528,39 @@ private struct WaterBusStopRow: View {
             ZStack {
                 Circle()
                     .fill(Color.doVeNavigation.opacity(0.12))
-                    .frame(width: 36, height: 36)
+                    .frame(width: 40, height: 40)
                 Image(systemName: "ferry.fill")
-                    .font(.system(size: 14))
+                    .font(.system(size: 15))
                     .foregroundStyle(Color.doVeNavigation)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(stop.name)
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(.primary)
+            VStack(alignment: .leading, spacing: 5) {
+                highlightedName
+                    .font(.system(size: 16, weight: .semibold))
                     .lineLimit(1)
 
                 // Line badges
-                HStack(spacing: 3) {
-                    ForEach(stop.lines.prefix(8), id: \.self) { line in
-                        LineBadge(line: line, vm: vm, size: .tiny)
-                    }
-                    if stop.lines.count > 8 {
-                        Text("+\(stop.lines.count - 8)")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.secondary)
-                    }
-                }
+                GroupedLineBadges(stop: stop, vm: vm, size: .small, maxLines: 6)
 
                 // Next departure
                 let next = vm.nextDepartures(for: stop, count: 1)
                 if let dep = next.first {
-                    let mins = dep.minutesUntil()
-                    HStack(spacing: 4) {
-                        Image(systemName: "clock")
-                            .font(.system(size: 10))
-                        if mins <= 1 {
-                            Text("In partenza")
-                                .foregroundStyle(Color(hex: "38A169"))
+                    HStack(spacing: 5) {
+                        if dep.isImminent {
+                            Circle()
+                                .fill(Color(hex: "38A169"))
+                                .frame(width: 6, height: 6)
+                                .modifier(PulseModifier())
                         } else {
-                            Text("\(dep.time) (\(mins) min)")
+                            Image(systemName: "clock")
+                                .font(.system(size: 11))
                         }
+                        Text(dep.time)
+                            .foregroundColor(dep.isSoon ? Color(hex: "38A169") : Color(.secondaryLabel))
+                        Text(dep.countdownLabel)
+                            .foregroundStyle(dep.isSoon ? AnyShapeStyle(Color(hex: "38A169")) : AnyShapeStyle(Color(.secondaryLabel)))
                     }
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
+                    .font(.system(size: 12, weight: dep.isSoon ? .semibold : .regular))
                 }
             }
 
@@ -450,15 +570,33 @@ private struct WaterBusStopRow: View {
             if let dist = locationManager.formattedDistance(to: stop.coordinate) {
                 Text(dist)
                     .font(.system(size: 12))
-                    .foregroundStyle(.tertiary)
+                    .foregroundColor(Color(.secondaryLabel))
             }
 
             Image(systemName: "chevron.right")
-                .font(.system(size: 12))
-                .foregroundStyle(.quaternary)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(Color(.tertiaryLabel))
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .padding(.vertical, 12)
+    }
+
+    /// Nome fermata con highlight della query di ricerca
+    private var highlightedName: Text {
+        guard let query = highlightQuery?.lowercased(), !query.isEmpty else {
+            return Text(stop.name).foregroundColor(.primary)
+        }
+        let name = stop.name
+        let lower = name.lowercased()
+        guard let range = lower.range(of: query) else {
+            return Text(name).foregroundColor(.primary)
+        }
+        let before = String(name[name.startIndex..<range.lowerBound])
+        let match = String(name[range.lowerBound..<range.upperBound])
+        let after = String(name[range.upperBound...])
+        return Text(before).foregroundColor(.primary)
+            + Text(match).foregroundColor(Color.doVeNavigation)
+            + Text(after).foregroundColor(.primary)
     }
 }
 
@@ -520,6 +658,44 @@ struct LineBadge: View {
     }
 }
 
+// MARK: - Grouped Line Badges (ACTV | Alilaguna)
+
+struct GroupedLineBadges: View {
+    let stop: WaterBusStop
+    let vm: WaterBusViewModel
+    let size: LineBadge.BadgeSize
+    var maxLines: Int = 0
+
+    var body: some View {
+        let groups = vm.linesBySource(for: stop)
+        let actvLines = maxLines > 0 ? Array(groups.actv.prefix(maxLines)) : groups.actv
+        let aliLines = groups.alilaguna
+
+        HStack(spacing: 4) {
+            ForEach(actvLines, id: \.self) { line in
+                LineBadge(line: line, vm: vm, size: size)
+            }
+
+            if maxLines > 0 && groups.actv.count > maxLines {
+                Text("+\(groups.actv.count - maxLines)")
+                    .font(.system(size: size.fontSize))
+                    .foregroundColor(Color(.secondaryLabel))
+            }
+
+            if !actvLines.isEmpty && !aliLines.isEmpty {
+                Text("·")
+                    .font(.system(size: size == .tiny ? 10 : 14, weight: .bold))
+                    .foregroundColor(Color(.tertiaryLabel))
+                    .padding(.horizontal, 1)
+            }
+
+            ForEach(aliLines, id: \.self) { line in
+                LineBadge(line: line, vm: vm, size: size)
+            }
+        }
+    }
+}
+
 // MARK: - Lines Content
 
 private struct WaterBusLinesContent: View {
@@ -528,32 +704,66 @@ private struct WaterBusLinesContent: View {
     let appeared: Bool
     let strings: L10n.Strings
 
+    private var groupedRoutes: [(source: String, routes: [WaterBusRoute])] {
+        let dict = Dictionary(grouping: routes) { $0.source }
+        let order = ["actv", "alilaguna"]
+        return dict.sorted { a, b in
+            let ia = order.firstIndex(of: a.key) ?? order.count
+            let ib = order.firstIndex(of: b.key) ?? order.count
+            return ia < ib
+        }.map { (source: $0.key, routes: $0.value) }
+    }
+
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                // Spacer for top bar (segmented + search)
                 Color.clear.frame(height: 100)
 
                 if routes.isEmpty {
                     Text(strings.waterBusNoLines)
                         .font(.system(size: 15))
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(Color(.secondaryLabel))
                         .padding(.top, 40)
                 } else {
-                    ForEach(Array(routes.enumerated()), id: \.element.id) { index, route in
-                        NavigationLink(value: route) {
-                            WaterBusRouteRow(route: route, vm: vm)
+                    var globalIndex = 0
+                    ForEach(groupedRoutes, id: \.source) { group in
+                        // Section header
+                        HStack(spacing: 8) {
+                            Image(group.source == "actv" ? "logo-actv" : "logo-alilaguna")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 16)
+                            Text(group.source.uppercased())
+                                .font(.system(size: 11, weight: .bold, design: .rounded))
+                                .tracking(1)
+                            Rectangle()
+                                .fill(Color(.separator).opacity(0.3))
+                                .frame(height: 0.5)
                         }
-                        .buttonStyle(.plain)
-                        .opacity(appeared ? 1 : 0)
-                        .offset(y: appeared ? 0 : 10)
-                        .animation(.spring(duration: 0.35).delay(Double(index) * 0.02), value: appeared)
+                        .foregroundColor(Color(.secondaryLabel))
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                        .padding(.bottom, 4)
 
-                        if index < routes.count - 1 {
-                            Divider().padding(.leading, 60)
+                        ForEach(Array(group.routes.enumerated()), id: \.element.id) { index, route in
+                            let animIndex = globalIndex + index
+                            NavigationLink(value: route) {
+                                WaterBusRouteRow(route: route, vm: vm)
+                            }
+                            .buttonStyle(.plain)
+                            .opacity(appeared ? 1 : 0)
+                            .offset(y: appeared ? 0 : 10)
+                            .animation(.spring(duration: 0.35).delay(Double(animIndex) * 0.02), value: appeared)
+
+                            if index < group.routes.count - 1 {
+                                Divider().padding(.leading, 64)
+                            }
                         }
+                        let _ = { globalIndex += group.routes.count }()
                     }
                 }
+
+                Color.clear.frame(height: 120)
             }
         }
     }
@@ -566,39 +776,51 @@ private struct WaterBusRouteRow: View {
     let vm: WaterBusViewModel
 
     var body: some View {
-        HStack(spacing: 12) {
-            // Line badge
+        HStack(spacing: 14) {
             LineBadge(line: route.name, vm: vm, size: .medium)
-                .frame(width: 40)
+                .frame(minWidth: 44)
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text(route.longName)
+            VStack(alignment: .leading, spacing: 4) {
+                if route.directions.count == 2 {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(route.directions[0].headsign)
+                            .lineLimit(1)
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.up.arrow.down")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundColor(Color(.tertiaryLabel))
+                            Text(route.directions[1].headsign)
+                                .lineLimit(1)
+                                .foregroundColor(Color(.secondaryLabel))
+                        }
+                    }
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-
-                HStack(spacing: 6) {
-                    if let dir = route.directions.first {
+                } else if let dir = route.directions.first {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundColor(Color(.secondaryLabel))
                         Text(dir.headsign)
-                            .font(.system(size: 12))
-                            .foregroundStyle(.secondary)
                             .lineLimit(1)
                     }
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.primary)
+                } else {
+                    Text(route.longName)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
                 }
-
-                Text(route.source.uppercased())
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(.tertiary)
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
-                .font(.system(size: 12))
-                .foregroundStyle(.quaternary)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(Color(.tertiaryLabel))
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .padding(.vertical, 12)
         .contentShape(Rectangle())
     }
 }

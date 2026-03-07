@@ -8,50 +8,116 @@ struct WaterBusLineDetailView: View {
     @Environment(\.strings) private var strings
     @State private var selectedDirection: Int = 0
     @State private var mapPosition: MapCameraPosition = .automatic
+    private static let peekDetent = PresentationDetent.height(130)
+    @State private var sheetDetent: PresentationDetent = .medium
+    @State private var showSheet = false
 
     var body: some View {
         let direction = route.directions.first { $0.id == selectedDirection }
         let stops = vm.stopsForRoute(route, direction: selectedDirection)
 
-        ScrollView {
-            VStack(spacing: 0) {
-                // Map with polyline
-                routeMap(direction: direction, stops: stops)
-                    .frame(height: 300)
+        routeMap(direction: direction, stops: stops)
+            .safeAreaInset(edge: .bottom) {
+                Color.clear.frame(height: sheetDetent == .large ? 0 : sheetDetent == .medium ? UIScreen.main.bounds.height * 0.5 : 130)
+            }
+            .ignoresSafeArea(edges: .bottom)
+            .navigationTitle(route.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .tabBar)
+            .onAppear {
+                centerMapOnRoute(direction: direction)
+                showSheet = true
+            }
+            .onChange(of: selectedDirection) { _, newDir in
+                let dir = route.directions.first { $0.id == newDir }
+                centerMapOnRoute(direction: dir)
+            }
+            .sheet(isPresented: $showSheet) {
+                sheetContent(direction: direction, stops: stops)
+                    .presentationDetents([Self.peekDetent, .medium, .large], selection: $sheetDetent)
+                    .presentationDragIndicator(.visible)
+                    .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+                    .presentationCornerRadius(20)
+                    .interactiveDismissDisabled()
+            }
+    }
 
-                // Direction picker
-                if route.directions.count > 1 {
-                    directionPicker
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-                }
+    // MARK: - Sheet Content
 
-                // Route info
-                routeHeader(direction: direction, stopsCount: stops.count)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16)
+    private func sheetContent(direction: RouteDirection?, stops: [WaterBusStop]) -> some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    // MARK: Peek header (static route info + picker)
+                    peekHeader(stopsCount: stops.count)
 
-                // Stops list
-                if !stops.isEmpty {
-                    stopsSection(stops: stops)
-                        .padding(.top, 20)
+                    // Direction picker
+                    if route.directions.count > 1 {
+                        directionPicker
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 12)
+                    }
+
+                    // Headsign for single-direction routes (no picker shown)
+                    if route.directions.count <= 1, let direction {
+                        HStack(spacing: 5) {
+                            Image(systemName: "arrow.right")
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundColor(Color(.secondaryLabel))
+                            Text(direction.headsign)
+                                .font(.system(size: 15, weight: .semibold))
+                                .lineLimit(1)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 12)
+                    }
+
+                    // Stops list
+                    if !stops.isEmpty {
+                        stopsSection(stops: stops)
+                    }
+
+                    Color.clear.frame(height: 40)
                 }
             }
-            .padding(.bottom, 40)
+            .navigationDestination(for: WaterBusStop.self) { stop in
+                WaterBusStopDetailView(stop: stop)
+            }
         }
-        .navigationTitle(route.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(.hidden, for: .tabBar)
-        .navigationDestination(for: WaterBusStop.self) { stop in
-            WaterBusStopDetailView(stop: stop)
+    }
+
+    // MARK: - Peek Header
+
+    private func peekHeader(stopsCount: Int) -> some View {
+        HStack(spacing: 12) {
+            LineBadge(line: route.name, vm: vm, size: .medium)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(route.longName)
+                    .font(.system(size: 16, weight: .semibold))
+                    .lineLimit(2)
+
+                HStack(spacing: 6) {
+                    Text(strings.waterBusStopsCount(stopsCount))
+                        .font(.system(size: 12))
+                        .foregroundColor(Color(.secondaryLabel))
+
+                    Text("·")
+                        .foregroundColor(Color(.secondaryLabel))
+                        .font(.system(size: 12))
+
+                    Image(route.source == "actv" ? "logo-actv" : "logo-alilaguna")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 12)
+                }
+            }
+
+            Spacer()
         }
-        .onAppear {
-            centerMapOnRoute(direction: direction)
-        }
-        .onChange(of: selectedDirection) { _, newDir in
-            let dir = route.directions.first { $0.id == newDir }
-            centerMapOnRoute(direction: dir)
-        }
+        .padding(.horizontal, 20)
+        .padding(.top, 20)
+        .padding(.bottom, 12)
     }
 
     // MARK: - Map
@@ -59,23 +125,17 @@ struct WaterBusLineDetailView: View {
     @ViewBuilder
     private func routeMap(direction: RouteDirection?, stops: [WaterBusStop]) -> some View {
         Map(position: $mapPosition, interactionModes: [.pan, .zoom, .rotate]) {
-            // Route polyline
             if let direction, !direction.coordinates.isEmpty {
                 MapPolyline(coordinates: direction.coordinates)
                     .stroke(route.color == Color(hex: "FFFFFF") ? .blue : route.color, lineWidth: 4)
             }
 
-            // Stop annotations
             ForEach(stops) { stop in
-                Annotation(stop.name, coordinate: stop.coordinate) {
-                    NavigationLink(value: stop) {
-                        stopPin
-                    }
-                    .buttonStyle(.plain)
+                Annotation("", coordinate: stop.coordinate) {
+                    stopPin
                 }
             }
 
-            // User location
             if let location = locationManager.userLocation {
                 Annotation("", coordinate: location.coordinate) {
                     Circle()
@@ -115,114 +175,70 @@ struct WaterBusLineDetailView: View {
         .pickerStyle(.segmented)
     }
 
-    // MARK: - Route Header
-
-    @ViewBuilder
-    private func routeHeader(direction: RouteDirection?, stopsCount: Int) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Line badge + name
-            HStack(spacing: 10) {
-                LineBadge(line: route.name, vm: vm, size: .medium)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(route.longName)
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(.primary)
-                        .lineLimit(2)
-
-                    HStack(spacing: 6) {
-                        Text(strings.waterBusStopsCount(stopsCount))
-                            .font(.system(size: 12))
-                            .foregroundStyle(.secondary)
-
-                        Text("·")
-                            .foregroundStyle(.quaternary)
-
-                        Text(route.source.uppercased())
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(.tertiary)
-                    }
-                }
-            }
-
-            if let direction {
-                HStack(spacing: 4) {
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 11))
-                    Text(direction.headsign)
-                        .font(.system(size: 13))
-                }
-                .foregroundStyle(.secondary)
-            }
-        }
-    }
-
     // MARK: - Stops Section
 
     @ViewBuilder
     private func stopsSection(stops: [WaterBusStop]) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(strings.waterBusRouteStops)
-                .font(.system(size: 11, weight: .medium))
-                .tracking(1.5)
-                .foregroundStyle(.tertiary)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 10)
+        let lineColor = route.color == Color(hex: "FFFFFF") ? Color.blue : route.color
 
-            let lineColor = route.color == Color(hex: "FFFFFF") ? Color.blue : route.color
+        VStack(alignment: .leading, spacing: 0) {
+            Divider()
+                .padding(.horizontal, 20)
+                .padding(.bottom, 4)
 
             ForEach(Array(stops.enumerated()), id: \.element.id) { index, stop in
+                let isTerminal = index == 0 || index == stops.count - 1
+                let dotSize: CGFloat = isTerminal ? 12 : 8
+
                 NavigationLink(value: stop) {
-                    HStack(spacing: 14) {
-                        // Timeline indicator
-                        VStack(spacing: 0) {
-                            if index > 0 {
+                    HStack(spacing: 0) {
+                        // Timeline column
+                        ZStack {
+                            // Continuous line
+                            VStack(spacing: 0) {
                                 Rectangle()
-                                    .fill(lineColor.opacity(0.3))
-                                    .frame(width: 2)
-                            } else {
-                                Spacer().frame(width: 2)
+                                    .fill(index > 0 ? lineColor : .clear)
+                                    .frame(width: 3)
+                                Rectangle()
+                                    .fill(index < stops.count - 1 ? lineColor : .clear)
+                                    .frame(width: 3)
                             }
 
+                            // Dot
                             Circle()
                                 .fill(lineColor)
-                                .frame(width: 10, height: 10)
+                                .frame(width: dotSize, height: dotSize)
                                 .overlay(
                                     Circle()
-                                        .stroke(.white, lineWidth: 1.5)
+                                        .fill(.white)
+                                        .frame(width: isTerminal ? 5 : 0)
                                 )
-
-                            if index < stops.count - 1 {
-                                Rectangle()
-                                    .fill(lineColor.opacity(0.3))
-                                    .frame(width: 2)
-                            } else {
-                                Spacer().frame(width: 2)
-                            }
                         }
-                        .frame(width: 10, height: 44)
+                        .frame(width: 20, height: 40)
 
-                        VStack(alignment: .leading, spacing: 2) {
+                        // Stop info
+                        VStack(alignment: .leading, spacing: 1) {
                             Text(stop.name)
-                                .font(.system(size: 15, weight: index == 0 || index == stops.count - 1 ? .semibold : .regular))
+                                .font(.system(size: 15, weight: isTerminal ? .semibold : .regular))
                                 .foregroundStyle(.primary)
                                 .lineLimit(1)
 
                             if let dist = locationManager.formattedDistance(to: stop.coordinate) {
                                 Text(dist)
-                                    .font(.system(size: 12))
-                                    .foregroundStyle(.tertiary)
+                                    .font(.system(size: 11))
+                                    .foregroundColor(Color(.secondaryLabel))
                             }
                         }
+                        .padding(.leading, 12)
 
                         Spacer()
 
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 11))
-                            .foregroundStyle(.quaternary)
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(Color(.tertiaryLabel))
                     }
                     .padding(.horizontal, 20)
-                    .padding(.vertical, 6)
+                    .padding(.vertical, 2)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)

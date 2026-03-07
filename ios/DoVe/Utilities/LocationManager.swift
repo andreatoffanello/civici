@@ -50,6 +50,7 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
 
     func formattedDistance(to coordinate: CLLocationCoordinate2D) -> String? {
         guard let meters = distance(to: coordinate) else { return nil }
+        if meters > 50_000 { return nil }
         if meters < 1000 {
             return "\(Int(meters)) m"
         } else {

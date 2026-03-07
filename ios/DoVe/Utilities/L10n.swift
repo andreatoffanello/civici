@@ -124,6 +124,8 @@ enum L10n {
         let waterBusStops: String
         let waterBusNoLines: String
         let waterBusRouteStops: String
+        let waterBusFavorites: String
+        let waterBusFullSchedule: String
 
         // MARK: Pharmacies
         let pharmaciesTitle: String
@@ -231,6 +233,8 @@ enum L10n {
             waterBusStops: "Fermate",
             waterBusNoLines: "Nessuna linea trovata",
             waterBusRouteStops: "FERMATE DEL PERCORSO",
+            waterBusFavorites: "Fermate preferite",
+            waterBusFullSchedule: "Tutti gli orari",
 
             pharmaciesTitle: "Farmacie",
             pharmaciesOpenCount: { open, total in "\(open) aperte su \(total)" },
@@ -338,6 +342,8 @@ enum L10n {
             waterBusStops: "Stops",
             waterBusNoLines: "No lines found",
             waterBusRouteStops: "ROUTE STOPS",
+            waterBusFavorites: "Favorite stops",
+            waterBusFullSchedule: "Full schedule",
 
             pharmaciesTitle: "Pharmacies",
             pharmaciesOpenCount: { open, total in "\(open) open out of \(total)" },
