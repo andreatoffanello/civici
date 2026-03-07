@@ -8,6 +8,7 @@ struct TripDetailView: View {
     @Environment(WaterBusViewModel.self) private var vm
     @Environment(LocationManager.self) private var locationManager
     @Environment(\.strings) private var strings
+    @Environment(\.dismiss) private var dismiss
     @State private var mapPosition: MapCameraPosition = .automatic
     private static let peekDetent = PresentationDetent.height(130)
     @State private var sheetDetent: PresentationDetent = .medium
@@ -18,12 +19,30 @@ struct TripDetailView: View {
         let trip = vm.reconstructTrip(departure: departure, fromStop: fromStop)
 
         tripMap(trip: trip)
+            .overlay(alignment: .topLeading) {
+                Button { dismiss() } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text(fromStop.name)
+                            .font(.system(size: 15, weight: .medium))
+                            .lineLimit(1)
+                    }
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.ultraThinMaterial)
+                    .clipShape(Capsule())
+                    .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+                }
+                .padding(.leading, 16)
+                .padding(.top, 8)
+            }
             .safeAreaInset(edge: .bottom) {
                 Color.clear.frame(height: sheetDetent == .large ? 0 : sheetDetent == .medium ? UIScreen.main.bounds.height * 0.5 : 130)
             }
             .ignoresSafeArea(edges: .bottom)
-            .navigationTitle(departure.line)
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarHidden(true)
             .toolbar(.hidden, for: .tabBar)
             .onAppear {
                 centerMap(trip: trip)
