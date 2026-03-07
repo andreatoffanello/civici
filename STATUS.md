@@ -1,51 +1,86 @@
 # DoVe — Status
 
-> Ultimo aggiornamento: 2026-03-04
+> Ultimo aggiornamento: 2026-03-07
 
 ## Stato generale
 
 ```
-iOS     ████████████████████ 100%  → In review App Store
+iOS     ████████████████████ 100%  → v1.0 pubblicata su App Store
 Android ██████████████████░░  90%  → APK debug compilato, da rifinire e rilasciare
 Web     ████████████████░░░░  80%  → Sito Nuxt 4 con landing page, ricerca, mappa
 ```
 
 ---
 
-## iOS
+## iOS — Funzionalita
 
-### Completati
-- [x] Masterplan redatto
-- [x] Riorganizzazione cartelle (legacy/ separato, data/ condiviso)
-- [x] Nome scelto: **DoVe**
-- [x] Research API Liquid Glass
-- [x] Progetto Xcode con xcodegen (project.yml)
-- [x] Data models: `Sestiere`, `Civico`, `ZonaNormale`
-- [x] `DataLoader`: carica civici.json bundled, ricerca, filtro
-- [x] `SearchViewModel`: stato app con @Observable
-- [x] **SestieriView**: griglia sestieri con silhouette geografiche
-- [x] **SearchView**: ricerca civico con campo numerico, filtro live, glass effect
-- [x] **ResultView**: mappa MapKit 3D con pin custom, navigazione Apple Maps, condivisione
-- [x] **InfoView**: storia toponomastica veneziana, spiegazione nizioleti, firma autore
-- [x] **ContentView**: TabView con Cerca + Info
-- [x] **SettingsView**: impostazioni app
-- [x] **SplashScreenView**: splash screen animata
-- [x] **StreetListView** + **StreetNumbersView**: navigazione per vie
-- [x] Silhouette geografiche sestieri (SestiereShape da GeoJSON semplificato)
-- [x] Font custom CCXLKSNizioleti-Regular per nomi sestieri
-- [x] Renaming completo Niziol → DoVe
-- [x] Silhouette sestieri originali da SVG progetto iZioleti (PNG croppate con trasparenza)
-- [x] Asset catalog: AppIcon, AccentColor rosso veneziano
-- [x] SearchView header: silhouette sestiere + nome in font nizioleti
-- [x] CivicoRow: numeri civici stile targa veneziana
-- [x] Zone normali (isole): ZonaNormale model + ZonaNormaleCard
-- [x] LocationManager, NotificationManager, GlassCompat, L10n (localizzazione)
-- [x] Build + run su iOS 26 Simulator
-- [x] **Submission App Store** — in review
+### Civici (tab Civici)
+- [x] Ricerca civico per sestiere + numero
+- [x] Griglia sestieri con silhouette geografiche
+- [x] Navigazione per vie (StreetListView + StreetNumbersView)
+- [x] Mappa MapKit 3D con pin custom
+- [x] Navigazione verso Apple Maps / Google Maps / Waze
+- [x] Condivisione posizione
 
-### Prossimi
-- [ ] Cronologia ricerche (UserDefaults)
-- [ ] Preferiti
+### Vaporetti (tab Vaporetti)
+- [x] Dati GTFS ACTV (22 linee, 149 fermate, ~87k stop_times) + Alilaguna
+- [x] Vista mappa e lista fermate con toggle
+- [x] Ricerca fermate e linee (diacritic-insensitive)
+- [x] Vista linee con sezioni ACTV/Alilaguna e loghi operatore
+- [x] Dettaglio fermata: mappa + bottom sheet con prossime partenze
+- [x] Prossime partenze con countdown live (departureTick timer)
+- [x] Badge linea colorati (LineBadge) con colori GTFS
+- [x] Badge imbarcadero (DockBadge) stile segnaletica veneziana
+- [x] Dock di partenza nelle righe partenze (da dati GTFS trip)
+- [x] Dettaglio corsa: trip integrato nella mappa di sfondo (no doppia mappa)
+- [x] Trip sheet: header fisso + timeline scrollabile + auto-scroll a fermata corrente
+- [x] Coincidenze: badge linee di collegamento per ogni fermata
+- [x] Tutti gli orari: tabellone completo con filtro per linea
+- [x] Fermate preferite con bookmark (salvate in UserDefaults)
+- [x] Card fermate preferite in Home con prossime partenze live
+- [x] Dock pin sulla mappa raggruppati per imbarcadero
+- [x] Rilevamento linee circolari (es. "Murano (circolare)")
+- [x] Loghi ACTV/Alilaguna con sfondo bianco (OperatorLogo) per dark mode
+- [x] Linea 1 (bianca): badge forzato bianco con testo nero
+
+### Farmacie (tab Servizi)
+- [x] 42 farmacie centro storico con coordinate geocodificate
+- [x] Stato aperta/chiusa con turni aggiornati (pipeline GitHub Actions)
+- [x] Vista mappa e lista con toggle
+- [x] Dettaglio farmacia: mappa, orari, telefono, navigazione
+- [x] Badge stato aperta/chiusa con colore adattivo
+
+### Home
+- [x] Logo DoVe + tagline
+- [x] Card colorate per sezioni (Civici, Vaporetti, Servizi)
+- [x] Card fermate preferite con partenze live
+- [x] Accesso impostazioni
+- [x] Credits e versione
+
+### Design System
+- [x] Colori adattivi light/dark mode (WCAG AA compliant)
+  - doVeAccent (coral): #C2452D / #E06D51
+  - doVeNavigation (blue): #416E9E / #6E9DCA
+  - doVeServices (green): #15803D / #50BD88
+  - doVeSoon (green countdown): #15803D / #50BD88
+  - niziolettoBackground/Text per card civici
+- [x] Componenti condivisi: LineBadge, DockBadge, OperatorLogo, GroupedLineBadges, FlowLayout, PulseModifier
+- [x] Back button solo chevron (.toolbarRole(.editor))
+- [x] Icone Phosphor (duotone) + SF Symbols per sistema
+- [x] Deep linking: dove://tab/, dove://stop/, dove://line/, dove://view/
+
+### Infrastruttura
+- [x] Localizzazione IT/EN via L10n.swift
+- [x] LocationManager con distanza formattata
+- [x] Navigazione multi-app (Apple Maps, Google Maps, Waze) con preferenza salvata
+- [x] Splash screen animata
+- [x] Impostazioni: lingua, navigazione preferita
+
+### Prossimi (iOS)
+- [ ] Bagni pubblici (16 Veritas, dato quasi statico)
+- [ ] Fontanelle (~140, mappa Veritas)
+- [ ] Notifiche partenze vaporetti
+- [ ] Widget iOS per fermate preferite
 - [ ] Haptic feedback su selezioni
 
 ---
@@ -53,31 +88,18 @@ Web     ████████████████░░░░  80%  → S
 ## Android
 
 ### Completati
-- [x] Progetto Android Studio con Kotlin + Jetpack Compose
-- [x] Data models: `Sestiere`, `Civico`, `ZonaNormale`
-- [x] `CiviciRepository` + `ZonaNormaleRepository`: caricamento JSON con coroutine
-- [x] `SearchViewModel` + `ZonaNormaleViewModel`: StateFlow, filtro real-time
-- [x] Theme Material 3: light + dark + Dynamic Color (Android 12+)
-- [x] Font nizioleti custom
-- [x] Navigazione: Navigation Compose con 6+ route
-- [x] **SplashScreen**: fade in/out animato
-- [x] **SestieriScreen**: griglia sestieri + sezione isole
-- [x] **SearchScreen**: TextField numerico + LazyColumn filtrato
-- [x] **ResultScreen**: MapLibre + OpenFreeMap + bottoni Maps/Waze/Share
-- [x] **InfoScreen**: spiegazione civici veneziani + credits
-- [x] **SettingsScreen**: tema (system/light/dark) + lingua (IT/EN)
-- [x] **StreetListScreen** + **StreetNumbersScreen**: navigazione per vie
-- [x] Stringhe localizzate IT + EN
-- [x] AppPrefs: preferenze persistenti
-- [x] APK debug compilato (~99MB debug, ~20MB release stimato)
+- [x] Progetto Kotlin + Jetpack Compose + Material 3
+- [x] Ricerca civici con tutti i sestieri
+- [x] MapLibre + OpenFreeMap
+- [x] Navigazione per vie
+- [x] Impostazioni tema + lingua
+- [x] APK debug compilato
 
-### Prossimi (Fase 6-7)
-- [ ] Icona app adaptive (mipmap-*) definitiva
-- [ ] Silhouette sestieri come VectorDrawable
-- [ ] Marker mappa custom con colore sestiere
-- [ ] Animazioni transizione tra schermate
+### Prossimi
+- [ ] Icona app adaptive definitiva
+- [ ] Port funzionalita vaporetti
+- [ ] Port funzionalita farmacie
 - [ ] Dark mode: verifica contrasti
-- [ ] Test su emulatori vari (phone + tablet)
 - [ ] Firma AAB + release Google Play
 
 ---
@@ -85,18 +107,16 @@ Web     ████████████████░░░░  80%  → S
 ## Web
 
 ### Completati
-- [x] Progetto Nuxt 4 con Vue 3
-- [x] Landing page con hero section e shader animato
-- [x] Ricerca civici integrata (CiviciSearch + CiviciMap)
-- [x] Griglia sestieri (SestieriGrid)
-- [x] Mappa Venezia (VeniceMap)
-- [x] Sezione problema/soluzione (ProblemSection)
-- [x] Showcase app (AppShowcase) con link download
-- [x] DownloadCta + SmartAppBanner
-- [x] Header + Footer
-- [x] LangSwitcher (multilingua)
+- [x] Nuxt 4 + Vue 3
+- [x] Landing page con hero e shader animato
+- [x] Ricerca civici + mappa
+- [x] Multilingua (IT, EN, FR, DE)
 - [x] Pagine: home, about, come-funziona, contatti, privacy, supporto
-- [x] Contenuti multilingua (IT, EN, FR, DE)
+
+### Prossimi
+- [ ] Deploy definitivo
+- [ ] SEO ottimizzazione
+- [ ] Sezione vaporetti web
 
 ---
 
@@ -104,64 +124,70 @@ Web     ████████████████░░░░  80%  → S
 
 | Data | Decisione | Motivazione |
 |------|-----------|-------------|
-| 2026-02-28 | Nome: DoVe | "Dove?" è la domanda che l'app risponde, la V maiuscola richiama Venezia |
-| 2026-02-28 | iOS-first, nativo Swift/SwiftUI | Massimo controllo su UX, performance, API native |
-| 2026-02-28 | iOS 26+ / Liquid Glass | Design premium, app che sembra nata per iOS 26 |
-| 2026-02-28 | MapKit per iOS | Gratuito, integrazione nativa perfetta |
+| 2026-02-28 | Nome: DoVe | "Dove?" e la domanda, V richiama Venezia |
+| 2026-02-28 | iOS-first, Swift/SwiftUI | Massimo controllo UX, performance nativa |
 | 2026-02-28 | Offline-first, no backend | Dati ~3MB bundled, zero dipendenze server |
-| 2026-02-28 | MVVM con @Observable | Pattern moderno SwiftUI, niente Combine esplicito |
-| 2026-02-28 | xcodegen per project | Evita conflitti pbxproj, project.yml versionabile |
-| 2026-02-28 | Font nizioleti per nomi sestieri | CCXLKSNizioleti-Regular dal progetto originale |
-| 2026-03-01 | MapLibre + OpenFreeMap per Android | Gratuito senza API key, equivalente di MapKit su Android |
-| 2026-03-01 | Material 3 per Android | Nativo, Dynamic Color su Android 12+ |
+| 2026-02-28 | MVVM con @Observable | Pattern moderno SwiftUI |
+| 2026-03-01 | MapLibre per Android | Gratuito senza API key |
+| 2026-03-04 | GTFS ufficiali per vaporetti | Dati ACTV + Alilaguna, pipeline GitHub Actions |
+| 2026-03-04 | Tabellone partenze, no journey planner | Google Maps lo fa gia, DoVe = info locale |
+| 2026-03-05 | Turni farmacie da Ordine Farmacisti | Pipeline scraping giornaliera |
+| 2026-03-07 | Colori WCAG AA adattivi | #15803D light / #50BD88 dark per contrasto |
+| 2026-03-07 | OperatorLogo con sfondo bianco | Loghi PNG trasparenti visibili in dark mode |
+| 2026-03-07 | Bookmark al posto di star | Icona piu sobria e coerente col design |
 
 ---
 
 ## Struttura file iOS
 
 ```
-ios/
-├── project.yml                    # xcodegen spec
-├── DoVe.xcodeproj/                # generato da xcodegen
-└── DoVe/
-    ├── App/
-    │   └── DoVeApp.swift          # Entry point
-    ├── Models/
-    │   ├── Sestiere.swift         # Enum 7 sestieri con colori, coordinate, simboli
-    │   ├── Civico.swift           # Struct civico con coordinate
-    │   └── ZonaNormale.swift      # Isole e zone normali
-    ├── ViewModels/
-    │   └── SearchViewModel.swift  # Stato app: selezione, ricerca, filtro
-    ├── Views/
-    │   ├── ContentView.swift      # TabView root
-    │   ├── SearchFlowView.swift   # Router: sestieri → ricerca → risultato
-    │   ├── SestieriView.swift     # Griglia selezione sestiere
-    │   ├── SearchView.swift       # Ricerca numero civico
-    │   ├── ResultView.swift       # Mappa con pin e azioni
-    │   ├── InfoView.swift         # About e spiegazioni
-    │   ├── SettingsView.swift     # Impostazioni
-    │   ├── SplashScreenView.swift # Splash screen animata
-    │   ├── StreetListView.swift   # Lista vie per sestiere
-    │   └── StreetNumbersView.swift # Numeri civici per via
-    ├── Components/
-    │   ├── SestiereCard.swift     # Card sestiere con font nizioleti + silhouette
-    │   ├── ZonaNormaleCard.swift  # Card zona normale/isola
-    │   ├── SestiereShape.swift    # Shape geografica da sestieri_shapes.json
-    │   ├── NiziolettoShape.swift  # Forma nizioleto (rettangolo arrotondato)
-    │   └── CivicoRow.swift        # Riga risultato ricerca
-    ├── Utilities/
-    │   ├── DataLoader.swift       # Caricamento e query dati JSON
-    │   ├── ColorExtension.swift   # Color(hex:) extension
-    │   ├── GlassCompat.swift      # Compatibilità Liquid Glass
-    │   ├── LocationManager.swift  # Gestione posizione GPS
-    │   ├── NotificationManager.swift # Notifiche
-    │   └── L10n.swift             # Localizzazione stringhe
-    └── Resources/
-        ├── Assets.xcassets/
-        ├── Fonts/
-        │   └── CCXLKSNizioleti-Regular.ttf
-        └── Data/
-            ├── civici.json
-            ├── sestieri_shapes.json
-            └── zone_normali.json
+ios/DoVe/
+├── App/
+│   └── DoVeApp.swift              # Entry point
+├── Models/
+│   ├── Civico.swift               # Struct civico con coordinate
+│   ├── Sestiere.swift             # Enum 7 sestieri
+│   ├── ZonaNormale.swift          # Isole e zone normali
+│   ├── Pharmacy.swift             # Farmacia con turni e coordinate
+│   └── WaterBus.swift             # Departure, WaterBusStop, WaterBusRoute, TripStop, TripNavigation
+├── ViewModels/
+│   ├── SearchViewModel.swift      # Ricerca civici
+│   ├── WaterBusViewModel.swift    # GTFS, partenze, trip, coincidenze
+│   └── PharmacyViewModel.swift    # Farmacie e turni
+├── Views/
+│   ├── ContentView.swift          # TabView root + deep link router
+│   ├── HomeHubView.swift          # Home con card sezioni + preferiti
+│   ├── SearchFlowView.swift       # Router civici
+│   ├── SestieriView.swift         # Griglia sestieri
+│   ├── SearchView.swift           # Ricerca civico
+│   ├── ResultView.swift           # Mappa risultato
+│   ├── WaterBusListView.swift     # Fermate/linee + componenti condivisi
+│   ├── WaterBusStopDetailView.swift # Dettaglio fermata + trip integrato
+│   ├── WaterBusLineDetailView.swift # Dettaglio linea con timeline fermate
+│   ├── TripDetailView.swift       # Dettaglio corsa (standalone)
+│   ├── PharmacyListView.swift     # Lista/mappa farmacie
+│   ├── PharmacyDetailView.swift   # Dettaglio farmacia
+│   ├── ServicesView.swift         # Hub servizi
+│   ├── SettingsView.swift         # Impostazioni
+│   ├── InfoView.swift             # About
+│   ├── SplashScreenView.swift     # Splash
+│   ├── StreetListView.swift       # Liste vie
+│   └── StreetNumbersView.swift    # Numeri per via
+├── Components/
+│   ├── SestiereCard.swift         # Card sestiere
+│   ├── ZonaNormaleCard.swift      # Card isola
+│   ├── SestiereShape.swift        # Shape da GeoJSON
+│   ├── NiziolettoShape.swift      # Forma nizioleto
+│   └── CivicoRow.swift            # Riga risultato
+├── Utilities/
+│   ├── ColorExtension.swift       # Colori adattivi + PulseModifier
+│   ├── DataLoader.swift           # Caricamento JSON civici
+│   ├── LocationManager.swift      # GPS + distanza formattata
+│   ├── NotificationManager.swift  # Notifiche
+│   ├── GlassCompat.swift          # Compatibilita Liquid Glass
+│   └── L10n.swift                 # Localizzazione IT/EN
+└── Resources/
+    ├── Assets.xcassets/           # Icone, loghi ACTV/Alilaguna
+    ├── Fonts/                     # CCXLKSNizioleti-Regular
+    └── Data/                      # civici.json, vaporetti.json, farmacie.json, turni, zone_normali
 ```

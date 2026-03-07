@@ -32,12 +32,12 @@ Venezia ha un sistema di numerazione civica unico al mondo: i numeri non seguono
 
 ## 3. Piattaforme
 
-### 3.1 iOS (piattaforma primaria) — in review App Store
+### 3.1 iOS (piattaforma primaria) — pubblicata su App Store
 - **Linguaggio**: Swift 6
 - **UI**: SwiftUI con Liquid Glass (iOS 26+)
 - **Target**: iOS 26+
 - **Mappe**: MapKit (nativo, gratuito, ottima integrazione)
-- **Stato**: MVP completo, submission App Store in review
+- **Stato**: v1.0 pubblicata, include civici + vaporetti + farmacie
 
 ### 3.2 Android — APK debug compilato
 - **Linguaggio**: Kotlin 2.1
@@ -53,8 +53,8 @@ Venezia ha un sistema di numerazione civica unico al mondo: i numeri non seguono
 - **Stato**: 80% completato, funzionante
 
 ### Ordine di sviluppo (realizzato)
-1. **iOS** — completato, in review App Store
-2. **Android** — port completato, da rilasciare
+1. **iOS** — v1.0 pubblicata su App Store
+2. **Android** — port civici completato, da aggiungere vaporetti/farmacie e rilasciare
 3. **Web** — sito funzionante con ricerca e mappa
 
 ---
@@ -177,30 +177,41 @@ Sestieri:
 
 ---
 
-## 7. Feature future (post-MVP)
+## 7. Feature
 
 In ordine di priorità. Principio guida: **solo fonti ufficiali e verificabili**, no OSM (rischio dati obsoleti a Venezia). Meglio pochi dati certi che tanti inaffidabili. Focus su cittadini prima che turisti.
 
-### 1. Vaporetti — priorità alta
+### 1. Vaporetti — COMPLETATO
 
-Tab standalone nell'app (non legata alla ricerca civici). Un'alternativa a "chebateo": tabellone partenze digitale, non journey planner.
+Tab standalone nell'app. Tabellone partenze digitale, alternativa a "chebateo".
 
 - **Dati**: GTFS ufficiali ACTV navigazione (22 linee, 149 fermate, ~87k stop_times) + Alilaguna (2 linee, 34 fermate)
-- **UX**: ricerca fermate come lista o selezione da mappa → dettaglio fermata con prossime partenze programmate, direzioni, pontili
 - **Fonti**:
-  - ACTV: `https://actv.avmspa.it/sites/default/files/attachments/opendata/navigazione/actv_nav.zip` (~1.2MB, aggiornato mensilmente)
-  - Alilaguna: `http://www.alilaguna.it/attuale/alilaguna.zip` (17KB, aggiornato stagionalmente)
-- **Pipeline**: GitHub Actions (cron settimanale) → scarica GTFS → converte in JSON ottimizzati → hosting statico (GitHub Pages o Cloudflare Pages). L'app scarica il JSON aggiornato
-- **No journey planner**: troppo complesso, Google Maps lo fa già. DoVe = tabellone partenze
+  - ACTV: `https://actv.avmspa.it/sites/default/files/attachments/opendata/navigazione/actv_nav.zip`
+  - Alilaguna: `http://www.alilaguna.it/attuale/alilaguna.zip`
+- **Pipeline**: GitHub Actions (cron settimanale) → scarica GTFS → converte in JSON ottimizzati → bundle app
+- **UX realizzata**:
+  - Mappa + lista fermate con toggle e ricerca
+  - Dettaglio fermata con prossime partenze, countdown live, dock di partenza
+  - Dettaglio corsa integrato nella mappa di sfondo con timeline scrollabile
+  - Coincidenze (linee di collegamento) per ogni fermata
+  - Tutti gli orari con filtro per linea
+  - Fermate preferite (bookmark) con card live in Home
+  - Badge linee colorati, badge imbarcadero, loghi operatore adattivi
+  - Linee circolari rilevate automaticamente
+- **No journey planner**: Google Maps lo fa già. DoVe = tabellone partenze
 
-### 2. Farmacie di turno — priorità alta
+### 2. Farmacie di turno — COMPLETATO
 
 Sapere quale farmacia è aperta/di turno, utile soprattutto per i residenti.
 
-- **Dati**: ~15 farmacie nel centro storico, con indirizzi in formato sestiere+civico (geocodificabili con civici.json)
-- **Fonte**: Ordine dei Farmacisti di Venezia (`ordinefarmacistivenezia.it`) — export JSON/XML ufficiale dei turni
-- **Pipeline**: GitHub Actions (cron giornaliero o settimanale) → scraping turni → JSON con coordinate → hosting statico
-- **UX**: lista farmacie con stato aperta/turno, mappa con pin, dettaglio con indirizzo/orari/telefono
+- **Dati**: 42 farmacie centro storico con coordinate geocodificate
+- **Fonte**: Ordine dei Farmacisti di Venezia (`ordinefarmacistivenezia.it`)
+- **Pipeline**: GitHub Actions (cron giornaliero) → scraping turni → JSON con coordinate → bundle app
+- **UX realizzata**:
+  - Vista mappa e lista con toggle
+  - Badge stato aperta/chiusa
+  - Dettaglio: mappa, orari, telefono (chiamata diretta), navigazione multi-app
 
 ### 3. Bagni pubblici — priorità media
 
@@ -224,13 +235,13 @@ Storia e origine dei nomi delle vie veneziane, dal libro "Curiosità Veneziane" 
 - **Alternativa**: OCR/trascrizione dal testo originale (pubblico dominio) + georeferenziazione propria
 - **Da valutare**: effort vs valore, questione copyright del lavoro derivato
 
-### Nuova alberatura
+### Alberatura app (realizzata)
 
-Le feature sopra richiedono una nuova struttura dell'app con TabBar e sezioni dedicate:
-- **Civici** (ricerca civici, funzionalità core attuale)
-- **Vaporetti** (fermate e partenze)
-- **Servizi** (farmacie, bagni, fontanelle)
-- **Info** (about, impostazioni)
+TabBar con 4 sezioni:
+- **Home** — hub con card sezioni, fermate preferite, impostazioni
+- **Civici** — ricerca civici per sestiere/numero/via
+- **Vaporetti** — fermate e linee, mappa + lista, dettaglio con partenze e corse
+- **Servizi** — farmacie (e futuri: bagni, fontanelle)
 
 ### Infrastruttura dati
 
@@ -340,14 +351,17 @@ civici/
 2. ~~Creare il progetto Xcode con SwiftUI~~ — fatto
 3. ~~Definire il design~~ — Liquid Glass, palette, tipografia
 4. ~~Implementare MVP iOS~~ — tutte le schermate con dati reali
-5. ~~Submission App Store~~ — in review
+5. ~~Submission App Store~~ — pubblicata v1.0
 6. ~~Port Android~~ — APK debug compilato
 7. ~~Sito web~~ — Nuxt 4, landing page + ricerca + mappa
+8. ~~Vaporetti~~ — tab completa con GTFS ACTV + Alilaguna
+9. ~~Farmacie~~ — 42 farmacie con turni, mappa, dettaglio
+10. ~~UX audit~~ — contrasto WCAG AA, dark mode, design system coerente
 
 ### Da fare
-- [ ] Rilascio App Store iOS (in attesa review)
-- [ ] Android: rifinitura (icona, animazioni, marker custom) e rilascio Play Store
-- [ ] Web: deploy definitivo
-- [ ] Test dati: spot check civici noti su entrambe le piattaforme
-- [ ] Cronologia ricerche + preferiti (iOS e Android)
-- [ ] Rinominare il repository da `civici` a `dove` (opzionale)
+- [ ] Android: port vaporetti + farmacie + rilascio Play Store
+- [ ] Web: deploy definitivo + sezione vaporetti
+- [ ] Bagni pubblici (16 Veritas, dato quasi statico)
+- [ ] Fontanelle (~140, mappa Veritas)
+- [ ] Widget iOS per fermate preferite
+- [ ] Notifiche partenze vaporetti
