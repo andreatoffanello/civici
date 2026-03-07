@@ -645,6 +645,7 @@ private struct WaterBusStopRow: View {
                                 .renderingMode(.template)
                                 .frame(width: 11, height: 11)
                         }
+                        LineBadge(line: dep.line, vm: vm, size: .small)
                         Text(dep.time)
                             .foregroundColor(dep.isSoon ? Color(hex: "38A169") : Color(.secondaryLabel))
                         Text(dep.countdownLabel)
