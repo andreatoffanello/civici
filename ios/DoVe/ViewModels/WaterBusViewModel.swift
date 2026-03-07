@@ -440,12 +440,29 @@ final class WaterBusViewModel {
             }
         }
 
+        // Parse docks: [{letter, lat, lng, lines}, ...]
+        var docks: [Dock] = []
+        if let docksArray = dict["docks"] as? [[String: Any]] {
+            for dockDict in docksArray {
+                guard let letter = dockDict["letter"] as? String,
+                      let dLat = dockDict["lat"] as? Double,
+                      let dLng = dockDict["lng"] as? Double else { continue }
+                let dockLines = dockDict["lines"] as? [String] ?? []
+                docks.append(Dock(
+                    letter: letter,
+                    coordinate: CLLocationCoordinate2D(latitude: dLat, longitude: dLng),
+                    lines: dockLines
+                ))
+            }
+        }
+
         return WaterBusStop(
             id: id,
             name: name,
             coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lng),
             lines: lines,
-            departures: departures
+            departures: departures,
+            docks: docks
         )
     }
 }

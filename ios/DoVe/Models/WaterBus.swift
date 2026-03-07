@@ -10,8 +10,22 @@ struct WaterBusStop: Identifiable, Hashable {
     let coordinate: CLLocationCoordinate2D
     let lines: [String]
     let departures: [DayGroup: [Departure]]
+    let docks: [Dock]
 
     static func == (lhs: WaterBusStop, rhs: WaterBusStop) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
+}
+
+// MARK: - Dock (imbarcadero/pontile)
+
+struct Dock: Identifiable, Hashable {
+    let letter: String
+    let coordinate: CLLocationCoordinate2D
+    let lines: [String]
+
+    var id: String { "\(letter)_\(coordinate.latitude)_\(coordinate.longitude)" }
+
+    static func == (lhs: Dock, rhs: Dock) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 

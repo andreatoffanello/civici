@@ -179,6 +179,9 @@ def parse_stops(stops_raw: list[dict], source: str) -> tuple[dict, dict]:
         if parent:
             children[parent].append(stop_id)
 
+    # Build index for child info
+    child_info = {si["id"]: si for si in all_stops_info}
+
     # Prima: gestisci parent_station esplicito (Alilaguna)
     for si in all_stops_info:
         if not si["parent"]:
@@ -186,6 +189,16 @@ def parse_stops(stops_raw: list[dict], source: str) -> tuple[dict, dict]:
             sid = si["id"]
             if sid in [c for cs in children.values() for c in cs]:
                 continue  # È un figlio elencato altrove, skip
+
+            # Per-pontile dock info
+            docks_info = {}
+            for child_id in children.get(sid, []):
+                ci = child_info.get(child_id)
+                if ci:
+                    letter = _extract_dock_letter(ci["name"])
+                    if letter:
+                        docks_info[child_id] = {"letter": letter, "lat": ci["lat"], "lng": ci["lng"]}
+
             stations[sid] = {
                 "id": sid,
                 "name": si["name"],
@@ -193,6 +206,7 @@ def parse_stops(stops_raw: list[dict], source: str) -> tuple[dict, dict]:
                 "lng": si["lng"],
                 "source": source,
                 "pontili": children.get(sid, [sid]),
+                "docks_info": docks_info,
             }
 
     # Se non ci sono parent (ACTV), raggruppa per nome base
@@ -215,6 +229,13 @@ def parse_stops(stops_raw: list[dict], source: str) -> tuple[dict, dict]:
             avg_lng = sum(s["lng"] for s in group) / len(group)
             station_id = f"actv_{base_name.replace(' ', '_').replace('.', '').lower()}"
 
+            # Per-pontile dock info (letter + coordinates)
+            docks_info = {}
+            for s in group:
+                letter = _extract_dock_letter(s["name"])
+                if letter:
+                    docks_info[s["id"]] = {"letter": letter, "lat": s["lat"], "lng": s["lng"]}
+
             stations[station_id] = {
                 "id": station_id,
                 "name": base_name,
@@ -222,6 +243,7 @@ def parse_stops(stops_raw: list[dict], source: str) -> tuple[dict, dict]:
                 "lng": round(avg_lng, 6),
                 "source": source,
                 "pontili": [s["id"] for s in group],
+                "docks_info": docks_info,
             }
 
     # Build stop_to_station mapping
@@ -368,6 +390,10 @@ def merge_stations(
                 if p not in existing["pontili"]:
                     existing["pontili"].append(p)
                     merged_s2s[p] = best_match
+            # Merge docks_info
+            if "docks_info" not in existing:
+                existing["docks_info"] = {}
+            existing["docks_info"].update(ali_st.get("docks_info", {}))
         else:
             # Fermata solo Alilaguna
             merged[ali_id] = ali_st
@@ -677,14 +703,44 @@ def build_output(
         if not departures:
             continue
 
-        stops_output.append({
+        # Build per-dock info with lines (merge same-letter docks nearby)
+        dock_by_letter: dict[str, dict] = {}
+        for pontile_id, dock_info in st.get("docks_info", {}).items():
+            dock_lines = set()
+            if pontile_id in all_departures:
+                for day_deps in all_departures[pontile_id].values():
+                    for d in day_deps:
+                        dock_lines.add(d["line"])
+            if not dock_lines:
+                continue
+            letter = dock_info["letter"]
+            if letter in dock_by_letter:
+                # Merge lines into existing dock with same letter
+                dock_by_letter[letter]["lines"].update(dock_lines)
+            else:
+                dock_by_letter[letter] = {
+                    "letter": letter,
+                    "lat": dock_info["lat"],
+                    "lng": dock_info["lng"],
+                    "lines": dock_lines,
+                }
+        docks_output = [
+            {**d, "lines": sorted(d["lines"])}
+            for d in sorted(dock_by_letter.values(), key=lambda d: d["letter"])
+        ]
+
+        stop_entry = {
             "id": st["id"],
             "name": st["name"],
             "lat": st["lat"],
             "lng": st["lng"],
             "lines": sorted(lines_serving),
             "departures": departures,
-        })
+        }
+        if docks_output:
+            stop_entry["docks"] = docks_output
+
+        stops_output.append(stop_entry)
 
     # Ordina fermate per nome
     stops_output.sort(key=lambda s: s["name"])

@@ -271,16 +271,39 @@ private struct WaterBusMapView: View {
                 }
 
                 ForEach(stops) { stop in
-                    Annotation("", coordinate: stop.coordinate, anchor: .center) {
-                        WaterBusStopPin(
-                            stop: stop,
-                            isSelected: selectedStop?.id == stop.id,
-                            zoomLevel: zoomLevel,
-                            vm: vm
-                        )
-                        .onTapGesture {
-                            withAnimation(.spring(duration: 0.25)) {
-                                selectedStop = selectedStop?.id == stop.id ? nil : stop
+                    let isSelected = selectedStop?.id == stop.id
+                    let showDocks = (zoomLevel == .close || isSelected) && !stop.docks.isEmpty
+
+                    if showDocks {
+                        // Show individual dock pins with their lines
+                        ForEach(stop.docks) { dock in
+                            Annotation("", coordinate: dock.coordinate, anchor: .center) {
+                                WaterBusDockPin(
+                                    stop: stop,
+                                    dock: dock,
+                                    isSelected: isSelected,
+                                    vm: vm
+                                )
+                                .onTapGesture {
+                                    withAnimation(.spring(duration: 0.25)) {
+                                        selectedStop = isSelected ? nil : stop
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // Show single station pin
+                        Annotation("", coordinate: stop.coordinate, anchor: .center) {
+                            WaterBusStopPin(
+                                stop: stop,
+                                isSelected: isSelected,
+                                zoomLevel: zoomLevel,
+                                vm: vm
+                            )
+                            .onTapGesture {
+                                withAnimation(.spring(duration: 0.25)) {
+                                    selectedStop = isSelected ? nil : stop
+                                }
                             }
                         }
                     }
@@ -406,7 +429,8 @@ private struct WaterBusStopPin: View {
                         .clipShape(RoundedRectangle(cornerRadius: 4))
                         .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
 
-                    if zoomLevel == .close || isSelected {
+                    // Show line badges only when no docks (docks handle their own badges)
+                    if (zoomLevel == .close || isSelected) && stop.docks.isEmpty {
                         FlowLayout(spacing: 2) {
                             ForEach(stop.lines, id: \.self) { line in
                                 LineBadge(line: line, vm: vm, size: .small)
@@ -422,6 +446,60 @@ private struct WaterBusStopPin: View {
         .frame(minWidth: 44, minHeight: 44)
         .contentShape(Circle().size(width: 44, height: 44))
         .animation(.easeInOut(duration: 0.2), value: zoomLevel)
+        .animation(.spring(duration: 0.2), value: isSelected)
+    }
+}
+
+// MARK: - Dock Map Pin (imbarcadero con badge linee)
+
+private struct WaterBusDockPin: View {
+    let stop: WaterBusStop
+    let dock: Dock
+    let isSelected: Bool
+    let vm: WaterBusViewModel
+
+    var body: some View {
+        VStack(spacing: 2) {
+            // Dock badge (yellow, like DockBadge)
+            ZStack {
+                Circle()
+                    .fill(.white)
+                    .frame(width: 22, height: 22)
+                Circle()
+                    .fill(Color(red: 1.0, green: 0.82, blue: 0.0))
+                    .frame(width: 18, height: 18)
+                Text(dock.letter)
+                    .font(.system(size: 11, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.black)
+            }
+            .shadow(color: .black.opacity(0.2), radius: isSelected ? 4 : 2, y: 1)
+        }
+        .overlay(alignment: .top) {
+            VStack(spacing: 2) {
+                // Stop name label
+                Text(stop.name)
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 1)
+                    .background(.white.opacity(0.9))
+                    .clipShape(RoundedRectangle(cornerRadius: 3))
+                    .shadow(color: .black.opacity(0.1), radius: 1, y: 1)
+
+                // Line badges for this dock
+                FlowLayout(spacing: 2) {
+                    ForEach(dock.lines, id: \.self) { line in
+                        LineBadge(line: line, vm: vm, size: .tiny)
+                    }
+                }
+                .frame(maxWidth: 120)
+            }
+            .fixedSize()
+            .offset(y: 26)
+        }
+        .frame(minWidth: 36, minHeight: 36)
+        .contentShape(Circle().size(width: 36, height: 36))
         .animation(.spring(duration: 0.2), value: isSelected)
     }
 }

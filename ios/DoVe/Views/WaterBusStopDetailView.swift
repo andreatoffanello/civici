@@ -16,14 +16,22 @@ struct WaterBusStopDetailView: View {
 
     var body: some View {
         Map(position: $mapPosition) {
-            Annotation(stop.name, coordinate: stop.coordinate) {
-                ZStack {
-                    Circle()
-                        .fill(Color.doVeNavigation)
-                        .frame(width: 28, height: 28)
-                    Ph.boat.fill
-                        .frame(width: 14, height: 14)
-                        .foregroundStyle(.white)
+            if stop.docks.isEmpty {
+                Annotation(stop.name, coordinate: stop.coordinate) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.doVeNavigation)
+                            .frame(width: 28, height: 28)
+                        Ph.boat.fill
+                            .frame(width: 14, height: 14)
+                            .foregroundStyle(.white)
+                    }
+                }
+            } else {
+                ForEach(stop.docks) { dock in
+                    Annotation("", coordinate: dock.coordinate) {
+                        StopDetailDockPin(dock: dock, vm: vm)
+                    }
                 }
             }
 
@@ -486,6 +494,39 @@ struct FullScheduleView: View {
 
                 Color.clear.frame(height: 40)
             }
+        }
+    }
+}
+
+// MARK: - Stop Detail Dock Pin
+
+private struct StopDetailDockPin: View {
+    let dock: Dock
+    let vm: WaterBusViewModel
+
+    var body: some View {
+        VStack(spacing: 3) {
+            // Dock letter badge (yellow)
+            ZStack {
+                Circle()
+                    .fill(.white)
+                    .frame(width: 26, height: 26)
+                Circle()
+                    .fill(Color(red: 1.0, green: 0.82, blue: 0.0))
+                    .frame(width: 22, height: 22)
+                Text(dock.letter)
+                    .font(.system(size: 13, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.black)
+            }
+            .shadow(color: .black.opacity(0.2), radius: 3, y: 1)
+
+            // Line badges below
+            FlowLayout(spacing: 2) {
+                ForEach(dock.lines, id: \.self) { line in
+                    LineBadge(line: line, vm: vm, size: .tiny)
+                }
+            }
+            .frame(maxWidth: 120)
         }
     }
 }

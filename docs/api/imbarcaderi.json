@@ -1,0 +1,230 @@
+[
+  {
+    "stationId": "actv_accademia",
+    "name": "Accademia",
+    "docks": [
+      { "letter": "A", "lat": 45.431736, "lng": 12.328523 },
+      { "letter": "B", "lat": 45.431633, "lng": 12.328705 }
+    ]
+  },
+  {
+    "stationId": "actv_arsenale",
+    "name": "Arsenale",
+    "docks": [
+      { "letter": "A", "lat": 45.432774, "lng": 12.348552 },
+      { "letter": "B", "lat": 45.432896, "lng": 12.34833 }
+    ]
+  },
+  {
+    "stationId": "actv_burano",
+    "name": "Burano",
+    "docks": [
+      { "letter": "A", "lat": 45.48769, "lng": 12.415232 },
+      { "letter": "B", "lat": 45.487602, "lng": 12.416217 },
+      { "letter": "C", "lat": 45.487572, "lng": 12.416754 }
+    ]
+  },
+  {
+    "stationId": "actv_fte_nove",
+    "name": "F.te Nove",
+    "docks": [
+      { "letter": "A", "lat": 45.443958, "lng": 12.339143 },
+      { "letter": "B", "lat": 45.443138, "lng": 12.340671 },
+      { "letter": "C", "lat": 45.443016, "lng": 12.340888 },
+      { "letter": "D", "lat": 45.442867, "lng": 12.341126 }
+    ]
+  },
+  {
+    "stationId": "actv_ferrovia",
+    "name": "Ferrovia",
+    "docks": [
+      { "letter": "A", "lat": 45.441017, "lng": 12.322206 },
+      { "letter": "B", "lat": 45.440937, "lng": 12.322042 },
+      { "letter": "C", "lat": 45.440372, "lng": 12.321408 },
+      { "letter": "D", "lat": 45.440216, "lng": 12.321242 },
+      { "letter": "E", "lat": 45.439873, "lng": 12.32088 }
+    ]
+  },
+  {
+    "stationId": "actv_giardini",
+    "name": "Giardini",
+    "docks": [
+      { "letter": "A", "lat": 45.42976, "lng": 12.354997 },
+      { "letter": "B", "lat": 45.429848, "lng": 12.354835 }
+    ]
+  },
+  {
+    "stationId": "actv_giardini_biennale",
+    "name": "Giardini Biennale",
+    "docks": [
+      { "letter": "A", "lat": 45.428886, "lng": 12.356096 },
+      { "letter": "B", "lat": 45.429047, "lng": 12.355934 }
+    ]
+  },
+  {
+    "stationId": "actv_giudecca_palanca",
+    "name": "Giudecca Palanca",
+    "docks": [
+      { "letter": "A", "lat": 45.426899, "lng": 12.325401 },
+      { "letter": "B", "lat": 45.426849, "lng": 12.325638 }
+    ]
+  },
+  {
+    "stationId": "actv_guglie",
+    "name": "Guglie",
+    "docks": [
+      { "letter": "A", "lat": 45.444294, "lng": 12.32445 },
+      { "letter": "B", "lat": 45.444424, "lng": 12.324183 }
+    ]
+  },
+  {
+    "stationId": "actv_lido_sme",
+    "name": "Lido S.M.E.",
+    "docks": [
+      { "letter": "A", "lat": 45.418144, "lng": 12.368973 },
+      { "letter": "B", "lat": 45.417992, "lng": 12.368725 },
+      { "letter": "C", "lat": 45.417683, "lng": 12.368217 },
+      { "letter": "D", "lat": 45.41748, "lng": 12.367735 },
+      { "letter": "E", "lat": 45.417358, "lng": 12.36754 }
+    ]
+  },
+  {
+    "stationId": "actv_murano_colonna",
+    "name": "Murano Colonna",
+    "docks": [
+      { "letter": "A", "lat": 45.451107, "lng": 12.349192 },
+      { "letter": "B", "lat": 45.451111, "lng": 12.348869 },
+      { "letter": "C", "lat": 45.451134, "lng": 12.348564 }
+    ]
+  },
+  {
+    "stationId": "actv_murano_faro",
+    "name": "Murano Faro",
+    "docks": [
+      { "letter": "A", "lat": 45.452663, "lng": 12.354642 },
+      { "letter": "B", "lat": 45.452557, "lng": 12.354241 }
+    ]
+  },
+  {
+    "stationId": "actv_murano_museo",
+    "name": "Murano Museo",
+    "docks": [
+      { "letter": "A", "lat": 45.456104, "lng": 12.355435 },
+      { "letter": "B", "lat": 45.456139, "lng": 12.355189 }
+    ]
+  },
+  {
+    "stationId": "actv_ple_roma",
+    "name": "P.le Roma",
+    "docks": [
+      { "letter": "B", "lat": 45.4389, "lng": 12.316018 },
+      { "letter": "C", "lat": 45.43985, "lng": 12.317839 },
+      { "letter": "D", "lat": 45.439556, "lng": 12.318337 },
+      { "letter": "E", "lat": 45.439388, "lng": 12.318463 },
+      { "letter": "F", "lat": 45.438923, "lng": 12.31883 },
+      { "letter": "G", "lat": 45.438816, "lng": 12.319038 }
+    ]
+  },
+  {
+    "stationId": "actv_punta_sabbioni",
+    "name": "Punta Sabbioni",
+    "docks": [
+      { "letter": "A", "lat": 45.447338, "lng": 12.424333 },
+      { "letter": "B", "lat": 45.447639, "lng": 12.424682 }
+    ]
+  },
+  {
+    "stationId": "actv_rialto",
+    "name": "Rialto",
+    "docks": [
+      { "letter": "A", "lat": 45.436981, "lng": 12.334541 },
+      { "letter": "B", "lat": 45.437088, "lng": 12.334779 },
+      { "letter": "C", "lat": 45.437428, "lng": 12.335405 },
+      { "letter": "D", "lat": 45.437584, "lng": 12.335558 }
+    ]
+  },
+  {
+    "stationId": "actv_riva_de_biasio",
+    "name": "Riva de Biasio",
+    "docks": [
+      { "letter": "A", "lat": 45.44183, "lng": 12.325079 },
+      { "letter": "B", "lat": 45.441998, "lng": 12.325667 }
+    ]
+  },
+  {
+    "stationId": "actv_s_marco_vallaresso",
+    "name": "S. Marco Vallaresso",
+    "docks": [
+      { "letter": "A", "lat": 45.432186, "lng": 12.337525 },
+      { "letter": "B", "lat": 45.432125, "lng": 12.337271 }
+    ]
+  },
+  {
+    "stationId": "actv_s_marco-san_zaccaria",
+    "name": "S. Marco-San Zaccaria",
+    "docks": [
+      { "letter": "A", "lat": 45.433395, "lng": 12.344964 },
+      { "letter": "B", "lat": 45.433514, "lng": 12.344095 },
+      { "letter": "C", "lat": 45.433491, "lng": 12.343048 },
+      { "letter": "D", "lat": 45.433456, "lng": 12.342809 },
+      { "letter": "E", "lat": 45.433384, "lng": 12.342215 },
+      { "letter": "F", "lat": 45.433342, "lng": 12.342007 }
+    ]
+  },
+  {
+    "stationId": "actv_s_marcuola-casino'",
+    "name": "S. Marcuola-Casino'",
+    "docks": [
+      { "letter": "A", "lat": 45.442444, "lng": 12.32882 },
+      { "letter": "B", "lat": 45.442513, "lng": 12.328278 }
+    ]
+  },
+  {
+    "stationId": "actv_s_toma'",
+    "name": "S. Toma'",
+    "docks": [
+      { "letter": "A", "lat": 45.435249, "lng": 12.328128 },
+      { "letter": "B", "lat": 45.435184, "lng": 12.327917 }
+    ]
+  },
+  {
+    "stationId": "actv_selena-stadio_penzo",
+    "name": "S.Elena-Stadio Penzo",
+    "docks": [
+      { "letter": "B", "lat": 45.42532, "lng": 12.360782 },
+      { "letter": "C", "lat": 45.425426, "lng": 12.360565 }
+    ]
+  },
+  {
+    "stationId": "actv_sacca_fisola",
+    "name": "Sacca Fisola",
+    "docks": [
+      { "letter": "A", "lat": 45.429008, "lng": 12.315648 },
+      { "letter": "B", "lat": 45.428959, "lng": 12.316327 }
+    ]
+  },
+  {
+    "stationId": "actv_tronchetto",
+    "name": "Tronchetto",
+    "docks": [
+      { "letter": "A", "lat": 45.440308, "lng": 12.306533 },
+      { "letter": "B", "lat": 45.440094, "lng": 12.306348 }
+    ]
+  },
+  {
+    "stationId": "actv_zattere",
+    "name": "Zattere",
+    "docks": [
+      { "letter": "A", "lat": 45.429153, "lng": 12.3268 },
+      { "letter": "B", "lat": 45.42926, "lng": 12.32628 }
+    ]
+  },
+  {
+    "stationId": "actv_zitelle",
+    "name": "Zitelle",
+    "docks": [
+      { "letter": "A", "lat": 45.426624, "lng": 12.337678 },
+      { "letter": "B", "lat": 45.42672, "lng": 12.337905 }
+    ]
+  }
+]
