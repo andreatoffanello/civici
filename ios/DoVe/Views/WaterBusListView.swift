@@ -311,7 +311,7 @@ private struct WaterBusMapView: View {
                 WaterBusMapCard(stop: stop, vm: vm, locationManager: locationManager)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 90)
+                    .padding(.bottom, 16)
             }
 
             // Center on user button
@@ -407,16 +407,12 @@ private struct WaterBusStopPin: View {
 
             // Line badges (close zoom only)
             if zoomLevel == .close || isSelected {
-                HStack(spacing: 2) {
-                    ForEach(stop.lines.prefix(5), id: \.self) { line in
+                FlowLayout(spacing: 2) {
+                    ForEach(stop.lines, id: \.self) { line in
                         LineBadge(line: line, vm: vm, size: .small)
                     }
-                    if stop.lines.count > 5 {
-                        Text("+\(stop.lines.count - 5)")
-                            .font(.system(size: 9, weight: .bold))
-                            .foregroundStyle(.secondary)
-                    }
                 }
+                .frame(maxWidth: 160)
             }
         }
         .frame(minWidth: 44, minHeight: 44)
@@ -437,22 +433,18 @@ private struct WaterBusMapCard: View {
     var body: some View {
         NavigationLink(value: stop) {
             VStack(alignment: .leading, spacing: 10) {
-                // Name + distance
-                HStack(spacing: 10) {
-                    Image(systemName: "ferry.fill")
-                        .font(.system(size: 16))
-                        .foregroundStyle(Color.doVeNavigation)
-
+                // Header: name + distance + chevron
+                HStack(spacing: 8) {
                     Text(stop.name)
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.system(size: 18, weight: .bold))
                         .foregroundStyle(.primary)
                         .lineLimit(1)
 
                     Spacer()
 
                     if let dist = locationManager.formattedDistance(to: stop.coordinate) {
-                        Text(dist)
-                            .font(.system(size: 13))
+                        Label(dist, systemImage: "location.fill")
+                            .font(.system(size: 12))
                             .foregroundColor(Color(.secondaryLabel))
                     }
 
@@ -461,25 +453,60 @@ private struct WaterBusMapCard: View {
                         .foregroundColor(Color(.tertiaryLabel))
                 }
 
-                // Lines badges
-                ScrollView(.horizontal, showsIndicators: false) {
-                    GroupedLineBadges(stop: stop, vm: vm, size: .small)
+                // Lines by company
+                let groups = vm.linesBySource(for: stop)
+                VStack(alignment: .leading, spacing: 5) {
+                    if !groups.actv.isEmpty {
+                        HStack(spacing: 6) {
+                            Image("logo-actv")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 14)
+                            ForEach(groups.actv, id: \.self) { line in
+                                LineBadge(line: line, vm: vm, size: .small)
+                            }
+                        }
+                    }
+                    if !groups.alilaguna.isEmpty {
+                        HStack(spacing: 6) {
+                            Image("logo-alilaguna")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 14)
+                            ForEach(groups.alilaguna, id: \.self) { line in
+                                LineBadge(line: line, vm: vm, size: .small)
+                            }
+                        }
+                    }
                 }
 
                 // Next departures
                 let next = vm.nextDepartures(for: stop, count: 3)
                 if !next.isEmpty {
-                    HStack(spacing: 14) {
+                    Divider()
+                    HStack(spacing: 12) {
                         ForEach(next) { dep in
-                            HStack(spacing: 5) {
+                            HStack(spacing: 4) {
+                                if dep.isImminent {
+                                    Circle()
+                                        .fill(Color(hex: "38A169"))
+                                        .frame(width: 5, height: 5)
+                                        .modifier(PulseModifier())
+                                }
                                 LineBadge(line: dep.line, vm: vm, size: .small)
                                 VStack(alignment: .leading, spacing: 0) {
                                     Text(dep.time)
                                         .font(.system(size: 13, weight: .medium, design: .monospaced))
                                         .foregroundStyle(.primary)
-                                    Text(dep.countdownLabel)
-                                        .font(.system(size: 11))
-                                        .foregroundStyle(dep.isSoon ? AnyShapeStyle(Color(hex: "38A169")) : AnyShapeStyle(Color(.secondaryLabel)))
+                                    let parsed = parseDock(from: dep.headsign)
+                                    HStack(spacing: 2) {
+                                        Text(dep.countdownLabel)
+                                            .font(.system(size: 11))
+                                            .foregroundStyle(dep.isSoon ? Color(hex: "38A169") : Color(.secondaryLabel))
+                                        if let dock = parsed.dock {
+                                            DockBadge(letter: dock, size: .small)
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -490,7 +517,7 @@ private struct WaterBusMapCard: View {
             .padding(16)
             .background(.regularMaterial)
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
+            .shadow(color: .black.opacity(0.15), radius: 10, y: 4)
         }
         .buttonStyle(.plain)
     }

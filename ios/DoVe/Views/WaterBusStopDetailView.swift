@@ -458,7 +458,7 @@ struct FullScheduleView: View {
 
 // MARK: - Flow Layout
 
-private struct FlowLayout: Layout {
+struct FlowLayout: Layout {
     var spacing: CGFloat = 6
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {

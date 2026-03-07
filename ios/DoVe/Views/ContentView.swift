@@ -6,6 +6,14 @@ struct ContentView: View {
     @State private var selectedTab: AppTab = .home
     @State private var waterBusPath = NavigationPath()
 
+    private var tabTintColor: Color {
+        switch selectedTab {
+        case .home, .search: Color.doVeAccent
+        case .waterBus: Color.doVeNavigation
+        case .services: Color.doVeServices
+        }
+    }
+
     var body: some View {
         TabView(selection: $selectedTab) {
             Tab(strings.tabHome, systemImage: "house.fill", value: .home) {
@@ -32,7 +40,7 @@ struct ContentView: View {
                 }
             }
         }
-        .tint(Color.doVeAccent)
+        .tint(tabTintColor)
         .onOpenURL { url in
             handleDeepLink(url)
         }
