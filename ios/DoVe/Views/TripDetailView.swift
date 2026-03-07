@@ -226,42 +226,49 @@ struct TripDetailView: View {
                                         .frame(width: isTerminal || isOrigin ? 5 : 0)
                                 )
                         }
-                        .frame(width: 20, height: 40)
+                        .frame(width: 20)
+                        .frame(minHeight: 40)
                         .padding(.horizontal, 8)
 
                         // Stop info
                         VStack(alignment: .leading, spacing: 2) {
+                            // Nome fermata
                             Text(tripStop.stop.name)
                                 .font(.system(size: 15, weight: isTerminal || isOrigin ? .semibold : .regular))
                                 .foregroundStyle(isPast ? Color(.tertiaryLabel) : isOrigin ? lineColor : .primary)
                                 .lineLimit(1)
 
-                            HStack(spacing: 4) {
-                                if let dist = locationManager.formattedDistance(to: tripStop.stop.coordinate) {
-                                    Text(dist)
-                                        .font(.system(size: 11))
-                                        .foregroundColor(Color(.tertiaryLabel))
-                                }
+                            // Distanza
+                            if let dist = locationManager.formattedDistance(to: tripStop.stop.coordinate) {
+                                Text(dist)
+                                    .font(.system(size: 11))
+                                    .foregroundColor(Color(.tertiaryLabel))
+                            }
 
-                                if !otherLines.isEmpty && !isPast {
-                                    HStack(spacing: 3) {
-                                        ForEach(otherLines.prefix(6), id: \.self) { line in
-                                            LineBadge(line: line, vm: vm, size: .tiny)
-                                        }
-                                        if otherLines.count > 6 {
-                                            Text("+\(otherLines.count - 6)")
-                                                .font(.system(size: 9, weight: .bold))
-                                                .foregroundColor(Color(.secondaryLabel))
-                                        }
+                            // Badge coincidenze su riga separata
+                            if !otherLines.isEmpty && !isPast {
+                                HStack(spacing: 3) {
+                                    Ph.arrowsLeftRight.bold
+                                        .renderingMode(.template)
+                                        .frame(width: 8, height: 8)
+                                        .foregroundColor(Color(.tertiaryLabel))
+                                    ForEach(otherLines.prefix(5), id: \.self) { line in
+                                        LineBadge(line: line, vm: vm, size: .tiny)
+                                    }
+                                    if otherLines.count > 5 {
+                                        Text("+\(otherLines.count - 5)")
+                                            .font(.system(size: 9, weight: .bold))
+                                            .foregroundColor(Color(.secondaryLabel))
                                     }
                                 }
+                                .padding(.top, 1)
                             }
                         }
 
                         Spacer(minLength: 6)
 
                         // Dock badge + chevron aligned right
-                        HStack(spacing: 6) {
+                        VStack(spacing: 4) {
                             if let dock = tripStop.dock {
                                 DockBadge(letter: dock, size: .small)
                                     .opacity(isPast ? 0.4 : 1)
@@ -274,7 +281,7 @@ struct TripDetailView: View {
                         }
                     }
                     .padding(.horizontal, 20)
-                    .padding(.vertical, 2)
+                    .padding(.vertical, !otherLines.isEmpty && !isPast ? 6 : 2)
                     .background(isOrigin ? lineColor.opacity(0.05) : .clear)
                     .contentShape(Rectangle())
                     .onTapGesture {
@@ -318,27 +325,32 @@ struct TripDetailView: View {
             // Connections list
             VStack(alignment: .leading, spacing: 0) {
                 if conns.isEmpty {
-                    Text("Nessuna coincidenza")
-                        .font(.system(size: 12))
+                    Text("Nessuna coincidenza entro 30 min")
+                        .font(.system(size: 11))
                         .foregroundColor(Color(.tertiaryLabel))
                         .padding(.vertical, 6)
                 } else {
+                    // Header
+                    Text("COINCIDENZE")
+                        .font(.system(size: 9, weight: .bold, design: .rounded))
+                        .tracking(0.5)
+                        .foregroundColor(Color(.tertiaryLabel))
+                        .padding(.top, 6)
+                        .padding(.bottom, 4)
+
                     ForEach(Array(conns.enumerated()), id: \.element.departure.id) { i, conn in
                         let parsed = parseDock(from: conn.departure.headsign)
                         HStack(spacing: 0) {
-                            // Badge fisso a sinistra
-                            LineBadge(line: conn.line, vm: vm, size: .tiny)
-                                .frame(width: 32, alignment: .leading)
+                            LineBadge(line: conn.line, vm: vm, size: .small)
+                                .frame(width: 38, alignment: .leading)
 
-                            // Orario fisso
                             Text(conn.departure.time)
-                                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                                .font(.system(size: 13, weight: .medium, design: .monospaced))
                                 .foregroundStyle(.primary)
-                                .frame(width: 42, alignment: .leading)
+                                .frame(width: 48, alignment: .leading)
 
-                            // Destinazione
                             Text(parsed.name)
-                                .font(.system(size: 12))
+                                .font(.system(size: 13))
                                 .foregroundColor(Color(.secondaryLabel))
                                 .lineLimit(1)
 
@@ -356,9 +368,9 @@ struct TripDetailView: View {
                 }
             }
             .padding(.vertical, 2)
-            .padding(.horizontal, 10)
-            .background(Color(.systemGray6).opacity(0.6))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .padding(.horizontal, 12)
+            .background(Color(.systemGray6).opacity(0.5))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(.trailing, 20)
             .padding(.bottom, 4)
         }
