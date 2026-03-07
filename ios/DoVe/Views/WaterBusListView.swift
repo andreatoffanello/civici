@@ -658,6 +658,61 @@ struct LineBadge: View {
     }
 }
 
+// MARK: - Dock Badge (imbarcadero — sfondo giallo, testo nero, come segnaletica veneziana)
+
+struct DockBadge: View {
+    let letter: String
+    let size: DockSize
+
+    enum DockSize {
+        case small, medium
+
+        var fontSize: CGFloat {
+            switch self {
+            case .small: 10
+            case .medium: 12
+            }
+        }
+
+        var minWidth: CGFloat {
+            switch self {
+            case .small: 16
+            case .medium: 20
+            }
+        }
+    }
+
+    var body: some View {
+        Text(letter)
+            .font(.system(size: size.fontSize, weight: .heavy, design: .rounded))
+            .foregroundStyle(.black)
+            .frame(minWidth: size.minWidth)
+            .padding(.horizontal, 3)
+            .padding(.vertical, 2)
+            .background(Color(red: 1.0, green: 0.82, blue: 0.0))
+            .clipShape(RoundedRectangle(cornerRadius: 3))
+    }
+}
+
+/// Estrae la lettera dell'imbarcadero dalla fine di un headsign (pattern: `"X`)
+/// Ritorna (nome pulito, lettera dock opzionale)
+func parseDock(from headsign: String) -> (name: String, dock: String?) {
+    // Pattern: `"X` o `"X"` alla fine (una lettera maiuscola dopo virgolette)
+    let trimmed = headsign.hasSuffix("\"")
+        ? String(headsign.dropLast()).trimmingCharacters(in: .whitespaces)
+        : headsign
+    guard let quoteRange = trimmed.range(of: " \"", options: .backwards),
+          trimmed.distance(from: quoteRange.upperBound, to: trimmed.endIndex) <= 2 else {
+        return (headsign, nil)
+    }
+    let letter = String(trimmed[quoteRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+    guard letter.count == 1, letter.first?.isUppercase == true else {
+        return (headsign, nil)
+    }
+    let name = String(trimmed[..<quoteRange.lowerBound])
+    return (name, letter)
+}
+
 // MARK: - Grouped Line Badges (ACTV | Alilaguna)
 
 struct GroupedLineBadges: View {
@@ -783,15 +838,12 @@ private struct WaterBusRouteRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 if route.directions.count == 2 {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(route.directions[0].headsign)
-                            .lineLimit(1)
+                        headsignRow(route.directions[0].headsign, color: .primary)
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.up.arrow.down")
                                 .font(.system(size: 10, weight: .semibold))
                                 .foregroundColor(Color(.tertiaryLabel))
-                            Text(route.directions[1].headsign)
-                                .lineLimit(1)
-                                .foregroundColor(Color(.secondaryLabel))
+                            headsignRow(route.directions[1].headsign, color: Color(.secondaryLabel))
                         }
                     }
                     .font(.system(size: 14, weight: .medium))
@@ -800,11 +852,9 @@ private struct WaterBusRouteRow: View {
                         Image(systemName: "arrow.right")
                             .font(.system(size: 10, weight: .semibold))
                             .foregroundColor(Color(.secondaryLabel))
-                        Text(dir.headsign)
-                            .lineLimit(1)
+                        headsignRow(dir.headsign, color: .primary)
                     }
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.primary)
                 } else {
                     Text(route.longName)
                         .font(.system(size: 14, weight: .medium))
@@ -822,5 +872,18 @@ private struct WaterBusRouteRow: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .contentShape(Rectangle())
+    }
+
+    @ViewBuilder
+    private func headsignRow(_ headsign: String, color: Color) -> some View {
+        let parsed = parseDock(from: headsign)
+        HStack(spacing: 4) {
+            Text(parsed.name)
+                .lineLimit(1)
+                .foregroundColor(color)
+            if let dock = parsed.dock {
+                DockBadge(letter: dock, size: .small)
+            }
+        }
     }
 }

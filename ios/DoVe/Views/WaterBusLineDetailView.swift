@@ -60,13 +60,17 @@ struct WaterBusLineDetailView: View {
 
                     // Headsign for single-direction routes (no picker shown)
                     if route.directions.count <= 1, let direction {
+                        let parsed = parseDock(from: direction.headsign)
                         HStack(spacing: 5) {
                             Image(systemName: "arrow.right")
                                 .font(.system(size: 11, weight: .semibold))
                                 .foregroundColor(Color(.secondaryLabel))
-                            Text(direction.headsign)
+                            Text(parsed.name)
                                 .font(.system(size: 15, weight: .semibold))
                                 .lineLimit(1)
+                            if let dock = parsed.dock {
+                                DockBadge(letter: dock, size: .medium)
+                            }
                         }
                         .padding(.horizontal, 20)
                         .padding(.bottom, 12)
@@ -93,9 +97,8 @@ struct WaterBusLineDetailView: View {
             LineBadge(line: route.name, vm: vm, size: .medium)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(route.longName)
+                routeNameView
                     .font(.system(size: 16, weight: .semibold))
-                    .lineLimit(2)
 
                 HStack(spacing: 6) {
                     Text(strings.waterBusStopsCount(stopsCount))
@@ -242,6 +245,33 @@ struct WaterBusLineDetailView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+            }
+        }
+    }
+
+    // MARK: - Route Name with Dock Badges
+
+    @ViewBuilder
+    private var routeNameView: some View {
+        let parts = route.longName.components(separatedBy: " - ")
+        if parts.count == 2 {
+            let p1 = parseDock(from: parts[0])
+            let p2 = parseDock(from: parts[1])
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 4) {
+                    Text(p1.name).lineLimit(1)
+                    if let d = p1.dock { DockBadge(letter: d, size: .medium) }
+                }
+                HStack(spacing: 4) {
+                    Text(p2.name).lineLimit(1)
+                    if let d = p2.dock { DockBadge(letter: d, size: .medium) }
+                }
+            }
+        } else {
+            let parsed = parseDock(from: route.longName)
+            HStack(spacing: 4) {
+                Text(parsed.name).lineLimit(2)
+                if let d = parsed.dock { DockBadge(letter: d, size: .medium) }
             }
         }
     }
