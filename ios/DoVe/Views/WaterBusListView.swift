@@ -240,6 +240,21 @@ private struct WaterBusMapView: View {
         span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04)
     ))
     @State private var selectedStop: WaterBusStop?
+    @State private var zoomLevel: ZoomLevel = .far
+
+    enum ZoomLevel: Hashable {
+        case far    // tutta Venezia — solo pin
+        case medium // quartiere — pin + nome
+        case close  // fermata — pin + nome + linee
+
+        init(latitudeDelta: Double) {
+            switch latitudeDelta {
+            case ..<0.008: self = .close
+            case ..<0.02:  self = .medium
+            default:       self = .far
+            }
+        }
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -254,20 +269,28 @@ private struct WaterBusMapView: View {
                 }
 
                 ForEach(stops) { stop in
-                    Annotation("", coordinate: stop.coordinate) {
+                    Annotation("", coordinate: stop.coordinate, anchor: zoomLevel == .far && selectedStop?.id != stop.id ? .center : .bottom) {
                         WaterBusStopPin(
                             stop: stop,
-                            isSelected: selectedStop?.id == stop.id
+                            isSelected: selectedStop?.id == stop.id,
+                            zoomLevel: zoomLevel,
+                            vm: vm
                         )
                         .onTapGesture {
                             withAnimation(.spring(duration: 0.25)) {
-                                selectedStop = stop
+                                selectedStop = selectedStop?.id == stop.id ? nil : stop
                             }
                         }
                     }
                 }
             }
             .mapStyle(.standard(pointsOfInterest: .excludingAll))
+            .onMapCameraChange(frequency: .continuous) { context in
+                let newZoom = ZoomLevel(latitudeDelta: context.region.span.latitudeDelta)
+                if newZoom != zoomLevel {
+                    zoomLevel = newZoom
+                }
+            }
             .onAppear {
                 let veniceLocation = CLLocation(latitude: Self.veniceCenter.latitude, longitude: Self.veniceCenter.longitude)
                 if let userLocation, userLocation.distance(from: veniceLocation) < 20_000 {
@@ -280,13 +303,6 @@ private struct WaterBusMapView: View {
                         center: Self.veniceCenter,
                         span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04)
                     ))
-                }
-            }
-            .onTapGesture {
-                if selectedStop != nil {
-                    withAnimation(.spring(duration: 0.25)) {
-                        selectedStop = nil
-                    }
                 }
             }
 
@@ -327,6 +343,7 @@ private struct WaterBusMapView: View {
             }
         }
     }
+
 }
 
 // MARK: - Stop Map Pin
@@ -334,37 +351,77 @@ private struct WaterBusMapView: View {
 private struct WaterBusStopPin: View {
     let stop: WaterBusStop
     let isSelected: Bool
+    let zoomLevel: WaterBusMapView.ZoomLevel
+    let vm: WaterBusViewModel
 
-    /// Pin size scales with number of lines (importance of the hub)
-    private var dotSize: CGFloat {
-        if isSelected { return 30 }
+    private var iconSize: CGFloat {
+        if isSelected { return 32 }
         let count = stop.lines.count
         switch count {
-        case 0...2: return 14
-        case 3...5: return 17
-        default:    return 20
+        case 0...2: return 22
+        case 3...5: return 26
+        default:    return 30
         }
     }
 
-    private var innerSize: CGFloat {
-        isSelected ? 12 : dotSize * 0.4
+    private var ferrySize: CGFloat {
+        if isSelected { return 16 }
+        let count = stop.lines.count
+        switch count {
+        case 0...2: return 10
+        case 3...5: return 12
+        default:    return 14
+        }
     }
 
     var body: some View {
-        ZStack {
-            Circle()
-                .fill(.white)
-                .frame(width: dotSize, height: dotSize)
+        VStack(spacing: 2) {
+            // Pin icon
+            ZStack {
+                Circle()
+                    .fill(.white)
+                    .frame(width: iconSize, height: iconSize)
 
-            Circle()
-                .fill(Color.doVeNavigation)
-                .frame(width: dotSize - 3, height: dotSize - 3)
+                Circle()
+                    .fill(Color.doVeNavigation)
+                    .frame(width: iconSize - 3, height: iconSize - 3)
 
-            Circle()
-                .fill(.white)
-                .frame(width: innerSize, height: innerSize)
+                Image(systemName: "ferry.fill")
+                    .font(.system(size: ferrySize))
+                    .foregroundStyle(.white)
+            }
+            .shadow(color: .black.opacity(0.2), radius: isSelected ? 5 : 2.5, y: isSelected ? 2 : 1)
+
+            // Name label (medium + close zoom)
+            if zoomLevel != .far || isSelected {
+                Text(stop.name)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(.white.opacity(0.9))
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                    .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
+            }
+
+            // Line badges (close zoom only)
+            if zoomLevel == .close || isSelected {
+                HStack(spacing: 2) {
+                    ForEach(stop.lines.prefix(5), id: \.self) { line in
+                        LineBadge(line: line, vm: vm, size: .small)
+                    }
+                    if stop.lines.count > 5 {
+                        Text("+\(stop.lines.count - 5)")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
         }
-        .shadow(color: .black.opacity(0.2), radius: isSelected ? 5 : 2.5, y: isSelected ? 2 : 1)
+        .frame(minWidth: 44, minHeight: 44)
+        .contentShape(Rectangle())
+        .animation(.easeInOut(duration: 0.2), value: zoomLevel)
         .animation(.spring(duration: 0.2), value: isSelected)
     }
 }
