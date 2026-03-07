@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import PhosphorSwift
 
 struct ResultView: View {
     @Environment(SearchViewModel.self) private var viewModel
@@ -190,8 +191,9 @@ struct ResultView: View {
                                     mapCameraPosition = .camera(cameraFor(civico))
                                 }
                             } label: {
-                                Image(systemName: "scope")
-                                    .font(.body.weight(.semibold))
+                                Ph.crosshairSimple.duotone
+                                    .renderingMode(.template)
+                                    .frame(width: 20, height: 20)
                                     .frame(width: 40, height: 40)
                                     .adaptiveGlassEffect(interactive: true, in: Circle())
                             }
@@ -210,8 +212,9 @@ struct ResultView: View {
                                     )
                                 }
                             } label: {
-                                Image(systemName: "location.north.fill")
-                                    .font(.body.weight(.semibold))
+                                Ph.compassRose.duotone
+                                    .renderingMode(.template)
+                                    .frame(width: 20, height: 20)
                                     .frame(width: 40, height: 40)
                                     .adaptiveGlassEffect(interactive: true, in: Circle())
                             }
@@ -224,7 +227,13 @@ struct ResultView: View {
                         Button {
                             navigateToCivico(civico)
                         } label: {
-                            Label(strings.navigate, systemImage: "arrow.triangle.turn.up.right.diamond")
+                            Label {
+                                Text(strings.navigate)
+                            } icon: {
+                                Ph.navigationArrow.duotone
+                                    .renderingMode(.template)
+                                    .frame(width: 18, height: 18)
+                            }
                                 .font(.body.weight(.medium))
                                 .padding(.horizontal, 24)
                                 .padding(.vertical, 14)

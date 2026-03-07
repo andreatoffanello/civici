@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreLocation
 import UserNotifications
+import PhosphorSwift
 
 enum PreferredNavApp: String, CaseIterable, Identifiable {
     case alwaysAsk = "ask"
@@ -115,7 +116,7 @@ struct SettingsView: View {
                         Text(scheme.displayName(strings: strings)).tag(scheme.rawValue)
                     }
                 } label: {
-                    Label(strings.theme, systemImage: "paintpalette")
+                    PhLabel(strings.theme, icon: .palette)
                 }
             } header: {
                 Text(strings.sectionAppearance)
@@ -128,7 +129,7 @@ struct SettingsView: View {
                         Text(option.displayName).tag(option.rawValue)
                     }
                 } label: {
-                    Label(strings.mapView, systemImage: "cube")
+                    PhLabel(strings.mapView, icon: .cube)
                 }
 
                 Picker(selection: $preferredNavApp) {
@@ -136,7 +137,7 @@ struct SettingsView: View {
                         Text(app.displayName(strings: strings)).tag(app.rawValue)
                     }
                 } label: {
-                    Label(strings.navigationLabel, systemImage: "arrow.triangle.turn.up.right.diamond")
+                    PhLabel(strings.navigationLabel, icon: .navigationArrow)
                 }
             } header: {
                 Text(strings.sectionMap)
@@ -151,7 +152,7 @@ struct SettingsView: View {
                         Text("\(lang.flag) \(lang.displayName)").tag(lang.rawValue)
                     }
                 } label: {
-                    Label(strings.languageLabel, systemImage: "globe")
+                    PhLabel(strings.languageLabel, icon: .globeHemisphereEast)
                 }
             } header: {
                 Text(strings.sectionLanguage)
@@ -162,13 +163,13 @@ struct SettingsView: View {
             // Permissions section
             Section {
                 HStack {
-                    Label(strings.locationLabel, systemImage: "location")
+                    PhLabel(strings.locationLabel, icon: .mapPin)
                     Spacer()
                     permissionBadge(for: locationManager.authorizationStatus)
                 }
 
                 HStack {
-                    Label(strings.notificationsLabel, systemImage: "bell")
+                    PhLabel(strings.notificationsLabel, icon: .bell)
                     Spacer()
                     permissionBadge(forNotification: notificationManager.authorizationStatus)
                 }
@@ -239,6 +240,27 @@ struct SettingsView: View {
             Text(strings.permissionUnknown)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+        }
+    }
+}
+
+/// Label with Phosphor duotone icon for settings rows
+private struct PhLabel: View {
+    let text: String
+    let icon: Ph
+
+    init(_ text: String, icon: Ph) {
+        self.text = text
+        self.icon = icon
+    }
+
+    var body: some View {
+        Label {
+            Text(text)
+        } icon: {
+            icon.duotone
+                .renderingMode(.template)
+                .frame(width: 18, height: 18)
         }
     }
 }

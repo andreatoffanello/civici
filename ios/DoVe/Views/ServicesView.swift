@@ -1,4 +1,5 @@
 import SwiftUI
+import PhosphorSwift
 
 struct ServicesView: View {
     @Environment(\.strings) private var strings
@@ -11,10 +12,10 @@ struct ServicesView: View {
             VStack(spacing: 0) {
                 // Header
                 VStack(spacing: 8) {
-                    Image(systemName: "building.2.crop.circle")
-                        .font(.system(size: 48, weight: .light))
+                    Ph.buildings.duotone
+                        .renderingMode(.template)
+                        .frame(width: 48, height: 48)
                         .foregroundStyle(Color.doVeServices)
-                        .symbolRenderingMode(.hierarchical)
 
                     Text(strings.servicesTitle)
                         .font(.system(size: 28, weight: .bold))
@@ -48,7 +49,7 @@ struct ServicesView: View {
                     showPharmacies = true
                 } label: {
                     ServiceCard(
-                        icon: "cross.case.fill",
+                        icon: .firstAidKit,
                         iconColor: Color.doVeServices,
                         title: strings.pharmaciesTitle,
                         subtitle: pharmacySummary,
@@ -98,7 +99,7 @@ struct ServicesView: View {
 // MARK: - ServiceCard
 
 struct ServiceCard: View {
-    let icon: String
+    let icon: Ph
     let iconColor: Color
     let title: String
     let subtitle: String
@@ -107,8 +108,9 @@ struct ServiceCard: View {
     var body: some View {
         HStack(spacing: 16) {
             // Icon
-            Image(systemName: icon)
-                .font(.system(size: 22, weight: .medium))
+            icon.duotone
+                .renderingMode(.template)
+                .frame(width: 24, height: 24)
                 .foregroundStyle(iconColor)
                 .frame(width: 52, height: 52)
                 .background(iconColor.opacity(0.1))

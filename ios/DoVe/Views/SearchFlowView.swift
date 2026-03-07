@@ -1,4 +1,5 @@
 import SwiftUI
+import PhosphorSwift
 
 struct SearchFlowView: View {
     @Environment(SearchViewModel.self) private var viewModel
@@ -39,7 +40,9 @@ struct SearchFlowView: View {
                 Button {
                     showInfo = true
                 } label: {
-                    Image(systemName: "info.circle")
+                    Ph.info.duotone
+                        .renderingMode(.template)
+                        .frame(width: 20, height: 20)
                         .foregroundStyle(.secondary)
                 }
             }

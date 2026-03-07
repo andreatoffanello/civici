@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import PhosphorSwift
 
 struct PharmacyDetailView: View {
     let pharmacy: Pharmacy
@@ -72,8 +73,9 @@ struct PharmacyDetailView: View {
     private var pharmacyMarker: some View {
         VStack(spacing: 0) {
             VStack(spacing: 2) {
-                Image(systemName: "cross.case.fill")
-                    .font(.system(size: 16, weight: .medium))
+                Ph.firstAidKit.duotone
+                    .renderingMode(.template)
+                    .frame(width: 18, height: 18)
                     .foregroundStyle(pharmacy.isOpen() ? Color(hex: "38A169") : Color(hex: "E53E3E"))
 
                 if let distance = locationManager.formattedDistance(to: pharmacy.coordinate) {
@@ -131,7 +133,7 @@ struct PharmacyDetailView: View {
             VStack(spacing: 0) {
                 // Hours
                 infoRow(
-                    icon: "clock",
+                    icon: .clock,
                     title: strings.pharmacyHoursLabel,
                     value: pharmacy.nextOpeningDescription(strings: strings)
                 )
@@ -140,7 +142,7 @@ struct PharmacyDetailView: View {
 
                 // Phone
                 infoRow(
-                    icon: "phone",
+                    icon: .phone,
                     title: strings.pharmacyPhoneLabel,
                     value: pharmacy.phone
                 )
@@ -149,7 +151,7 @@ struct PharmacyDetailView: View {
 
                 // Area
                 infoRow(
-                    icon: "mappin.circle",
+                    icon: .mapPin,
                     title: strings.pharmacyAreaLabel,
                     value: pharmacy.areaName
                 )
@@ -163,8 +165,8 @@ struct PharmacyDetailView: View {
                     callPharmacy()
                 } label: {
                     HStack(spacing: 6) {
-                        Image(systemName: "phone.fill")
-                            .font(.system(size: 14, weight: .semibold))
+                        Ph.phone.fill
+                            .frame(width: 16, height: 16)
                         Text(strings.pharmacyCall)
                             .font(.system(size: 14, weight: .semibold))
                     }
@@ -180,8 +182,8 @@ struct PharmacyDetailView: View {
                     navigateToPharmacy()
                 } label: {
                     HStack(spacing: 6) {
-                        Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
-                            .font(.system(size: 14, weight: .semibold))
+                        Ph.navigationArrow.fill
+                            .frame(width: 16, height: 16)
                         Text(strings.navigate)
                             .font(.system(size: 14, weight: .semibold))
                     }
@@ -222,10 +224,11 @@ struct PharmacyDetailView: View {
     }
 
     @ViewBuilder
-    private func infoRow(icon: String, title: String, value: String) -> some View {
+    private func infoRow(icon: Ph, title: String, value: String) -> some View {
         HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.system(size: 14, weight: .medium))
+            icon.duotone
+                .renderingMode(.template)
+                .frame(width: 16, height: 16)
                 .foregroundStyle(.secondary)
                 .frame(width: 28, alignment: .center)
 

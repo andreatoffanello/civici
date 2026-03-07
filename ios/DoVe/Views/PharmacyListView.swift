@@ -1,6 +1,7 @@
 import SwiftUI
 import MapKit
 import CoreLocation
+import PhosphorSwift
 
 // MARK: - Main View with Map/List Toggle
 
@@ -60,8 +61,8 @@ struct PharmacyListView: View {
 
                     // Toggle
                     HStack(spacing: 0) {
-                        toggleButton(icon: "map.fill", mode: .map)
-                        toggleButton(icon: "list.bullet", mode: .list)
+                        toggleButton(icon: .mapTrifold, mode: .map)
+                        toggleButton(icon: .listBullets, mode: .list)
                     }
                     .background(.ultraThinMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -89,14 +90,15 @@ struct PharmacyListView: View {
     }
 
     @ViewBuilder
-    private func toggleButton(icon: String, mode: ViewMode) -> some View {
+    private func toggleButton(icon: Ph, mode: ViewMode) -> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
                 viewMode = mode
             }
         } label: {
-            Image(systemName: icon)
-                .font(.system(size: 13, weight: .semibold))
+            icon.duotone
+                .renderingMode(.template)
+                .frame(width: 15, height: 15)
                 .foregroundStyle(viewMode == mode ? .white : .secondary)
                 .frame(width: 34, height: 30)
                 .background(viewMode == mode ? Color.doVeAccent : .clear)
@@ -182,8 +184,9 @@ struct PharmacyMapView: View {
                             ))
                         }
                     } label: {
-                        Image(systemName: "location.fill")
-                            .font(.system(size: 15, weight: .semibold))
+                        Ph.crosshairSimple.duotone
+                            .renderingMode(.template)
+                            .frame(width: 17, height: 17)
                             .foregroundStyle(.primary)
                             .frame(width: 40, height: 40)
                             .background(.regularMaterial)
@@ -237,8 +240,8 @@ struct PharmacyMapPin: View {
                     .frame(width: isSelected ? 36 : 28, height: isSelected ? 36 : 28)
                     .shadow(color: color.opacity(0.4), radius: isSelected ? 6 : 3, y: 2)
 
-                Image(systemName: "cross.case.fill")
-                    .font(.system(size: isSelected ? 16 : 12, weight: .medium))
+                Ph.firstAidKit.fill
+                    .frame(width: isSelected ? 16 : 12, height: isSelected ? 16 : 12)
                     .foregroundStyle(.white)
             }
             .animation(.spring(response: 0.3), value: isSelected)
@@ -274,8 +277,9 @@ struct PharmacyMapCard: View {
                 HStack(spacing: 14) {
                     // Icon
                     VStack(spacing: 4) {
-                        Image(systemName: "cross.case.fill")
-                            .font(.system(size: 18, weight: .medium))
+                        Ph.firstAidKit.duotone
+                            .renderingMode(.template)
+                            .frame(width: 20, height: 20)
                             .foregroundStyle(isOpen ? Color(hex: "38A169") : Color.gray.opacity(0.5))
                             .frame(width: 44, height: 44)
                             .background(isOpen ? Color(hex: "38A169").opacity(0.1) : Color.secondary.opacity(0.06))
@@ -437,8 +441,9 @@ struct PharmacyRow: View {
     var body: some View {
         HStack(spacing: 14) {
             VStack(spacing: 4) {
-                Image(systemName: "cross.case.fill")
-                    .font(.system(size: 18, weight: .medium))
+                Ph.firstAidKit.duotone
+                    .renderingMode(.template)
+                    .frame(width: 20, height: 20)
                     .foregroundStyle(isOpen ? Color(hex: "38A169") : Color.gray.opacity(0.5))
                     .frame(width: 44, height: 44)
                     .background(isOpen ? Color(hex: "38A169").opacity(0.1) : Color.secondary.opacity(0.06))
