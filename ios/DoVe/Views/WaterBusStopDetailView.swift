@@ -12,6 +12,7 @@ struct WaterBusStopDetailView: View {
     @State private var sheetDetent: PresentationDetent = .medium
     @State private var showSheet = false
     @State private var showFullSchedule = false
+    @State private var selectedTrip: TripNavigation?
 
     var body: some View {
         Map(position: $mapPosition) {
@@ -63,6 +64,9 @@ struct WaterBusStopDetailView: View {
             ))
             showSheet = true
         }
+        .navigationDestination(item: $selectedTrip) { nav in
+            TripDetailView(departure: nav.departure, fromStop: nav.stop)
+        }
         .sheet(isPresented: $showSheet) {
             sheetContent
                 .presentationDetents([Self.peekDetent, .medium, .large], selection: $sheetDetent)
@@ -78,54 +82,49 @@ struct WaterBusStopDetailView: View {
     private var sheetContent: some View {
         let next = vm.nextDepartures(for: stop, count: 5)
 
-        return NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    peekHeader
-                    linesSection
+        return ScrollView {
+            VStack(spacing: 0) {
+                peekHeader
+                linesSection
 
-                    if !next.isEmpty {
-                        nextDeparturesSection(next)
-                    } else {
-                        VStack(spacing: 8) {
-                            Ph.boat.duotone
-                                .renderingMode(.template)
-                                .frame(width: 28, height: 28)
-                                .foregroundColor(Color(.tertiaryLabel))
-                            Text(strings.waterBusNoDepartures)
-                                .font(.system(size: 14))
-                                .foregroundColor(Color(.secondaryLabel))
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 32)
+                if !next.isEmpty {
+                    nextDeparturesSection(next)
+                } else {
+                    VStack(spacing: 8) {
+                        Ph.boat.duotone
+                            .renderingMode(.template)
+                            .frame(width: 28, height: 28)
+                            .foregroundColor(Color(.tertiaryLabel))
+                        Text(strings.waterBusNoDepartures)
+                            .font(.system(size: 14))
+                            .foregroundColor(Color(.secondaryLabel))
                     }
-
-                    // Full schedule button
-                    if !stop.departures.isEmpty {
-                        Button {
-                            showFullSchedule = true
-                        } label: {
-                            HStack(spacing: 6) {
-                                Ph.calendarDots.duotone
-                                    .renderingMode(.template)
-                                    .frame(width: 16, height: 16)
-                                Text(strings.waterBusFullSchedule)
-                                    .font(.system(size: 14, weight: .semibold))
-                            }
-                            .foregroundStyle(Color.doVeNavigation)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(Color.doVeNavigation.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 4)
-                        .padding(.bottom, 20)
-                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 32)
                 }
-            }
-            .navigationDestination(for: TripNavigation.self) { nav in
-                TripDetailView(departure: nav.departure, fromStop: nav.stop)
+
+                // Full schedule button
+                if !stop.departures.isEmpty {
+                    Button {
+                        showFullSchedule = true
+                    } label: {
+                        HStack(spacing: 6) {
+                            Ph.calendarDots.duotone
+                                .renderingMode(.template)
+                                .frame(width: 16, height: 16)
+                            Text(strings.waterBusFullSchedule)
+                                .font(.system(size: 14, weight: .semibold))
+                        }
+                        .foregroundStyle(Color.doVeNavigation)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Color.doVeNavigation.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 4)
+                    .padding(.bottom, 20)
+                }
             }
         }
         .fullScreenCover(isPresented: $showFullSchedule) {
@@ -210,7 +209,9 @@ struct WaterBusStopDetailView: View {
             ForEach(Array(departures.enumerated()), id: \.element.id) { index, dep in
                 let isFirst = index == 0
 
-                NavigationLink(value: TripNavigation(departure: dep, stop: stop)) {
+                Button {
+                    selectedTrip = TripNavigation(departure: dep, stop: stop)
+                } label: {
                     HStack(spacing: 0) {
                         // Countdown
                         HStack(spacing: 4) {

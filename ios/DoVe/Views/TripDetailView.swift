@@ -7,55 +7,44 @@ struct TripDetailView: View {
     let fromStop: WaterBusStop
     @Environment(WaterBusViewModel.self) private var vm
     @Environment(LocationManager.self) private var locationManager
-    @Environment(\.strings) private var strings
-    @Environment(\.dismiss) private var dismiss
     @State private var mapPosition: MapCameraPosition = .automatic
-    private static let peekDetent = PresentationDetent.height(130)
-    @State private var sheetDetent: PresentationDetent = .medium
-    @State private var showSheet = false
     @State private var expandedStops: Set<String> = []
 
     var body: some View {
         let trip = vm.reconstructTrip(departure: departure, fromStop: fromStop)
 
-        tripMap(trip: trip)
-            .overlay(alignment: .topLeading) {
-                Button { dismiss() } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .semibold))
-                        Text(fromStop.name)
-                            .font(.system(size: 15, weight: .medium))
-                            .lineLimit(1)
+        ScrollView {
+            VStack(spacing: 0) {
+                // Map header
+                tripMapHeader(trip: trip)
+
+                // Trip info header
+                tripInfoHeader(trip: trip)
+
+                // Timeline
+                if let trip, !trip.stops.isEmpty {
+                    stopsTimeline(trip: trip)
+                } else {
+                    VStack(spacing: 8) {
+                        Ph.boat.duotone
+                            .renderingMode(.template)
+                            .frame(width: 28, height: 28)
+                            .foregroundColor(Color(.tertiaryLabel))
+                        Text("Impossibile ricostruire la corsa")
+                            .font(.system(size: 14))
+                            .foregroundColor(Color(.secondaryLabel))
                     }
-                    .foregroundStyle(.primary)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(.ultraThinMaterial)
-                    .clipShape(Capsule())
-                    .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 32)
                 }
-                .padding(.leading, 16)
-                .padding(.top, 8)
+
+                Color.clear.frame(height: 40)
             }
-            .safeAreaInset(edge: .bottom) {
-                Color.clear.frame(height: sheetDetent == .large ? 0 : sheetDetent == .medium ? UIScreen.main.bounds.height * 0.5 : 130)
-            }
-            .ignoresSafeArea(edges: .bottom)
-            .navigationBarHidden(true)
-            .toolbar(.hidden, for: .tabBar)
-            .onAppear {
-                centerMap(trip: trip)
-                showSheet = true
-            }
-            .sheet(isPresented: $showSheet) {
-                sheetContent(trip: trip)
-                    .presentationDetents([Self.peekDetent, .medium, .large], selection: $sheetDetent)
-                    .presentationDragIndicator(.visible)
-                    .presentationBackgroundInteraction(.enabled(upThrough: .medium))
-                    .presentationCornerRadius(20)
-                    .interactiveDismissDisabled()
-            }
+        }
+        .navigationTitle("Linea \(departure.line)")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
+        .onAppear { centerMap(trip: trip) }
     }
 
     // MARK: - Origin Index
@@ -64,10 +53,9 @@ struct TripDetailView: View {
         stops.firstIndex(where: { $0.stop.id == fromStop.id }) ?? 0
     }
 
-    // MARK: - Map
+    // MARK: - Map Header
 
-    @ViewBuilder
-    private func tripMap(trip: (route: WaterBusRoute, direction: RouteDirection, stops: [TripStop])?) -> some View {
+    private func tripMapHeader(trip: (route: WaterBusRoute, direction: RouteDirection, stops: [TripStop])?) -> some View {
         Map(position: $mapPosition, interactionModes: [.pan, .zoom, .rotate]) {
             if let trip {
                 let lineColor = resolveColor(trip.route.color)
@@ -98,6 +86,10 @@ struct TripDetailView: View {
             }
         }
         .mapStyle(.standard(pointsOfInterest: .excludingAll))
+        .frame(height: 220)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
     }
 
     private func stopPin(color: Color, isOrigin: Bool, isPast: Bool) -> some View {
@@ -112,37 +104,9 @@ struct TripDetailView: View {
         }
     }
 
-    // MARK: - Sheet
+    // MARK: - Trip Info Header
 
-    private func sheetContent(trip: (route: WaterBusRoute, direction: RouteDirection, stops: [TripStop])?) -> some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                peekHeader(trip: trip)
-
-                if let trip, !trip.stops.isEmpty {
-                    stopsTimeline(trip: trip)
-                } else {
-                    VStack(spacing: 8) {
-                        Ph.boat.duotone
-                            .renderingMode(.template)
-                            .frame(width: 28, height: 28)
-                            .foregroundColor(Color(.tertiaryLabel))
-                        Text("Impossibile ricostruire la corsa")
-                            .font(.system(size: 14))
-                            .foregroundColor(Color(.secondaryLabel))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 32)
-                }
-
-                Color.clear.frame(height: 40)
-            }
-        }
-    }
-
-    // MARK: - Peek Header
-
-    private func peekHeader(trip: (route: WaterBusRoute, direction: RouteDirection, stops: [TripStop])?) -> some View {
+    private func tripInfoHeader(trip: (route: WaterBusRoute, direction: RouteDirection, stops: [TripStop])?) -> some View {
         HStack(spacing: 12) {
             LineBadge(line: departure.line, vm: vm, size: .medium)
 
@@ -193,7 +157,7 @@ struct TripDetailView: View {
             Spacer()
         }
         .padding(.horizontal, 20)
-        .padding(.top, 20)
+        .padding(.top, 16)
         .padding(.bottom, 12)
     }
 
@@ -251,20 +215,18 @@ struct TripDetailView: View {
 
                         // Stop info
                         VStack(alignment: .leading, spacing: 2) {
-                            // Nome fermata
                             Text(tripStop.stop.name)
                                 .font(.system(size: 15, weight: isTerminal || isOrigin ? .semibold : .regular))
                                 .foregroundStyle(isPast ? Color(.tertiaryLabel) : isOrigin ? lineColor : .primary)
                                 .lineLimit(1)
 
-                            // Distanza
                             if let dist = locationManager.formattedDistance(to: tripStop.stop.coordinate) {
                                 Text(dist)
                                     .font(.system(size: 11))
                                     .foregroundColor(Color(.tertiaryLabel))
                             }
 
-                            // Badge coincidenze su riga separata
+                            // Connection badges on separate row
                             if !otherLines.isEmpty && !isPast {
                                 HStack(spacing: 3) {
                                     Ph.arrowsLeftRight.bold
@@ -329,10 +291,8 @@ struct TripDetailView: View {
         let conns = vm.connections(at: stop, arrivalTime: arrivalTime, excludingLine: departure.line)
 
         return HStack(spacing: 0) {
-            // Time column placeholder
             Color.clear.frame(width: 52)
 
-            // Timeline continuation
             ZStack {
                 Rectangle()
                     .fill(index < totalStops - 1 ? (index < origin ? lineColor.opacity(0.25) : lineColor) : .clear)
@@ -341,7 +301,6 @@ struct TripDetailView: View {
             .frame(width: 20)
             .padding(.horizontal, 8)
 
-            // Connections list
             VStack(alignment: .leading, spacing: 0) {
                 if conns.isEmpty {
                     Text("Nessuna coincidenza entro 30 min")
@@ -349,7 +308,6 @@ struct TripDetailView: View {
                         .foregroundColor(Color(.tertiaryLabel))
                         .padding(.vertical, 6)
                 } else {
-                    // Header
                     Text("COINCIDENZE")
                         .font(.system(size: 9, weight: .bold, design: .rounded))
                         .tracking(0.5)
@@ -417,8 +375,6 @@ struct TripDetailView: View {
             latitudeDelta: (maxLat - minLat) * 1.3 + 0.005,
             longitudeDelta: (maxLng - minLng) * 1.3 + 0.005
         )
-        withAnimation(.easeInOut(duration: 0.4)) {
-            mapPosition = .region(MKCoordinateRegion(center: center, span: span))
-        }
+        mapPosition = .region(MKCoordinateRegion(center: center, span: span))
     }
 }

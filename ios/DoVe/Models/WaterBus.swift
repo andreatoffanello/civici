@@ -144,9 +144,10 @@ struct Departure: Identifiable, Hashable {
 
 // MARK: - Trip Navigation
 
-struct TripNavigation: Hashable {
+struct TripNavigation: Identifiable, Hashable {
     let departure: Departure
     let stop: WaterBusStop
+    var id: String { "\(departure.id)_\(stop.id)" }
 }
 
 // MARK: - Trip (corsa ricostruita)
